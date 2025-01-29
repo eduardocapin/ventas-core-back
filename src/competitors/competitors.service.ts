@@ -16,7 +16,15 @@ export class CompetitorsService {
     return `This action returns a #${id} competitor`;
   }
 
-  update(id: number, updateCompetitorDto: UpdateCompetitorDto) {
+  findFamiliesByCompetitorId(id: number) {
+    return `This action returns a #${id} competitor`;
+  }
+
+  updateName(id: number, name: string) {
+    return `This action updates a #${id} competitor`;
+  }
+
+  updateSegmentations(id: number, product_segmentation_ids: number[]) {
     return `This action updates a #${id} competitor`;
   }
 

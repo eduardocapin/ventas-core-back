@@ -1,19 +1,19 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
-import { NavListsService } from './nav-lists.service';
-import { CreateNavListDto } from './dto/create-nav-list.dto';
-import { UpdateNavListDto } from './dto/update-nav-list.dto';
+import { ImportService } from './import.service';
+import { CreateImportDto } from './dto/create-import.dto';
+import { UpdateImportDto } from './dto/update-import.dto';
 import { JwtAuthGuard } from 'src/users/jwt-auth/jwt-auth.guard';
 
-@Controller('nav-lists')
-export class NavListsController {
-  constructor(private readonly navListsService: NavListsService) { }
+@Controller('import')
+export class ImportController {
+  constructor(private readonly importService: ImportService) { }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':entinty')
-  getContainers(@Param('entity') entity: string) {
+  @Get()
+  getImportTablesName() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.navListsService.getContainersByEntity(entity);
+      return this.importService.getImportTablesName();
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -24,17 +24,18 @@ export class NavListsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':container_id/:entity')
-  getListItem(@Param('container_id', ParseIntPipe) container_id: number, @Param('entity') entity: string) {
+  @Get('saved/:id')
+  getImportTablesField(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.navListsService.getListItem(container_id, entity);
+      return this.importService.getImportTablesField(+id);
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
+    
   }
+
 }

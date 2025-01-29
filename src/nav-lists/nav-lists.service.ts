@@ -4,6 +4,12 @@ import { UpdateNavListDto } from './dto/update-nav-list.dto';
 
 @Injectable()
 export class NavListsService {
+  getListItem(container_id: number, entity: string) {
+    throw new Error('Method not implemented.');
+  }
+  getContainersByEntity(entity: string) {
+    throw new Error('Method not implemented.');
+  }
   create(createNavListDto: CreateNavListDto) {
     return 'This action adds a new navList';
   }

@@ -4,6 +4,9 @@ import { UpdateMenuDto } from './dto/update-menu.dto';
 
 @Injectable()
 export class MenusService {
+  getMenuItems(menu_id: number, language: string) {
+    throw new Error('Method not implemented.');
+  }
   create(createMenuDto: CreateMenuDto) {
     return 'This action adds a new menu';
   }

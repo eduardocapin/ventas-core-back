@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { PaginatedClientsDto } from './dto/paginated-client.dto';
 
 @Injectable()
 export class ClientsService {
@@ -8,7 +9,7 @@ export class ClientsService {
     return 'This action adds a new client';
   }
 
-  findAll() {
+  findAll(paginatedClientsDto: PaginatedClientsDto) {
     return `This action returns all clients`;
   }
 
@@ -23,4 +24,13 @@ export class ClientsService {
   remove(id: number) {
     return `This action removes a #${id} client`;
   }
+
+  findAllContacts(id: number) {
+    return `This action returns all contacts`;
+  }
+
+  findOneContact(id: number) {
+    return `This action returns one contact`;
+  }
+
 }
