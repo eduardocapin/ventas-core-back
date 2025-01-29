@@ -7,6 +7,9 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
+  newPassword(email: string, newpass: string) {
+    throw new Error('Method not implemented.');
+  }
   checkCode(code: string): string {
     throw new Error('Method not implemented.');
   }
