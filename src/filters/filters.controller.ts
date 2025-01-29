@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Req } from '@nestjs/common';
 import { FiltersService } from './filters.service';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { UpdateFilterDto } from './dto/update-filter.dto';
@@ -161,10 +161,11 @@ export class FiltersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('saved/:componentId')
-  getSavedByComponetId(@Param('componentId') componentId: string) {
+  getSavedByComponetId(@Req() req,@Param('componentId') componentId: string) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getSavedByComponetId(componentId);
+      const email = req.user['email']; // Se obtiene el email desde el token
+      return this.filtersService.getSavedByComponetId(componentId, email);
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -176,10 +177,11 @@ export class FiltersController {
 
   @UseGuards(JwtAuthGuard)
   @Post('saved/:componentId')
-  createSavedByComponetId(@Param('componentId') componentId: string, @Body() createFilterDto: CreateFilterDto) {
+  createSavedByComponetId(@Req() req,@Param('componentId') componentId: string, @Body() createFilterDto: CreateFilterDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.createSavedByComponetId(componentId, createFilterDto);
+      const email = req.user['email']; // Se obtiene el email desde el token
+      return this.filtersService.createSavedByComponetId(componentId,email, createFilterDto);
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },

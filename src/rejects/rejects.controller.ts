@@ -59,7 +59,6 @@ export class RejectsController {
   @UseGuards(JwtAuthGuard)
   @Patch('corrective-action/:id')
   updateCorrectiveAction(@Param('id', ParseIntPipe) id: number, @Body() updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
-   
     try {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.updateCorrectiveAction(+id, updateRejectCorrectiveActionDto);

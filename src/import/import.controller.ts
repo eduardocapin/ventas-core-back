@@ -24,7 +24,7 @@ export class ImportController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('saved/:id')
+  @Get('field/:id')
   getImportTablesField(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados

@@ -13,7 +13,8 @@ export class CompetitorsController {
   create(@Body() createCompetitorDto: CreateCompetitorDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.competitorsService.create(createCompetitorDto);
+      const competitor = this.competitorsService.create(createCompetitorDto);
+      return { status: 'Success', ...competitor };
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -42,7 +43,11 @@ export class CompetitorsController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.competitorsService.findOne(+id);
+      const competidor =  this.competitorsService.findOne(id);
+      if (!competidor) {
+        throw new HttpException('Competidor no encontrado', HttpStatus.NOT_FOUND);
+      }
+      return competidor
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -105,7 +110,11 @@ export class CompetitorsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.competitorsService.remove(+id);
+      const result = this.competitorsService.remove(id);
+      /* if (!result.affectedRows) {
+        throw new HttpException('Competidor no encontrado', HttpStatus.NOT_FOUND);
+      } */
+      return { status: 'Success', message: 'Competidor eliminado correctamente'};
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },

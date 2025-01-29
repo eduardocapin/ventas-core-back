@@ -7,10 +7,10 @@ export class FiltersService {
   removeSaved(id: number) {
     throw new Error('Method not implemented.');
   }
-  createSavedByComponetId(componentId: string, createFilterDto: CreateFilterDto) {
+  createSavedByComponetId(componentId: string,email:string, createFilterDto: CreateFilterDto) {
     throw new Error('Method not implemented.');
   }
-  getSavedByComponetId(componentId: string) {
+  getSavedByComponetId(componentId: string, email:string) {
     throw new Error('Method not implemented.');
   }
   getProductSegmentation(n: string) {

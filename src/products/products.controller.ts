@@ -11,7 +11,16 @@ export class ProductsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return this.productsService.create(createProductDto);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Ha ocurrido un error durante la petición.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,12 +56,30 @@ export class ProductsController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return this.productsService.update(+id, updateProductDto);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Ha ocurrido un error durante la petición.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.remove(+id);
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return this.productsService.remove(+id);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Ha ocurrido un error durante la petición.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    
   }
 }

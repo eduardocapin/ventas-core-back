@@ -12,7 +12,15 @@ export class ClientsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createClientDto: CreateClientDto) {
-    return this.clientsService.create(createClientDto);
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return this.clientsService.create(createClientDto);
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Ha ocurrido un error durante la petición.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(JwtAuthGuard)
@@ -34,7 +42,11 @@ export class ClientsController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.clientsService.findOne(+id);
+      const cliente =  this.clientsService.findOne(id);
+      if (!cliente) {
+        throw new HttpException('Cliente no encontrado', HttpStatus.NOT_FOUND);
+      }
+      return cliente;
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -49,7 +61,12 @@ export class ClientsController {
   findAllContacts(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.clientsService.findAllContacts(+id);
+      
+      const contactos =  this.clientsService.findAllContacts(+id);
+      if (!contactos) {
+        throw new HttpException('Contactos no encontrados para este cliente', HttpStatus.NOT_FOUND);
+      }
+      return contactos;
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
@@ -64,7 +81,11 @@ export class ClientsController {
   findOneContact(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.clientsService.findOneContact(+id);
+      const contacto =  this.clientsService.findOneContact(+id);
+      if (!contacto) {
+        throw new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
+      }
+      return contacto;
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
