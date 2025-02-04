@@ -3,13 +3,20 @@ import { CompetitorsService } from './competitors.service';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
 import { UpdateCompetitorDto } from './dto/update-competitor.dto';
 import { JwtAuthGuard } from 'src/users/jwt-auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Competidores')
 @Controller('competitors')
+@ApiBearerAuth() 
 export class CompetitorsController {
   constructor(private readonly competitorsService: CompetitorsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiOperation({ summary: 'Crear un nuevo competidor' })
+  @ApiResponse({ status: 201, description: 'Competidor creado exitosamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiBody({ type: CreateCompetitorDto })
   create(@Body() createCompetitorDto: CreateCompetitorDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -26,6 +33,9 @@ export class CompetitorsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiOperation({ summary: 'Obtener todos los competidores' })
+  @ApiResponse({ status: 200, description: 'Lista de competidores obtenida con éxito.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   findAll() {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -40,6 +50,11 @@ export class CompetitorsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un competidor por ID' })
+  @ApiResponse({ status: 200, description: 'Competidor encontrado.' })
+  @ApiResponse({ status: 404, description: 'Competidor no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -58,6 +73,10 @@ export class CompetitorsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('family/:id')
+  @ApiOperation({ summary: 'Obtener familias de un competidor' })
+  @ApiResponse({ status: 200, description: 'Familias obtenidas exitosamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   findFamilies(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -72,6 +91,12 @@ export class CompetitorsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar un competidor' })
+  @ApiResponse({ status: 200, description: 'Competidor actualizado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Debe proporcionar al menos un campo para actualizar.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
+  @ApiBody({ type: UpdateCompetitorDto })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCompetitorDto: UpdateCompetitorDto
@@ -107,6 +132,10 @@ export class CompetitorsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un competidor por ID' })
+  @ApiResponse({ status: 200, description: 'Competidor eliminado correctamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   remove(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados

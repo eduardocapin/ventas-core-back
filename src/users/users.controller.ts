@@ -6,13 +6,20 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Usarios')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
 
   @Post('login')
+  @ApiOperation({ summary: 'Iniciar sesión de usuario' })
+  @ApiBody({ type: LoginDto, description: 'Datos necesarios para iniciar sesión' })
+  @ApiResponse({ status: 200, description: 'Inicio de sesión exitoso, devuelve el token JWT' })
+  @ApiResponse({ status: 400, description: 'Credenciales incorrectas' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async login(@Body() loginDto: LoginDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -30,6 +37,12 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Crear un nuevo usuario' })
+  @ApiBody({ type: CreateUserDto, description: 'Datos del usuario a crear' })
+  @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Datos de usuario inválidos' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   create(@Body() createUserDto: CreateUserDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -44,6 +57,12 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener usuario por ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   findOne(@Param('id', ParseIntPipe) id: number) {
 
     try {
@@ -59,6 +78,12 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar la información del usuario' })
+  @ApiBody({ type: UpdateUserDto, description: 'Datos a actualizar del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Datos incorrectos' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const email = req.user.email; // Se obtiene del token JWT
     const { user, cargo, img, oldpass, newpass } = updateUserDto;
@@ -94,12 +119,23 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Eliminar usuario por ID' })
+  @ApiParam({ name: 'id', type: String, description: 'ID del usuario a eliminar' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
 
 
   @Post('reset-password')
+  @ApiOperation({ summary: 'Restablecer contraseña de usuario' })
+  @ApiBody({ type: ResetPasswordDto, description: 'Correo del usuario para restablecer la contraseña' })
+  @ApiResponse({ status: 200, description: 'Contraseña restablecida exitosamente' })
+  @ApiResponse({ status: 400, description: 'Correo inválido' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -113,6 +149,12 @@ export class UsersController {
   }
 
   @Post('check-code')
+  @ApiOperation({ summary: 'Verificar código de restablecimiento de contraseña' })
+  @ApiBody({ type: String, description: 'Código de verificación de restablecimiento' })
+  @ApiResponse({ status: 200, description: 'Código válido, devuelve el correo asociado' })
+  @ApiResponse({ status: 400, description: 'Código inválido' })
+  @ApiResponse({ status: 404, description: 'Código no encontrado o expirado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   checkCode(@Body('code') code: string) {
     try {
       // Validar que el código no sea undefined y no contenga caracteres peligrosos
@@ -143,6 +185,11 @@ export class UsersController {
   }
 
   @Post('new-password')
+  @ApiOperation({ summary: 'Establecer una nueva contraseña' })
+  @ApiBody({ type: NewPasswordDto, description: 'Correo y nueva contraseña' })
+  @ApiResponse({ status: 200, description: 'Contraseña actualizada exitosamente' })
+  @ApiResponse({ status: 400, description: 'Datos incorrectos' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
   newPassword(@Body() newPasswordDto: NewPasswordDto) {
     try {
       const { email, newpass } = newPasswordDto;

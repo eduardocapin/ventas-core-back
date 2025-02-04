@@ -4,6 +4,7 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = WinstonModule.createLogger({
@@ -27,10 +28,21 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger });
   // Establece el prefijo global para todas las rutas
   app.setGlobalPrefix('api');
-   // Habilitar la validación global
-   app.useGlobalPipes(new ValidationPipe({
+  // Habilitar la validación global
+  app.useGlobalPipes(new ValidationPipe({
     transform: true, // Convierte los parámetros de tipo string a tipo correcto
   }));
+
+  //Documentación
+  const config = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('Descripción de tu API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
   await app.listen(process.env.PORT ?? 3000);
 
 }

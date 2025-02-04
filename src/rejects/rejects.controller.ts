@@ -5,15 +5,22 @@ import { UpdateRejectDto } from './dto/update-reject.dto';
 import { JwtAuthGuard } from 'src/users/jwt-auth/jwt-auth.guard';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
 import { PaginatedRejectsDto } from './dto/paginated-reject.dto';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Rechazos')
 @Controller('rejects')
+@ApiBearerAuth()
 export class RejectsController {
   constructor(private readonly rejectsService: RejectsService) { }
 
-  
+
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('list')
+  @ApiOperation({ summary: 'Obtener rechazos paginados' })
+  @ApiResponse({ status: 200, description: 'Lista de rechazos obtenida con éxito.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiBody({ type: PaginatedRejectsDto })
   findAll(@Body() paginatedRejectsDto: PaginatedRejectsDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -28,8 +35,13 @@ export class RejectsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un rechazo por ID' })
+  @ApiResponse({ status: 200, description: 'Rechazo encontrado.' })
+  @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
   findOne(@Param('id', ParseIntPipe) id: number) {
-    
+
     try {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.findOne(+id);
@@ -43,8 +55,13 @@ export class RejectsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar un rechazo por ID' })
+  @ApiResponse({ status: 200, description: 'Rechazo actualizado.' })
+  @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
   update(@Param('id', ParseIntPipe) id: number, @Body() updateRejectDto: UpdateRejectDto) {
-    
+
     try {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.update(+id, updateRejectDto);
@@ -58,6 +75,11 @@ export class RejectsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('corrective-action/:id')
+  @ApiOperation({ summary: 'Actualizar la acción correctora de un rechazo por ID' })
+  @ApiResponse({ status: 200, description: 'Acción correctora actualizada.' })
+  @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
   updateCorrectiveAction(@Param('id', ParseIntPipe) id: number, @Body() updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
     try {
       // Llamar al servicio y pasar los datos validados
@@ -72,8 +94,13 @@ export class RejectsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un rechazo por ID' })
+  @ApiResponse({ status: 200, description: 'Rechazo eliminado.' })
+  @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
+  @ApiResponse({ status: 500, description: 'Error del servidor.' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
   remove(@Param('id', ParseIntPipe) id: number) {
-    
+
     try {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.remove(+id);
