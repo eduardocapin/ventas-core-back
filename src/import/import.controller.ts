@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { ImportService } from './import.service';
-import { CreateImportDto } from './dto/create-import.dto';
-import { UpdateImportDto } from './dto/update-import.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -21,8 +19,12 @@ export class ImportController {
       // Llamar al servicio y pasar los datos validados
       return this.importService.getImportTablesName();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -40,8 +42,12 @@ export class ImportController {
       // Llamar al servicio y pasar los datos validados
       return this.importService.getImportTablesField(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

@@ -26,8 +26,12 @@ export class RejectsController {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.findAll(paginatedRejectsDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -46,8 +50,12 @@ export class RejectsController {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.findOne(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -66,8 +74,12 @@ export class RejectsController {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.update(+id, updateRejectDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -85,8 +97,12 @@ export class RejectsController {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.updateCorrectiveAction(+id, updateRejectCorrectiveActionDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -105,8 +121,12 @@ export class RejectsController {
       // Llamar al servicio y pasar los datos validados
       return this.rejectsService.remove(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

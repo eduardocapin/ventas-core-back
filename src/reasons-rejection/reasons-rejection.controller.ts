@@ -22,8 +22,12 @@ export class ReasonsRejectionController {
       // Llamar al servicio y pasar los datos validados
       return this.reasonsRejectionService.create(createReasonsRejectionDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -40,8 +44,12 @@ export class ReasonsRejectionController {
       // Llamar al servicio y pasar los datos validados
       return this.reasonsRejectionService.findAll();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -60,8 +68,12 @@ export class ReasonsRejectionController {
       // Llamar al servicio y pasar los datos validados
       return this.reasonsRejectionService.findOne(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -79,8 +91,12 @@ export class ReasonsRejectionController {
       // Llamar al servicio y pasar los datos validados
       return this.reasonsRejectionService.update(+id, updateReasonsRejectionDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -98,8 +114,12 @@ export class ReasonsRejectionController {
       // Llamar al servicio y pasar los datos validados
       return this.reasonsRejectionService.remove(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

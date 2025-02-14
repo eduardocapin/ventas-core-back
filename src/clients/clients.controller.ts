@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -23,8 +22,12 @@ export class ClientsController {
       // Llamar al servicio y pasar los datos validados
       return this.clientsService.create(createClientDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -41,8 +44,12 @@ export class ClientsController {
       // Llamar al servicio y pasar los datos validados
       return this.clientsService.findAll(paginatedClientsDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -64,8 +71,12 @@ export class ClientsController {
       }
       return cliente;
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -89,8 +100,12 @@ export class ClientsController {
       }
       return contactos;
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -113,8 +128,12 @@ export class ClientsController {
       }
       return contacto;
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

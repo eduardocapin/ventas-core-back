@@ -23,8 +23,12 @@ export class CompetitorsController {
       const competitor = this.competitorsService.create(createCompetitorDto);
       return { status: 'Success', ...competitor };
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -41,8 +45,12 @@ export class CompetitorsController {
       // Llamar al servicio y pasar los datos validados
       return this.competitorsService.findAll();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -64,8 +72,12 @@ export class CompetitorsController {
       }
       return competidor
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -82,8 +94,12 @@ export class CompetitorsController {
       // Llamar al servicio y pasar los datos validados
       return this.competitorsService.findFamiliesByCompetitorId(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -122,8 +138,12 @@ export class CompetitorsController {
 
       return { status: 'Success', message: 'Competitor updated successfully' };
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -145,8 +165,12 @@ export class CompetitorsController {
       } */
       return { status: 'Success', message: 'Competidor eliminado correctamente'};
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

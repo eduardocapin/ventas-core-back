@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Req } from '@nestjs/common';
 import { FiltersService } from './filters.service';
 import { CreateFilterDto } from './dto/create-filter.dto';
-import { UpdateFilterDto } from './dto/update-filter.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -22,8 +21,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getCities();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -40,8 +43,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getProvinces();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -58,8 +65,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getStatus();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -76,8 +87,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getSymbol();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -94,8 +109,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getReasonsRejection();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -112,8 +131,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getCompetitors();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -130,8 +153,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getSalesmen();
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -149,8 +176,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.findFiltersByComponetId(componentId);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -168,8 +199,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getSegmentation(n);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -187,8 +222,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getProductSegmentation(n);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -207,8 +246,12 @@ export class FiltersController {
       const email = req.user['email']; // Se obtiene el email desde el token
       return this.filtersService.getSavedByComponetId(componentId, email);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -228,8 +271,12 @@ export class FiltersController {
       const email = req.user['email']; // Se obtiene el email desde el token
       return this.filtersService.createSavedByComponetId(componentId,email, createFilterDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -247,8 +294,12 @@ export class FiltersController {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.removeSaved(id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; 
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
