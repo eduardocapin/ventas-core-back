@@ -1,4 +1,4 @@
-import { FindOptionsWhere, ObjectId, Repository, UpdateResult } from 'typeorm';
+import {Repository, UpdateResult } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';

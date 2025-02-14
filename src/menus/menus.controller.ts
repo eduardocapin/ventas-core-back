@@ -7,9 +7,9 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 
 @ApiTags('Menús')
 @Controller('menus')
-@ApiBearerAuth() 
+@ApiBearerAuth()
 export class MenusController {
-  constructor(private readonly menusService: MenusService) {}
+  constructor(private readonly menusService: MenusService) { }
 
   @UseGuards(JwtAuthGuard)
   @Get(':menu_id/:language')
@@ -18,18 +18,22 @@ export class MenusController {
   @ApiParam({ name: 'language', type: 'string', description: 'El idioma del menú' }) // Parametro de language
   @ApiResponse({ status: 200, description: 'Lista de ítems del menú.' }) // Respuesta exitosa
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' }) // Respuesta de error
-  getMenuItems(@Param('menu_id', ParseIntPipe) menu_id: number,@Param('language') language: string) {
+  getMenuItems(@Param('menu_id', ParseIntPipe) menu_id: number, @Param('language') language: string) {
     try {
-          // Llamar al servicio y pasar los datos validados
-          return this.menusService.getMenuItems(+menu_id, language);
-        } catch (error) {
-          throw new HttpException(
-            { message: 'Ha ocurrido un error durante la petición.', error },
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-    
+      // Llamar al servicio y pasar los datos validados
+      return this.menusService.getMenuItems(+menu_id, language);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
   }
 
-  
+
 }

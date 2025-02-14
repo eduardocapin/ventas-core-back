@@ -52,8 +52,12 @@ export class UsersController {
       // Llamar al servicio y pasar los datos validados
       return this.usersService.create(createUserDto);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -73,8 +77,12 @@ export class UsersController {
       // Llamar al servicio y pasar los datos validados
       return this.usersService.findOneById(+id);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -114,8 +122,12 @@ export class UsersController {
 
       return { status: 'Success', message: 'User updated successfully' };
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -145,8 +157,12 @@ export class UsersController {
       // Llamar al servicio y pasar los datos validados
       return this.usersService.resetPassword(resetPasswordDto.email);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -181,8 +197,12 @@ export class UsersController {
 
       return { status: 'Success', email };
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -199,8 +219,12 @@ export class UsersController {
       const { email, newpass } = newPasswordDto;
       return this.usersService.newPassword(email, newpass);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

@@ -1,29 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMenuDto } from './dto/create-menu.dto';
-import { UpdateMenuDto } from './dto/update-menu.dto';
+import { MenusRepository } from './repositories/menus.repository';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MenusService {
-  getMenuItems(menu_id: number, language: string) {
-    throw new Error('Method not implemented.');
-  }
-  create(createMenuDto: CreateMenuDto) {
-    return 'This action adds a new menu';
+  constructor(
+    @InjectRepository(MenusRepository)
+    private readonly menusRepository: MenusRepository,
+  ) {
+
   }
 
-  findAll() {
-    return `This action returns all menus`;
+
+  async getMenuItems(menu_id: number, language: string) {
+    return await this.menusRepository.getMenuItemsByIdAndLanguage(menu_id, language)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} menu`;
-  }
-
-  update(id: number, updateMenuDto: UpdateMenuDto) {
-    return `This action updates a #${id} menu`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} menu`;
-  }
 }
