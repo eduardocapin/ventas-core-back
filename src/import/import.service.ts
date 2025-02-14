@@ -1,32 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateImportDto } from './dto/create-import.dto';
 import { UpdateImportDto } from './dto/update-import.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TableNameRepository } from './repositories/table-name.repository';
+import { TableFieldRepository } from './repositories/table-field.repository';
 
 @Injectable()
 export class ImportService {
-  getImportTablesField(arg0: number) {
-    throw new Error('Method not implemented.');
-  }
-  getImportTablesName() {
-    throw new Error('Method not implemented.');
-  }
-  create(createImportDto: CreateImportDto) {
-    return 'This action adds a new import';
+
+   constructor(
+      @InjectRepository(TableNameRepository)
+      private readonly tableNameRepository: TableNameRepository,
+      @InjectRepository(TableFieldRepository)
+      private readonly tableFieldRepository: TableFieldRepository,
+    ) {
+  
+    }
+  async getImportTablesField(table_id: number) {
+    return await this.tableFieldRepository.getTableFieldsByTableId(table_id)
   }
 
-  findAll() {
-    return `This action returns all import`;
+  async getImportTablesName() {
+    return await this.tableNameRepository.getTableNames()
   }
+  
 
-  findOne(id: number) {
-    return `This action returns a #${id} import`;
-  }
-
-  update(id: number, updateImportDto: UpdateImportDto) {
-    return `This action updates a #${id} import`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} import`;
-  }
 }
