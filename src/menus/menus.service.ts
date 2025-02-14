@@ -11,7 +11,6 @@ export class MenusService {
 
   }
 
-
   async getMenuItems(menu_id: number, language: string) {
     return await this.menusRepository.getMenuItemsByIdAndLanguage(menu_id, language)
   }
