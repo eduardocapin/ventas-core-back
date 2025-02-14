@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntP
 import { RejectsService } from './rejects.service';
 import { CreateRejectDto } from './dto/create-reject.dto';
 import { UpdateRejectDto } from './dto/update-reject.dto';
-import { JwtAuthGuard } from 'src/users/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
 import { PaginatedRejectsDto } from './dto/paginated-reject.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';

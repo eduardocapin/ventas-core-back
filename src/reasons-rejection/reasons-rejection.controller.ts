@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntP
 import { ReasonsRejectionService } from './reasons-rejection.service';
 import { CreateReasonsRejectionDto } from './dto/create-reasons-rejection.dto';
 import { UpdateReasonsRejectionDto } from './dto/update-reasons-rejection.dto';
-import { JwtAuthGuard } from 'src/users/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Motivos de rechazo')

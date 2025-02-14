@@ -1,30 +1,21 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('menu_items')
-export class MenuItem {
+@Entity('import_tables_fields')
+export class TableField {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'int' })
-  menu_id: number;
-
-  @Column({ type: 'int', nullable: true })
-  parent_menu_id: number;
-
-  @Column({ length: 255, nullable: true })
-  icon: string;
+  table_id: number;
 
   @Column({ length: 45 })
-  label: string;
+  real_field_name: string;
 
   @Column({ length: 45 })
-  route: string;
+  show_field_name: string;
 
   @Column({ type: 'boolean', default: false })
-  has_submenu: boolean;
-
-  @Column({ length: 45 })
-  language: string;
+  required: boolean;
 
   @Column({ type: 'boolean', default: false })
   deleted: boolean;

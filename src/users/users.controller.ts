@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,8 +27,12 @@ export class UsersController {
 
       return this.usersService.login(email, password);
     } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
       throw new HttpException(
-        { message: 'Ha ocurrido un error durante la petición.', error },
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -67,7 +71,7 @@ export class UsersController {
 
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.usersService.findOne(+id);
+      return this.usersService.findOneById(+id);
     } catch (error) {
       throw new HttpException(
         { message: 'Ha ocurrido un error durante la petición.', error },
