@@ -2,35 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ClientRepository } from './repositories/clients.repository';
+import { ClientContactRepository } from './repositories/client-contacts.repository';
+import { ClientContact } from './entities/client-contact.entity';
+import { Client } from './entities/client.entity';
 
 @Injectable()
 export class ClientsService {
-  create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+
+constructor(
+      @InjectRepository(ClientRepository)
+      private readonly clientRepository: ClientRepository,
+      @InjectRepository(ClientContactRepository)
+      private readonly clientContactRepository: ClientContactRepository,
+    ) {
+
+    }
+
+  async findAll(paginatedClientsDto: PaginatedClientsDto): Promise<{ items: Client[]; totalItems: number }> {
+    return await this.clientRepository.findAll(paginatedClientsDto);
   }
 
-  findAll(paginatedClientsDto: PaginatedClientsDto) {
-    return `This action returns all clients`;
+  async findOne(id: number): Promise<Client> {
+    return await this.clientRepository.findClientById(id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+
+
+  async findAllContacts(id: number): Promise<ClientContact[]> {
+    return await this.clientContactRepository.findAllContactsByClientId(id)
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} client`;
-  }
-
-  findAllContacts(id: number) {
-    return `This action returns all contacts`;
-  }
-
-  findOneContact(id: number) {
-    return `This action returns one contact`;
+  async findOneContact(id: number): Promise<ClientContact> {
+    return await this.clientContactRepository.findContactById(id);
+      
   }
 
 }

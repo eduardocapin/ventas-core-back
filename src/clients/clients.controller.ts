@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { CreateClientDto } from './dto/create-client.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,28 +9,6 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 @ApiBearerAuth() 
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) { }
-
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  @ApiOperation({ summary: 'Crear un nuevo cliente' })
-  @ApiResponse({ status: 201, description: 'Cliente creado exitosamente.' })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  @ApiBody({ type: CreateClientDto })
-  create(@Body() createClientDto: CreateClientDto) {
-    try {
-      // Llamar al servicio y pasar los datos validados
-      return this.clientsService.create(createClientDto);
-    } catch (error) {
-      console.log(error);
-      if (error instanceof HttpException) {
-        throw error; 
-      }
-      throw new HttpException(
-        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
 
   @UseGuards(JwtAuthGuard)
   @Post('list')
