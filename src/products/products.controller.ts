@@ -12,28 +12,6 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
-  @ApiOperation({ summary: 'Crear un nuevo producto' })
-  @ApiResponse({ status: 201, description: 'Producto creado correctamente.' })
-  @ApiResponse({ status: 500, description: 'Error al crear el producto.' })
-  create(@Body() createProductDto: CreateProductDto) {
-    try {
-      // Llamar al servicio y pasar los datos validados
-      return this.productsService.create(createProductDto);
-    } catch (error) {
-      console.log(error);
-      if (error instanceof HttpException) {
-        throw error; 
-      }
-      throw new HttpException(
-        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-    
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({ status: 200, description: 'Lista de productos obtenida correctamente.' })

@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductRepository } from './repositories/products.repository';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+
+  constructor(
+    @InjectRepository(ProductRepository)
+    private readonly productRepository: ProductRepository,
+
+  ) {
+
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    return await this.productRepository.findAll()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    return await this.productRepository.findById(id);
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async remove(id: number) {
+    const product = await this.findOne(id);
+    if (!product) {
+      throw new HttpException('Producto no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    return this.productRepository.removeById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async update(id: number,updateProductDto: UpdateProductDto) {
+
+    
+    const product = await this.findOne(id);
+    if (!product) {
+      throw new HttpException('Producto no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    //TODO: MODIFICAR LOS VALORES DEL PRODUCTO
+    const result = await this.productRepository.save(product)
+    return { status: 'Success', data: result };
+
   }
 }
