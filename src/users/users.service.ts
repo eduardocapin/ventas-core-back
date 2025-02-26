@@ -9,6 +9,7 @@ import { MailService } from 'src/shared/mail/mail.service';
 import { UtilitiesService } from 'src/shared/utilities/utilities.service';
 import { ConfigRepository } from 'src/repositories/config/config.repository';
 import { PasswordChangesRepository } from 'src/repositories/password-changes/password-changes.repository';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +23,8 @@ export class UsersService {
     private readonly passwordChangesRepository: PasswordChangesRepository,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-    private readonly utilitiesService: UtilitiesService) {
+    private readonly utilitiesService: UtilitiesService,
+    private readonly dataSource: DataSource,) {
 
   }
 
@@ -33,25 +35,21 @@ export class UsersService {
     }
     const hashedPassword = await bcrypt.hash(newpass, 10);
     user.password = hashedPassword;
-    const queryRunner = this.userRepository.manager.connection.createQueryRunner();
-    await queryRunner.startTransaction();
 
-    try {
-      await this.userRepository.save(user); 
-      // Eliminar los cambios de contraseña anteriores 
-      const result = await this.passwordChangesRepository.removeByEmail(user.email);  
+    return await this.dataSource.transaction(async (manager) => {
+      try {
+        await this.userRepository.save(user);
+        // Eliminar los cambios de contraseña anteriores 
+        const result = await this.passwordChangesRepository.removeByEmail(user.email);
 
-      // Hacer commit de la transacción
-      await queryRunner.commitTransaction();
+        return { status: 'Success', data: result };
+      } catch (error) {
+        throw new HttpException('Error al cambiar la contraseña.', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    });
 
-      return { status: 'Success', data: result };
-    } catch (error) {
-      //hacer rollback de la transacción
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+
+
   }
 
   async checkCode(code: string): Promise<string> {
@@ -72,7 +70,6 @@ export class UsersService {
       `https://www.${domain}/reset-password/${code}`
     );
 
-    //TODO: Insertar en passwordChanges
     const passwordChange = this.passwordChangesRepository.create({
       user_id: existingUser.id,
       email,

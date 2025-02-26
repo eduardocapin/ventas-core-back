@@ -89,4 +89,12 @@ export class RejectRepository extends Repository<Rejection> {
     async removeById(id: number): Promise<UpdateResult> {
         return await this.repo.update(id, { deleted: false });
     }
+
+    async updateReasonsRejection(id: number, nombre: string): Promise<UpdateResult> {
+        return await this.repo.update({ reason_rejection_id: id }, { reason_rejection: nombre })
+    }
+
+    async updateCompetitor(id: number, nombre: string): Promise<UpdateResult> {
+        return await this.repo.update({ competitor_id: id }, { competitor_name: nombre })
+    }
 }

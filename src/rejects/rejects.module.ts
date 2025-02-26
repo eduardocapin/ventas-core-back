@@ -9,5 +9,6 @@ import { Rejection } from './entities/reject.entity';
   imports: [TypeOrmModule.forFeature([Rejection, RejectRepository]),],
   controllers: [RejectsController],
   providers: [RejectsService, RejectRepository],
+  exports:[RejectRepository]
 })
 export class RejectsModule { }
