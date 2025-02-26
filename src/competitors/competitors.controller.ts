@@ -66,7 +66,7 @@ export class CompetitorsController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const competidor =  this.competitorsService.findOne(id);
+      const competidor =  this.competitorsService.findOneWithSegmentations(id);
       if (!competidor) {
         throw new HttpException('Competidor no encontrado', HttpStatus.NOT_FOUND);
       }

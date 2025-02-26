@@ -1,52 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
 import { UpdateCompetitorDto } from './dto/update-competitor.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RejectRepository } from 'src/rejects/repositories/rejects.repository';
+import { CompetitorRepository } from './repositories/competitors.repository';
+import { DataSource } from 'typeorm';
+import { Competitor } from './entities/competitor.entity';
 
 @Injectable()
 export class CompetitorsService {
-  create(createCompetitorDto: CreateCompetitorDto) {
-    const { nombre, product_segmentation_ids } = createCompetitorDto;
 
-    //Insertar Competidor 
-    
-    const competidorId = 1;
+  constructor(
+    @InjectRepository(CompetitorRepository)
+    private readonly competitorRepository: CompetitorRepository,
+    @InjectRepository(RejectRepository)
+    private readonly rejectRepository: RejectRepository,
+    private readonly dataSource: DataSource,
+  ) { }
+  async create(createCompetitorDto: CreateCompetitorDto) {
+    const existingCompetitor = this.competitorRepository.findByName(createCompetitorDto.nombre)
+    if (existingCompetitor) {
+      throw new HttpException('Comeptidor con nombre ya existente', HttpStatus.BAD_REQUEST);
+    }
+    return await this.competitorRepository.createCompetitor(createCompetitorDto)
+  }
 
-    if (Array.isArray(product_segmentation_ids) && product_segmentation_ids.length > 0) {
-      const values = product_segmentation_ids.map((id) => [competidorId, id]);
-      // Insertar en Competitor_segmentations
-      
+
+  async findAll() {
+    return await this.competitorRepository.findAllWithSegmentations();
+  }
+
+  async findOneWithSegmentations(id: number): Promise<Competitor> {
+    return await this.competitorRepository.findCompetitorById(id);
+  }
+
+  async findOne(id: number): Promise<Competitor> {
+    return await this.competitorRepository.findById(id);;
+  }
+
+  async findFamiliesByCompetitorId(id: number) {
+    return this.competitorRepository.findCompetitorsByFamily(id)
+  }
+
+  async updateName(id: number, name: string) {
+    const comeptitor = await this.findOne(id);
+    if (!comeptitor) {
+      throw new HttpException('Comeptidor no encontrado.', HttpStatus.NOT_FOUND);
     }
 
-    return {
-      competidorId,
-      product_segmentation_ids: product_segmentation_ids || [],
-      message: product_segmentation_ids?.length ? 'Competidor creado con segmentaciones.' : 'Competidor creado sin segmentaciones.',
-    };
+
+    const existingComeptitor = await this.competitorRepository.findByName(name);
+    if (existingComeptitor) {
+      throw new HttpException('Comeptidor con nombre ya existente', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.dataSource.transaction(async (manager) => {
+      try {
+        const result = await this.competitorRepository.updateComepetitor(comeptitor, name);
+        await this.rejectRepository.updateCompetitor(id, name);
+
+        return { status: 'Success', data: result };
+      } catch (error) {
+        throw new HttpException('Error al actualizar el competidor.', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    });
   }
 
-
-  findAll() {
-    return `This action returns all competitors`;
-  }
-
-  findOne(id: number) {
-    
-    return `This action returns a #${id} competitor`;
-  }
-
-  findFamiliesByCompetitorId(id: number) {
-    return `This action returns a #${id} competitor`;
-  }
-
-  updateName(id: number, name: string) {
+  async updateSegmentations(id: number, product_segmentation_ids: number[]) {
+    const comeptitor = await this.findOne(id);
+    if (!comeptitor) {
+      throw new HttpException('Comeptidor no encontrado.', HttpStatus.NOT_FOUND);
+    }
     return `This action updates a #${id} competitor`;
   }
 
-  updateSegmentations(id: number, product_segmentation_ids: number[]) {
-    return `This action updates a #${id} competitor`;
-  }
+  async remove(id: number) {
+    const comeptitor = await this.findOne(id);
+    if (!comeptitor) {
+      throw new HttpException('Comeptidor no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    return this.competitorRepository.removeById(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} competitor`;
   }
 }
