@@ -1,31 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRejectDto } from './dto/create-reject.dto';
 import { UpdateRejectDto } from './dto/update-reject.dto';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
 import { PaginatedRejectsDto } from './dto/paginated-reject.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RejectRepository } from './repositories/rejects.repository';
+import { Rejection } from './entities/reject.entity';
 
 @Injectable()
 export class RejectsService {
-  updateCorrectiveAction(id: number, updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
-    throw new Error('Method not implemented.');
+  constructor(
+    @InjectRepository(RejectRepository)
+    private readonly rejectRepository: RejectRepository) {
+
+  }
+  async updateCorrectiveAction(id: number, updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
+    const rejection = await this.findOne(id);
+    if (!rejection) {
+      throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    
+    const updatedRejection = { ...rejection, ...updateRejectCorrectiveActionDto };
+
+    const result = await this.rejectRepository.save(updatedRejection);
+
+    return { status: 'Success', data: result };
   }
   create(createRejectDto: CreateRejectDto) {
     return 'This action adds a new reject';
   }
 
-  findAll( paginatedRejectsDto: PaginatedRejectsDto) {
-    return `This action returns all rejects`;
+  async findAll(paginatedRejectsDto: PaginatedRejectsDto): Promise<{ items: Rejection[]; totalItems: number }> {
+    return await this.rejectRepository.findAll(paginatedRejectsDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reject`;
+  async findOne(id: number): Promise<Rejection> {
+    return await this.rejectRepository.findById(id);
   }
 
-  update(id: number, updateRejectDto: UpdateRejectDto) {
-    return `This action updates a #${id} reject`;
+  async update(id: number, updateRejectDto: UpdateRejectDto) {
+    const rejection = await this.findOne(id);
+    if (!rejection) {
+      throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    const updatedRejection = { ...rejection, ...updateRejectDto };
+
+    const result = await this.rejectRepository.save(updatedRejection);
+
+    return { status: 'Success', data: result };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reject`;
+  async remove(id: number) {
+    const rejection = await this.findOne(id);
+    if (!rejection) {
+      throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
+    }
+    return this.rejectRepository.removeById(id);
   }
 }
