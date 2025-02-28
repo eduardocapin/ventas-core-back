@@ -10,5 +10,6 @@ import { RejectsModule } from 'src/rejects/rejects.module';
   imports: [TypeOrmModule.forFeature([ReasonsRejection, ReasonRejectionRepository]),RejectsModule ],
   controllers: [ReasonsRejectionController],
   providers: [ReasonsRejectionService, ReasonRejectionRepository],
+  exports:[ReasonRejectionRepository]
 })
 export class ReasonsRejectionModule {}

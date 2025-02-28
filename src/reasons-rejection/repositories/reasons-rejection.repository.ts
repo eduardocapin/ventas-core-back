@@ -6,6 +6,7 @@ import { ReasonsRejection } from "../entities/reasons-rejection.entity";
 @Injectable()
 export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
 
+
     constructor(@InjectRepository(ReasonsRejection) private readonly repo: Repository<ReasonsRejection>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
@@ -48,12 +49,36 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
     }
 
     async updateReason(reason: ReasonsRejection, codigo: string, nombre: string) {
-        const newValue ={
+        const newValue = {
             rejection_code: codigo,
             rejection: nombre,
-          }
-          const updatedReason = { ...reason, newValue };
-      
-         return await this.repo.save(updatedReason);
-      }
+        }
+        const updatedReason = { ...reason, newValue };
+
+        return await this.repo.save(updatedReason);
+    }
+
+    async getFilter() {
+        const reasons = await this.find({
+            where: [
+                { deleted: false }, 
+
+            ],
+            order: {
+                rejection: 'ASC',
+            },
+            select: ['id', 'rejection_code', 'rejection'],
+        });
+
+        if (!reasons.length) {
+            throw new HttpException('No se encontraron Motivos de rechazo.', HttpStatus.NOT_FOUND);
+        }
+        
+        return reasons.map((reason) => ({
+            id: reason.id,
+            rejection_code: reason.rejection_code,
+            name: reason.rejection,
+        }));
+
+    }
 }

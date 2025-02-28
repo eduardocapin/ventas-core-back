@@ -191,10 +191,10 @@ export class FiltersController {
   @UseGuards(JwtAuthGuard)
   @Get('segmentation/:n')
   @ApiOperation({ summary: 'Obtener segmentación de clientes por el número de segmentación' })
-  @ApiParam({ name: 'n', description: 'Número de segmentación' })
+  @ApiParam({ name: 'n', description: 'Número de segmentación' , type: Number})
   @ApiResponse({ status: 200, description: 'Segmentación de clientes obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getSegmentation(@Param('n') n: string) {
+  getSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getSegmentation(n);
@@ -214,10 +214,10 @@ export class FiltersController {
   @UseGuards(JwtAuthGuard)
   @Get('product-segmentation/:n')
   @ApiOperation({ summary: 'Obtener segmentación de productos por número de segmentación' })
-  @ApiParam({ name: 'n', description: 'Número de segmentación' })
+  @ApiParam({ name: 'n', description: 'Número de segmentación' , type: Number})
   @ApiResponse({ status: 200, description: 'Segmentación de productos obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getProductSegmentation(@Param('n') n: string) {
+  getProductSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getProductSegmentation(n);

@@ -24,12 +24,12 @@ export class CompetitorRepository extends Repository<Competitor> {
         });
     }
 
-    
+
 
     async removeById(id: number): Promise<UpdateResult> {
         return await this.dataSource.transaction(async (manager) => {
             // Marcar el competidor como eliminado
-           const result = await this.repo
+            const result = await this.repo
                 .createQueryBuilder()
                 .update(Competitor)
                 .set({ deleted: true })
@@ -44,7 +44,7 @@ export class CompetitorRepository extends Repository<Competitor> {
                 .where("competitor_id = :id", { id })
                 .execute();
 
-            return result ;
+            return result;
         });
     }
 
@@ -55,6 +55,24 @@ export class CompetitorRepository extends Repository<Competitor> {
             },
         });
 
+        if (!competitors.length) {
+            throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
+        }
+
+        return competitors;
+    }
+
+    async getFilter() {
+        const competitors = await this.repo.find({
+            where: [{
+                deleted: false,
+            },
+
+            ],
+            order: {
+                name: 'ASC',
+            },
+        });
         if (!competitors.length) {
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
@@ -122,7 +140,7 @@ export class CompetitorRepository extends Repository<Competitor> {
     }
 
     async createCompetitor(competitorData: CreateCompetitorDto) {
-        const {nombre, product_segmentation_ids} = competitorData
+        const { nombre, product_segmentation_ids } = competitorData
         return await this.dataSource.transaction(async (manager) => {
             // Insertar el competidor
             const { identifiers } = await this.repo
@@ -131,9 +149,9 @@ export class CompetitorRepository extends Repository<Competitor> {
                 .into(Competitor)
                 .values({ name: nombre })
                 .execute();
-    
+
             const competitorId = identifiers[0].id;
-    
+
             // Insertar segmentaciones si existen
             if (product_segmentation_ids.length > 0) {
                 await manager
@@ -148,7 +166,7 @@ export class CompetitorRepository extends Repository<Competitor> {
                     )
                     .execute();
             }
-    
+
             return {
                 competitor_id: competitorId,
                 product_segmentation_ids: product_segmentation_ids || [],
@@ -167,7 +185,7 @@ export class CompetitorRepository extends Repository<Competitor> {
     }
 
     async updateCompetitorSegmentations(id: number, productSegmentationIds: number[]) {
-       
+
         return await this.dataSource.transaction(async (manager) => {
             // Marcar como eliminadas las segmentaciones actuales
             await manager
@@ -177,10 +195,10 @@ export class CompetitorRepository extends Repository<Competitor> {
                 .where("competitor_id = :id", { id })
                 .andWhere("deleted = false")
                 .execute();
-    
+
             if (productSegmentationIds.length > 0) {
                 // Insertar nuevas relaciones o restaurar las existentes
-               return  await manager
+                return await manager
                     .createQueryBuilder()
                     .insert()
                     .into("competitor_segmentations")
@@ -194,8 +212,8 @@ export class CompetitorRepository extends Repository<Competitor> {
                     .orUpdate(["deleted"], ["competitor_id", "product_segmentation_id"])
                     .execute();
             }
-    
+
         });
     }
-    
+
 }
