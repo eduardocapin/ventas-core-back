@@ -51,7 +51,7 @@ export class ReasonsRejectionService {
     const { codigo, nombre } = updateReasonsRejectionDto;
 
     const existingReason = await this.reasonRejectionRepository.findByCodeOrName(codigo, nombre);
-    if (existingReason) {
+    if (existingReason && id != existingReason.id) {
       throw new HttpException('El Motivo de rechazo con codigo o nombre ya existente', HttpStatus.BAD_REQUEST);
     }
 

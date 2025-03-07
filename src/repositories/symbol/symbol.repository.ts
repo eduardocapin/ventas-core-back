@@ -23,10 +23,7 @@ export class SymbolRepository extends Repository<Symbol> {
         throw new HttpException('No se encontraron simbolos.', HttpStatus.NOT_FOUND);
     }
     
-    return symbols.map((symbol) => ({
-        id: symbol.id,
-        name: symbol.symbol,
-    }));
+    return symbols
     }
     
     

@@ -16,10 +16,10 @@ export class ProductsController {
   @ApiOperation({ summary: 'Obtener todos los productos' })
   @ApiResponse({ status: 200, description: 'Lista de productos obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error al obtener los productos.' })
-  findAll() {
+  async findAll() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.productsService.findAll();
+      return await this.productsService.findAll();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -40,10 +40,10 @@ export class ProductsController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error al obtener el producto.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.productsService.findOne(+id);
+      return await this.productsService.findOne(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -64,11 +64,11 @@ export class ProductsController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error al actualizar el producto.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.productsService.update(+id, updateProductDto);
-    } catch (error) {
+      return await this.productsService.update(+id, updateProductDto);
+    } catch (error) { 
       console.log(error);
       if (error instanceof HttpException) {
         throw error; 
@@ -88,10 +88,10 @@ export class ProductsController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error al eliminar el producto.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.productsService.remove(+id);
+      return await this.productsService.remove(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

@@ -14,10 +14,10 @@ export class ImportController {
   @ApiOperation({ summary: 'Obtiene los nombres de las tablas de importación' }) 
   @ApiResponse({ status: 200, description: 'Lista de nombres de tablas de importación.' }) 
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' })
-  getImportTablesName() {
+  async getImportTablesName() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.importService.getImportTablesName();
+      return await this.importService.getImportTablesName();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -37,10 +37,10 @@ export class ImportController {
   @ApiResponse({ status: 200, description: 'Campos de la tabla de importación.' }) 
   @ApiResponse({ status: 400, description: 'ID inválido.' })
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' }) 
-  getImportTablesField(@Param('id', ParseIntPipe) id: number) {
+  async getImportTablesField(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.importService.getImportTablesField(+id);
+      return await this.importService.getImportTablesField(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

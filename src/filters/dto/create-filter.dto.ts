@@ -8,8 +8,7 @@ export class CreateFilterDto {
         example: { key: 'value' },
       })
     @IsNotEmpty({ message: "El parámetro 'filtros' es obligatorio." })
-    @IsObject({ message: "El parámetro 'filtros' debe ser un objeto válido." })
-    filtros: Record<string, any>;
+    filtros: any;
   
     @ApiProperty({
         description: 'Nombre del filtro (debe ser un string sin caracteres no permitidos)',

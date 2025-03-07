@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import fs from "fs";
+import * as fs from 'fs';
 import handlebars from "handlebars";
 @Injectable()
 export class UtilitiesService {

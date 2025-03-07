@@ -47,10 +47,10 @@ export class UsersController {
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos de usuario inválidos' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.usersService.create(createUserDto);
+      return await this.usersService.create(createUserDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -71,11 +71,11 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
 
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.usersService.findOneById(+id);
+      return await this.usersService.findOneById(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -96,21 +96,21 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos incorrectos' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+  async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const email = req.user.email; // Se obtiene del token JWT
     const { user, cargo, img, oldpass, newpass } = updateUserDto;
 
     try {
       if (user || cargo) {
-        this.usersService.updateUserInfo(email, user, cargo);
+       await this.usersService.updateUserInfo(email, user, cargo);
       }
 
       if (img) {
-        this.usersService.updateImage(email, img);
+        await this.usersService.updateImage(email, img);
       }
 
       if (oldpass && newpass) {
-        this.usersService.changePassword(email, oldpass, newpass);
+        await this.usersService.changePassword(email, oldpass, newpass);
       }
 
       if (!user && !cargo && !img && (!oldpass || !newpass)) {
@@ -124,6 +124,7 @@ export class UsersController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
+        console.log(error)
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
       throw new HttpException(
@@ -141,8 +142,21 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return await this.usersService.remove(+id);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
 
@@ -152,10 +166,10 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Contraseña restablecida exitosamente' })
   @ApiResponse({ status: 400, description: 'Correo inválido' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.usersService.resetPassword(resetPasswordDto.email);
+      return await this.usersService.resetPassword(resetPasswordDto.email);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -175,7 +189,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Código inválido' })
   @ApiResponse({ status: 404, description: 'Código no encontrado o expirado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  checkCode(@Body('code') code: string) {
+  async checkCode(@Body('code') code: string) {
     try {
       // Validar que el código no sea undefined y no contenga caracteres peligrosos
       if (!code || /['";\\%_]/.test(code)) {
@@ -186,7 +200,7 @@ export class UsersController {
       }
 
       // Llamar al servicio para verificar el código
-      const email = this.usersService.checkCode(code);
+      const email = await this.usersService.checkCode(code);
 
       if (!email) {
         throw new HttpException(
@@ -214,10 +228,10 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Contraseña actualizada exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos incorrectos' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  newPassword(@Body() newPasswordDto: NewPasswordDto) {
+  async newPassword(@Body() newPasswordDto: NewPasswordDto) {
     try {
       const { email, newpass } = newPasswordDto;
-      return this.usersService.newPassword(email, newpass);
+      return await this.usersService.newPassword(email, newpass);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

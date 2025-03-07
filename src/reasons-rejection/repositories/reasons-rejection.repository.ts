@@ -26,7 +26,7 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
     }
 
     async removeById(id: number): Promise<UpdateResult> {
-        return await this.repo.update(id, { deleted: false });
+        return await this.repo.update(id, { deleted: true });
     }
 
     async findAll() {
@@ -40,7 +40,10 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
             throw new HttpException('No se encontraron Motivos de rechazo.', HttpStatus.NOT_FOUND);
         }
 
-        return reasons;
+        return reasons.map((reason) => ({
+           ...reason,
+            name: reason.rejection,
+        }));;
     }
 
     createReasonRejection(reasonData: Partial<ReasonsRejection>) {
@@ -49,13 +52,10 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
     }
 
     async updateReason(reason: ReasonsRejection, codigo: string, nombre: string) {
-        const newValue = {
-            rejection_code: codigo,
-            rejection: nombre,
-        }
-        const updatedReason = { ...reason, newValue };
-
-        return await this.repo.save(updatedReason);
+        reason.rejection_code = codigo;
+        reason.rejection = nombre;
+    
+        return await this.repo.save(reason);
     }
 
     async getFilter() {

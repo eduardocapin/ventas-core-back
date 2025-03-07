@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { RejectsService } from './rejects.service';
-import { CreateRejectDto } from './dto/create-reject.dto';
 import { UpdateRejectDto } from './dto/update-reject.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
@@ -21,10 +20,10 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'Lista de rechazos obtenida con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: PaginatedRejectsDto })
-  findAll(@Body() paginatedRejectsDto: PaginatedRejectsDto) {
+  async findAll(@Body() paginatedRejectsDto: PaginatedRejectsDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.rejectsService.findAll(paginatedRejectsDto);
+      return await this.rejectsService.findAll(paginatedRejectsDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -44,11 +43,11 @@ export class RejectsController {
   @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
 
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.rejectsService.findOne(+id);
+      return await this.rejectsService.findOne(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -68,11 +67,11 @@ export class RejectsController {
   @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateRejectDto: UpdateRejectDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateRejectDto: UpdateRejectDto) {
 
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.rejectsService.update(+id, updateRejectDto);
+      return await this.rejectsService.update(+id, updateRejectDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -92,10 +91,10 @@ export class RejectsController {
   @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
-  updateCorrectiveAction(@Param('id', ParseIntPipe) id: number, @Body() updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
+  async updateCorrectiveAction(@Param('id', ParseIntPipe) id: number, @Body() updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.rejectsService.updateCorrectiveAction(+id, updateRejectCorrectiveActionDto);
+      return await this.rejectsService.updateCorrectiveAction(+id, updateRejectCorrectiveActionDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -115,11 +114,11 @@ export class RejectsController {
   @ApiResponse({ status: 404, description: 'Rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del rechazo' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
 
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.rejectsService.remove(+id);
+      return await this.rejectsService.remove(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

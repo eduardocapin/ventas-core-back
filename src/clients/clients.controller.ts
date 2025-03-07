@@ -16,10 +16,11 @@ export class ClientsController {
   @ApiResponse({ status: 200, description: 'Lista de clientes obtenida con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: PaginatedClientsDto })
-  findAll(@Body() paginatedClientsDto: PaginatedClientsDto) {
+  async findAll(@Body() paginatedClientsDto: PaginatedClientsDto) {
+    console.log(paginatedClientsDto)
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.clientsService.findAll(paginatedClientsDto);
+      return await this.clientsService.findAll(paginatedClientsDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -39,10 +40,10 @@ export class ClientsController {
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del cliente' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const cliente =  this.clientsService.findOne(id);
+      const cliente = await this.clientsService.findOne(id);
       if (!cliente) {
         throw new HttpException('Cliente no encontrado', HttpStatus.NOT_FOUND);
       }
@@ -67,11 +68,11 @@ export class ClientsController {
   @ApiResponse({ status: 404, description: 'No se encontraron contactos.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del cliente' })
-  findAllContacts(@Param('id', ParseIntPipe) id: number) {
+  async findAllContacts(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
       
-      const contactos =  this.clientsService.findAllContacts(+id);
+      const contactos =  await this.clientsService.findAllContacts(+id);
       if (!contactos) {
         throw new HttpException('Contactos no encontrados para este cliente', HttpStatus.NOT_FOUND);
       }
@@ -96,10 +97,10 @@ export class ClientsController {
   @ApiResponse({ status: 404, description: 'Contacto no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del contacto' })
-  findOneContact(@Param('id', ParseIntPipe) id: number) {
+  async findOneContact(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const contacto =  this.clientsService.findOneContact(+id);
+      const contacto =  await this.clientsService.findOneContact(+id);
       if (!contacto) {
         throw new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
       }

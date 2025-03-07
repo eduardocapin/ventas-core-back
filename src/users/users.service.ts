@@ -133,6 +133,7 @@ export class UsersService {
       token: this.jwtService.sign(payload),
       name: user.name,
       cargo: user.position_company,
+      id: user.id
     };
   }
 

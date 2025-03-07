@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
-import { UpdateCompetitorDto } from './dto/update-competitor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RejectRepository } from 'src/rejects/repositories/rejects.repository';
 import { CompetitorRepository } from './repositories/competitors.repository';
 import { DataSource } from 'typeorm';
 import { Competitor } from './entities/competitor.entity';
+import { CompetitorSegmentationRepository } from './repositories/competitor-segmentation.repository';
 
 @Injectable()
 export class CompetitorsService {
@@ -15,10 +15,13 @@ export class CompetitorsService {
     private readonly competitorRepository: CompetitorRepository,
     @InjectRepository(RejectRepository)
     private readonly rejectRepository: RejectRepository,
+    @InjectRepository(CompetitorSegmentationRepository)
+    private readonly competitorSegmentationRepository: CompetitorSegmentationRepository,
     private readonly dataSource: DataSource,
   ) { }
   async create(createCompetitorDto: CreateCompetitorDto) {
-    const existingCompetitor = this.competitorRepository.findByName(createCompetitorDto.nombre)
+    const existingCompetitor = await this.competitorRepository.findByName(createCompetitorDto.nombre)
+    console.log(existingCompetitor)
     if (existingCompetitor) {
       throw new HttpException('Comeptidor con nombre ya existente', HttpStatus.BAD_REQUEST);
     }
@@ -50,7 +53,7 @@ export class CompetitorsService {
 
 
     const existingComeptitor = await this.competitorRepository.findByName(name);
-    if (existingComeptitor) {
+    if (existingComeptitor && id != existingComeptitor.id) {
       throw new HttpException('Comeptidor con nombre ya existente', HttpStatus.BAD_REQUEST);
     }
 
@@ -71,7 +74,9 @@ export class CompetitorsService {
     if (!comeptitor) {
       throw new HttpException('Comeptidor no encontrado.', HttpStatus.NOT_FOUND);
     }
-    return `This action updates a #${id} competitor`;
+
+    return await this.competitorSegmentationRepository.updateCompetitorSegmentations(id, product_segmentation_ids)
+    
   }
 
   async remove(id: number) {

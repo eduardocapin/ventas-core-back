@@ -3,35 +3,13 @@ import {
     IsOptional,
     IsString,
     IsNumber,
-    ValidateNested,
-    IsObject,
+    ValidateNested
   } from 'class-validator';
   import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { FilterDto } from 'src/filters/dto/filter.dto';
   
-  class FilterDto {
-    @ApiProperty({
-      description: 'ID del filtro',
-      type: String,
-    })
-    @IsString()
-    id: string;
-  
-    @ApiPropertyOptional({
-      description: 'Valor del filtro, puede ser cualquier objeto',
-      type: 'object',
-    })
-    @IsOptional()
-    @IsObject()
-    valor?: any;
-  
-    @ApiProperty({
-      description: 'Tipo del filtro',
-      type: String,
-    })
-    @IsString()
-    tipo: string;
-  }
+
   
   export class PaginatedClientsDto {
     @ApiPropertyOptional({
@@ -58,6 +36,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
       type: Number,
     })
     @IsNumber()
+    @Type(() => Number)
     currentPage: number;
   
     @ApiProperty({
@@ -65,6 +44,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
       type: Number,
     })
     @IsNumber()
+    @Type(() => Number)
     itemsPerPage: number;
   
     @ApiPropertyOptional({

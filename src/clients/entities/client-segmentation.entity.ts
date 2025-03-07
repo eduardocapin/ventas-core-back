@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('customer_segmentations')
+@Entity('segmentations')
 export class ClientSegmentation {
   @PrimaryGeneratedColumn()
   id: number;

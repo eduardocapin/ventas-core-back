@@ -26,7 +26,7 @@ export class ProductRepository extends Repository<Product> {
     }
 
     async removeById(id: number): Promise<UpdateResult> {
-        return await this.repo.update(id, { deleted: false });
+        return await this.repo.update(id, { deleted: true });
     }
 
     async findById(id: number): Promise<Product> {

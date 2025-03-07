@@ -17,10 +17,10 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 201, description: 'Motivo de rechazo creado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Petición incorrecta.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
-  create(@Body() createReasonsRejectionDto: CreateReasonsRejectionDto) {
+  async create(@Body() createReasonsRejectionDto: CreateReasonsRejectionDto) {
     try {
-      // Llamar al servicio y pasar los datos validados
-      return this.reasonsRejectionService.create(createReasonsRejectionDto);
+      const data = await this.reasonsRejectionService.create(createReasonsRejectionDto);
+      return {status: "Success", data}
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -39,10 +39,10 @@ export class ReasonsRejectionController {
   @ApiOperation({ summary: 'Obtener todos los motivos de rechazo' })
   @ApiResponse({ status: 200, description: 'Lista de motivos de rechazo.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
-  findAll() {
+  async findAll() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.reasonsRejectionService.findAll();
+      return await this.reasonsRejectionService.findAll();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -63,10 +63,10 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 404, description: 'Motivo de rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.reasonsRejectionService.findOne(+id);
+      return await this.reasonsRejectionService.findOne(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -86,10 +86,13 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 404, description: 'Motivo de rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateReasonsRejectionDto: UpdateReasonsRejectionDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateReasonsRejectionDto: UpdateReasonsRejectionDto) {
     try {
+      console.log(updateReasonsRejectionDto)
       // Llamar al servicio y pasar los datos validados
-      return this.reasonsRejectionService.update(+id, updateReasonsRejectionDto);
+      
+      const data = await this.reasonsRejectionService.update(+id, updateReasonsRejectionDto);
+      return {status: "Success", data}
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -109,10 +112,11 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 404, description: 'Motivo de rechazo no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.reasonsRejectionService.remove(+id);
+      const data = await this.reasonsRejectionService.remove(+id);
+      return {status: "Success", data}
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

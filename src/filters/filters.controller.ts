@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 
 @ApiTags('Filtros')
 @Controller('filters')
-@ApiBearerAuth() 
+@ApiBearerAuth()
 export class FiltersController {
   constructor(private readonly filtersService: FiltersService) { }
 
@@ -16,14 +16,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de poblaciones' })
   @ApiResponse({ status: 200, description: 'Lista de poblaciones obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getCities() {
+  async getCities() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getCities();
+      return await this.filtersService.getCities();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -45,7 +45,7 @@ export class FiltersController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -60,14 +60,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de estados' })
   @ApiResponse({ status: 200, description: 'Lista de estados obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getStatus() {
+  async getStatus() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getStatus();
+      return await this.filtersService.getStatus();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -82,14 +82,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de símbolos' })
   @ApiResponse({ status: 200, description: 'Lista de símbolos obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getSymbol() {
+  async getSymbol() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getSymbol();
+      return await this.filtersService.getSymbol();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -104,14 +104,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de motivos de rechazo' })
   @ApiResponse({ status: 200, description: 'Lista de motivos de rechazo obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getReasonsRejection() {
+  async getReasonsRejection() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getReasonsRejection();
+      return await this.filtersService.getReasonsRejection();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -126,14 +126,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de competidores' })
   @ApiResponse({ status: 200, description: 'Lista de competidores obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getCompetitors() {
+  async getCompetitors() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getCompetitors();
+      return await this.filtersService.getCompetitors();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -148,14 +148,14 @@ export class FiltersController {
   @ApiOperation({ summary: 'Obtener lista de vendedores' })
   @ApiResponse({ status: 200, description: 'Lista de vendedores obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getSalesmen() {
+  async getSalesmen() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getSalesmen();
+      return await this.filtersService.getSalesmen();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -171,14 +171,14 @@ export class FiltersController {
   @ApiParam({ name: 'componentId', description: 'ID del componente' })
   @ApiResponse({ status: 200, description: 'Filtros obtenidos correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  findFiltersByComponetId(@Param('componentId') componentId: string) {
+  async findFiltersByComponetId(@Param('componentId') componentId: string) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.findFiltersByComponetId(componentId);
+      return await this.filtersService.findFiltersByComponetId(componentId);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -191,17 +191,17 @@ export class FiltersController {
   @UseGuards(JwtAuthGuard)
   @Get('segmentation/:n')
   @ApiOperation({ summary: 'Obtener segmentación de clientes por el número de segmentación' })
-  @ApiParam({ name: 'n', description: 'Número de segmentación' , type: Number})
+  @ApiParam({ name: 'n', description: 'Número de segmentación', type: Number })
   @ApiResponse({ status: 200, description: 'Segmentación de clientes obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getSegmentation(@Param('n', ParseIntPipe) n: number) {
+  async getSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getSegmentation(n);
+      return await this.filtersService.getSegmentation(n);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -214,17 +214,17 @@ export class FiltersController {
   @UseGuards(JwtAuthGuard)
   @Get('product-segmentation/:n')
   @ApiOperation({ summary: 'Obtener segmentación de productos por número de segmentación' })
-  @ApiParam({ name: 'n', description: 'Número de segmentación' , type: Number})
+  @ApiParam({ name: 'n', description: 'Número de segmentación', type: Number })
   @ApiResponse({ status: 200, description: 'Segmentación de productos obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getProductSegmentation(@Param('n', ParseIntPipe) n: number) {
+  async getProductSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.getProductSegmentation(n);
+      return await this.filtersService.getProductSegmentation(n);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -240,15 +240,15 @@ export class FiltersController {
   @ApiParam({ name: 'componentId', description: 'ID del componente' })
   @ApiResponse({ status: 200, description: 'Filtros guardados obtenidos correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  getSavedByComponetId(@Req() req,@Param('componentId') componentId: string) {
+  async getSavedByComponetId(@Req() req, @Param('componentId') componentId: string) {
     try {
       // Llamar al servicio y pasar los datos validados
       const email = req.user['email']; // Se obtiene el email desde el token
-      return this.filtersService.getSavedByComponetId(componentId, email);
+      return await this.filtersService.getSavedByComponetId(componentId, email);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -265,15 +265,15 @@ export class FiltersController {
   @ApiBody({ type: CreateFilterDto })
   @ApiResponse({ status: 201, description: 'Filtro guardado correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  createSavedByComponetId(@Req() req,@Param('componentId') componentId: string, @Body() createFilterDto: CreateFilterDto) {
+  async createSavedByComponetId(@Req() req, @Param('componentId') componentId: string, @Body() createFilterDto: CreateFilterDto) {
     try {
       // Llamar al servicio y pasar los datos validados
       const email = req.user['email']; // Se obtiene el email desde el token
-      return this.filtersService.createSavedByComponetId(componentId,email, createFilterDto);
+      return await this.filtersService.createSavedByComponetId(componentId, email, createFilterDto);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -289,14 +289,14 @@ export class FiltersController {
   @ApiParam({ name: 'id', description: 'ID del filtro guardado' })
   @ApiResponse({ status: 200, description: 'Filtro eliminado correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  removeSaved(@Param('id', ParseIntPipe) id: number) {
+  async removeSaved(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.filtersService.removeSaved(id);
+      return await this.filtersService.removeSaved(id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },

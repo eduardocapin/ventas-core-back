@@ -14,7 +14,11 @@ export class FilterRepository extends Repository<Filter> {
         if (!filters.length) {
             throw new HttpException('No se encontraron Filtros', HttpStatus.NOT_FOUND);
         }
-        return filters;
+        return  filters.map((filter) => ({
+            ...filter,
+            id: filter.field,
+            optionsEndpoint:filter.options_endpoint,
+        }));
     }
 
 

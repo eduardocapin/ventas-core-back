@@ -25,6 +25,6 @@ export class UserRepository extends Repository<User> {
     }
 
     async removeById(id: number): Promise<UpdateResult> {
-        return await this.repo.update(id, { deleted: false });
+        return await this.repo.update(id, { deleted: true });
     }
 }

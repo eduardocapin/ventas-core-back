@@ -26,9 +26,6 @@ export class RejectsService {
 
     return { status: 'Success', data: result };
   }
-  create(createRejectDto: CreateRejectDto) {
-    return 'This action adds a new reject';
-  }
 
   async findAll(paginatedRejectsDto: PaginatedRejectsDto): Promise<{ items: Rejection[]; totalItems: number }> {
     return await this.rejectRepository.findAll(paginatedRejectsDto);

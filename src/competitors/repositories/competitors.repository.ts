@@ -100,7 +100,13 @@ export class CompetitorRepository extends Repository<Competitor> {
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
 
-        return competitors;
+
+
+        return  competitors.map((competitor) => ({
+            ...competitor,
+            id: competitor.c_id,
+            name: competitor.c_name
+        }));
     }
 
     async findCompetitorsByFamily(familyId: number) {
@@ -176,12 +182,9 @@ export class CompetitorRepository extends Repository<Competitor> {
     }
 
     async updateComepetitor(competitor: Competitor, nombre: string) {
-        const newValue = {
-            name: nombre,
-        }
-        const updatedCompetitor = { ...competitor, newValue };
+        competitor.name= nombre
 
-        return await this.repo.save(updatedCompetitor);
+        return await this.repo.save(competitor);
     }
 
     async updateCompetitorSegmentations(id: number, productSegmentationIds: number[]) {

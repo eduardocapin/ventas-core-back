@@ -14,7 +14,7 @@ export class ClientRepository extends Repository<Client> {
     }
 
     async removeById(id: number): Promise<UpdateResult> {
-        return await this.repo.update(id, { deleted: false });
+        return await this.repo.update(id, { deleted: true });
     }
 
     async findClientById(id: number): Promise<Client> {
@@ -39,16 +39,16 @@ export class ClientRepository extends Repository<Client> {
             selectedFilters.forEach((filter) => {
                 const { id, valor, tipo } = filter;
                 if (tipo === 'multi-select' && Array.isArray(valor)) {
-                    query.andWhere(`cu.${id} IN (:...values)`, { values: valor.map((v) => v.id) });
+                    query.andWhere(`${id} IN (:...values)`, { values: valor.map((v) => v.id) });
                 } else if (tipo === 'search' && typeof valor === 'string') {
-                    query.andWhere(`cu.${id} LIKE :searchValue`, { searchValue: `%${valor}%` });
+                    query.andWhere(`${id} LIKE :searchValue`, { searchValue: `%${valor}%` });
                 } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
-                    query.andWhere(`cu.${id} BETWEEN :startDate AND :endDate`, {
+                    query.andWhere(`${id} BETWEEN :startDate AND :endDate`, {
                         startDate: valor.startDate,
                         endDate: valor.endDate,
                     });
                 } else if (tipo === 'range' && valor?.min !== undefined && valor?.max !== undefined) {
-                    query.andWhere(`cu.${id} BETWEEN :min AND :max`, {
+                    query.andWhere(`${id} BETWEEN :min AND :max`, {
                         min: valor.min,
                         max: valor.max,
                     });

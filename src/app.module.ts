@@ -37,7 +37,12 @@ import { SharedModule } from './shared/shared.module';
         password: process.env.DB_PASSWORD || 'msbs',
         database: process.env.DB_NAME || 'db_rechazos',
         entities: [entitiesPath],
+        //synchronize: false,
         synchronize: false,
+        extra: {
+          driver: 'ODBC Driver 17 for SQL Server',
+          trustServerCertificate: true,
+        },
       };
     }
   }),

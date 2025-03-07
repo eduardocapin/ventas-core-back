@@ -18,10 +18,10 @@ export class MenusController {
   @ApiParam({ name: 'language', type: 'string', description: 'El idioma del menú' }) // Parametro de language
   @ApiResponse({ status: 200, description: 'Lista de ítems del menú.' }) // Respuesta exitosa
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' }) // Respuesta de error
-  getMenuItems(@Param('menu_id', ParseIntPipe) menu_id: number, @Param('language') language: string) {
+  async getMenuItems(@Param('menu_id', ParseIntPipe) menu_id: number, @Param('language') language: string) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.menusService.getMenuItems(+menu_id, language);
+      return await this.menusService.getMenuItems(+menu_id, language);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {

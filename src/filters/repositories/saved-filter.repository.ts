@@ -17,7 +17,7 @@ export class SavedFilterRepository extends Repository<SavedFilter> {
     }
 
     async removeById(id: number): Promise<UpdateResult> {
-        return await this.repo.update(id, { deleted: false });
+        return await this.repo.update(id, { deleted: true });
     }
 
     async findById(id: number): Promise<SavedFilter> {
@@ -30,13 +30,11 @@ export class SavedFilterRepository extends Repository<SavedFilter> {
 
     async findByIdAndEmail(componentId: string, email: string) {
         const filters = await this.repo.find({ where: { component_id: componentId, email: email, deleted: false } });
-        if (!filters.length) {
-            throw new HttpException('No se encontraron Filtros guardados.', HttpStatus.NOT_FOUND);
-        }
 
         return  filters.map((filter) => ({
-            ...filter,
-            filters: JSON.parse(filter.filters),
+            id: filter.id,
+            nombre: filter.name,
+            filtros: JSON.parse(filter.filters),
         }));
 ;
     }

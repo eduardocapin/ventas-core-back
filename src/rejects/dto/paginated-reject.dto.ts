@@ -4,38 +4,12 @@ import {
     IsString,
     IsNumber,
     ValidateNested,
-    IsObject,
     Matches,
   } from 'class-validator';
   import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-  
-  class FilterDto {
-    @ApiProperty({
-      description: 'ID del filtro',
-      type: String,
-      example: 'filter1',
-    })
-    @IsString()
-    id: string;
-  
-    @ApiPropertyOptional({
-      description: 'Valor del filtro (opcional)',
-      type: 'object',
-      example: { key: 'value' },
-    })
-    @IsOptional()
-    @IsObject()
-    valor?: any;
-  
-    @ApiProperty({
-      description: 'Tipo de filtro',
-      type: String,
-      example: 'search',
-    })
-    @IsString()
-    tipo: string;
-  }
+import { FilterDto } from 'src/filters/dto/filter.dto';
+
   
   export class PaginatedRejectsDto {
     @ApiPropertyOptional({
@@ -65,6 +39,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
       example: 1,
     })
     @IsNumber()
+    @Type(() => Number)
     currentPage: number;
   
     @ApiProperty({
@@ -73,6 +48,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
       example: 10,
     })
     @IsNumber()
+    @Type(() => Number)
     itemsPerPage: number;
   
     @ApiPropertyOptional({

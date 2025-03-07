@@ -17,10 +17,10 @@ export class CompetitorsController {
   @ApiResponse({ status: 201, description: 'Competidor creado exitosamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: CreateCompetitorDto })
-  create(@Body() createCompetitorDto: CreateCompetitorDto) {
+  async create(@Body() createCompetitorDto: CreateCompetitorDto) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const competitor = this.competitorsService.create(createCompetitorDto);
+      const competitor = await this.competitorsService.create(createCompetitorDto);
       return { status: 'Success', ...competitor };
     } catch (error) {
       console.log(error);
@@ -40,10 +40,10 @@ export class CompetitorsController {
   @ApiOperation({ summary: 'Obtener todos los competidores' })
   @ApiResponse({ status: 200, description: 'Lista de competidores obtenida con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  findAll() {
+  async findAll() {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.competitorsService.findAll();
+      return await this.competitorsService.findAll();
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -63,10 +63,10 @@ export class CompetitorsController {
   @ApiResponse({ status: 404, description: 'Competidor no encontrado.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const competidor =  this.competitorsService.findOneWithSegmentations(id);
+      const competidor =  await this.competitorsService.findOneWithSegmentations(id);
       if (!competidor) {
         throw new HttpException('Competidor no encontrado', HttpStatus.NOT_FOUND);
       }
@@ -89,10 +89,10 @@ export class CompetitorsController {
   @ApiResponse({ status: 200, description: 'Familias obtenidas exitosamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
-  findFamilies(@Param('id', ParseIntPipe) id: number) {
+  async findFamilies(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.competitorsService.findFamiliesByCompetitorId(+id);
+      return await this.competitorsService.findFamiliesByCompetitorId(+id);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
@@ -113,7 +113,7 @@ export class CompetitorsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   @ApiBody({ type: UpdateCompetitorDto })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCompetitorDto: UpdateCompetitorDto
   ) {
@@ -129,11 +129,11 @@ export class CompetitorsController {
       }
       // Verificar qué campos actualizar
       if (name) {
-        this.competitorsService.updateName(id, name);
+        await this.competitorsService.updateName(id, name);
       }
 
       if (product_segmentation_ids) {
-        this.competitorsService.updateSegmentations(id, product_segmentation_ids);
+        await this.competitorsService.updateSegmentations(id, product_segmentation_ids);
       }
 
       return { status: 'Success', message: 'Competitor updated successfully' };
@@ -156,13 +156,10 @@ export class CompetitorsController {
   @ApiResponse({ status: 200, description: 'Competidor eliminado correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     try {
       // Llamar al servicio y pasar los datos validados
-      const result = this.competitorsService.remove(id);
-      /* if (!result.affectedRows) {
-        throw new HttpException('Competidor no encontrado', HttpStatus.NOT_FOUND);
-      } */
+      const result = await this.competitorsService.remove(id);
       return { status: 'Success', message: 'Competidor eliminado correctamente'};
     } catch (error) {
       console.log(error);

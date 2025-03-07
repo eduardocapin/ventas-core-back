@@ -17,10 +17,10 @@ export class NavListsController {
   @ApiParam({ name: 'entity', type: 'string', description: 'Nombre de la entidad' }) 
   @ApiResponse({ status: 200, description: 'Lista de contenedores de la entidad.' }) 
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' })
-  getContainers(@Param('entity') entity: string) {
+  async getContainers(@Param('entity') entity: string) {
     try {
       // Llamar al servicio y pasar los datos validados
-      return this.navListsService.getContainersByEntity(entity);
+      return await this.navListsService.getContainersByEntity(entity);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
