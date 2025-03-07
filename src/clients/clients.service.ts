@@ -24,7 +24,7 @@ constructor(
     return await this.clientRepository.findAll(paginatedClientsDto);
   }
 
-  async findOne(id: number): Promise<Client> {
+  async findOne(id: number) {
     return await this.clientRepository.findClientById(id);
   }
 
