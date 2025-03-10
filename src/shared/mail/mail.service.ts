@@ -24,7 +24,7 @@ export class MailService {
         console.log(name)
         const replacements = { name: name, url: url };
         const htmlToSend = this.utilitiesService.loadEmailTemplate(
-            "/code/app/src/assets/templates/resetPasswordEmailTemplate.html",
+            "/app/src/assets/templates/resetPasswordEmailTemplate.html",
             replacements
         );
 
