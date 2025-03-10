@@ -21,7 +21,7 @@ import { SharedModule } from './shared/shared.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,  // Esto hace que las variables de entorno estén disponibles globalmente
-     envFilePath: '/code/app/.env'
+    envFilePath: '/app/.env'
   }),
   TypeOrmModule.forRootAsync({
     useFactory: () => {
