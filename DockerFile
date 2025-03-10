@@ -14,6 +14,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --only=production
 COPY --from=builder /app/dist ./dist
+
+# Copiar el archivo .env
+COPY .env .env  
+
 RUN adduser --disabled-password mobentis
 USER mobentis
 EXPOSE 3000
