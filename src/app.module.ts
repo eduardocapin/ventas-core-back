@@ -16,14 +16,12 @@ import { CorsMiddleware } from './middleware/cors/cors.middleware';
 import { CompressionMiddleware } from './middleware/compression/compression.middleware';
 import { ImportModule } from './import/import.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
-import { UtilitiesService } from './shared/utilities/utilities.service';
-import { MailService } from './shared/mail/mail.service';
 import { RepositoriesModule } from './repositories/repositories.module';
 import { SharedModule } from './shared/shared.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,  // Esto hace que las variables de entorno estén disponibles globalmente
+     envFilePath: '/code/app/.env'
   }),
   TypeOrmModule.forRootAsync({
     useFactory: () => {
