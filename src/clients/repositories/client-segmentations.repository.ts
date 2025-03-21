@@ -12,7 +12,6 @@ export class ClientSegmentationRepository extends Repository<ClientSegmentation>
     }
 
     async getFilter(n: number){
-        console.log('llega repositorio')
       const segmentations = await this.find({
         where: [
             { deleted: false, segmentation_number:n }, 

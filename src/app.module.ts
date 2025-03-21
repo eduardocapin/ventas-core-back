@@ -36,7 +36,7 @@ import { SharedModule } from './shared/shared.module';
         database: process.env.DB_NAME || 'db_rechazos',
         entities: [entitiesPath],
         //synchronize: false,
-        synchronize: true,
+        synchronize: false,
         options: {
           trustServerCertificate: true, 
           encrypt: false, // Si usas Azure, puedes necesitar habilitar esto

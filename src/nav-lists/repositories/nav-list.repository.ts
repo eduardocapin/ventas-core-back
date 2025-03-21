@@ -15,17 +15,17 @@ export class NavListsRepository extends Repository<ListItem> {
     const items = await this.repo
       .createQueryBuilder('o')
       .select([
-        'g.title AS groupTitle',
+        'g.Titulo AS groupTitle',
         'o.label AS itemLabel',
         'o.description AS itemDescription',
         'o.type AS itemType',
         'o.route AS itemRoute',
         'o.popup_function_name AS itemPopupFunction',
       ])
-      .innerJoin('configuration_containers', 'g', 'g.id = o.container_id')
-      .where('(o.deleted = false OR o.deleted IS NULL)')
-      .andWhere('(g.deleted = false OR g.deleted IS NULL)')
-      .orderBy('g.id', 'ASC')
+      .innerJoin('Converter_ContenedoresConfiguracion', 'g', 'g.id = o.container_id')
+      .where('(o.deleted = 0 OR o.deleted IS NULL)')
+      .andWhere('(g.BajaEnERP = 0 OR g.BajaEnERP IS NULL)')
+      .orderBy('g.Id', 'ASC')
       .addOrderBy('o.id', 'ASC')
       .getRawMany();
 

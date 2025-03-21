@@ -20,7 +20,7 @@ export class City {
   @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({name:'BajeEnERP',type: 'bit', default: () => '0' })
+  @Column({name:'BajaEnERP',type: 'bit', default: () => '0' })
   deleted: boolean;
 
   

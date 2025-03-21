@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { Rejection } from "../entities/reject.entity";
 import { PaginatedRejectsDto } from "../dto/paginated-reject.dto";
+import { Product } from "src/products/entities/product.entity";
+import { Client } from "src/clients/entities/client.entity";
+import { ProductSegmentation } from "src/products/entities/product-segmentation.entity";
 
 @Injectable()
 export class RejectRepository extends Repository<Rejection> {
@@ -22,15 +25,15 @@ export class RejectRepository extends Repository<Rejection> {
         } = paginatedRejectsDto;
 
         const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
-            .leftJoinAndSelect('products', 'p', 'p.id = r.product_id') // JOIN con productos
-            .leftJoinAndSelect('customers', 'c', 'c.id = r.customer_id') // JOIN con clientes
+            .leftJoinAndSelect(Product, 'p', 'p.id = r.product_id') // JOIN con productos
+            .leftJoinAndSelect(Client, 'c', 'c.id = r.customer_id') // JOIN con clientes
             .leftJoinAndSelect(
-                'product_segmentations',
+                ProductSegmentation,
                 's1',
                 'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
             ) // JOIN segmentación 1
             .leftJoinAndSelect(
-                'product_segmentations',
+                ProductSegmentation,
                 's2',
                 'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
             ) // JOIN segmentación 2

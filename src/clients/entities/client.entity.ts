@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ClientSegmentation } from "./client-segmentation.entity";
 
 @Entity('Clientes')
 export class Client {
@@ -50,14 +51,17 @@ export class Client {
   @Column({name:'Mail', length: 50, nullable: true })
   email: string;
 
-  @Column({name:'IdSegmentacion1ERP', length: 100, nullable: true })
-  segmentation_1: string;
+  @ManyToOne(() => ClientSegmentation, { nullable: true })
+  @JoinColumn([{ name: 'IdSegmentacion1ERP', referencedColumnName: 'segmentation_value_id' }])
+  segmentation_1: ClientSegmentation;
 
-  @Column({name:'IdSegmentacion2ERP', length: 100, nullable: true })
-  segmentation_2: string;
+  @ManyToOne(() => ClientSegmentation, { nullable: true })
+  @JoinColumn([{ name: 'IdSegmentacion2ERP', referencedColumnName: 'segmentation_value_id' }])
+  segmentation_2: ClientSegmentation;
 
-  @Column({name:'IdSegmentacion3ERP', length: 100, nullable: true })
-  segmentation_3: string;
+  @ManyToOne(() => ClientSegmentation, { nullable: true })
+  @JoinColumn([{ name: 'IdSegmentacion3ERP', referencedColumnName: 'segmentation_value_id' }])
+  segmentation_3: ClientSegmentation;
 
   @Column({name:'IdEmpresaERP', length: 45, nullable: true })
   company_ERP_id: string;

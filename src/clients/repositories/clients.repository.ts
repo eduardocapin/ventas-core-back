@@ -19,45 +19,16 @@ export class ClientRepository extends Repository<Client> {
     }
 
     async findClientById(id: number) {
-        const rawCliente = await this.repo.createQueryBuilder("client")
-        .leftJoin(
-            "segmentations",
-            "segmentacion1",
-            "client.segmentation_1 = segmentacion1.segmentation_value_id AND segmentacion1.segmentation_number = 1"
-        )
-        .leftJoin(
-            "segmentations",
-            "segmentacion2",
-            "client.segmentation_2 = segmentacion2.segmentation_value_id AND segmentacion2.segmentation_number = 2"
-        )
-        .leftJoin(
-            "segmentations",
-            "segmentacion3",
-            "client.segmentation_3 = segmentacion3.segmentation_value_id AND segmentacion3.segmentation_number = 3"
-        )
-        .addSelect([
-            "segmentacion1.name AS nsegmentacion_1",
-            "segmentacion1.segmentation_value AS descripcion_s1",
-            "segmentacion2.name AS nsegmentacion_2",
-            "segmentacion2.segmentation_value AS descripcion_s2",
-            "segmentacion3.name AS nsegmentacion_3",
-            "segmentacion3.segmentation_value AS descripcion_s3",
-        ])
-        .where("client.id = :id", { id })
-        .andWhere("client.deleted = false")
-        .getRawOne();
+        const cliente = await this.repo.createQueryBuilder("client")
+            .leftJoinAndSelect("client.segmentation_1", "segmentacion1")
+            .leftJoinAndSelect("client.segmentation_2", "segmentacion2")
+            .leftJoinAndSelect("client.segmentation_3", "segmentacion3")
+            .where("client.id = :id", { id })
+            .andWhere("client.deleted = 0 OR client.deleted IS NULL")
+            .getOne();
 
-    if (!rawCliente) return null;
-
-    // Eliminar los prefijos `client_` y `segmentacionX_`
-    const cliente = Object.keys(rawCliente).reduce((acc, key) => {
-        let newKey = key.replace(/^client_/, "");
-        acc[newKey] = rawCliente[key];
-        return acc;
-    }, {} as Record<string, any>);
-
-    console.log(cliente);
-    return cliente;
+        console.log(cliente);
+        return cliente;
     }
 
     async findAll(paginatedClientsDto: PaginatedClientsDto): Promise<{ items: Client[]; totalItems: number }> {
