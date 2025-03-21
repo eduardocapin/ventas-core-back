@@ -1,31 +1,31 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('list_items')
+@Entity('Converter_TextosEnlaces')
 export class ListItem {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({name:'Id_Contenedor', type: 'int' })
   container_id: number;
 
-  @Column({ length: 45 })
+  @Column({name:'Entidad', length: 45 })
   container_entity: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Etiqueta', length: 45 })
   label: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({name:'Descripcion', length: 255, nullable: true })
   description: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Tipo', length: 45 })
   type: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({name:'Ruta', length: 255, nullable: true })
   route: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({name:'FuncionPopup', length: 255, nullable: true })
   popup_function_name: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0'})
   deleted: boolean;
 }

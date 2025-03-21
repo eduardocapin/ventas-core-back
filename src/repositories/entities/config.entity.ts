@@ -1,22 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('configuration')
+@Entity('Converter_Configuracion')
 export class Config {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({name:'Id'})
     id: number;
 
-    @Column({ length: 50 })
+    @Column({name:'Argumento', length: 50 })
     argument: string;
 
-    @Column({ length: 500 })
+    @Column({name:'Descripcion', length: 500 })
     description: string;
 
-    @Column({ length: 20 })
+    @Column({name:'Origen', length: 20 })
     origin: string;
 
-    @Column({ length: 500 })
+    @Column({name:'Variable', length: 500 })
     variable: string;
 
-    @Column({ type: 'boolean', default: false })
+    @Column({name:'BajaEnERP', type: 'bit', default: () => '0'})
     deleted: boolean;
 }

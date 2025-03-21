@@ -1,31 +1,27 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('reasons_rejection')
+@Entity('Converter_MotivosRechazo')
 export class ReasonsRejection {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 100 })
-  internal_id: string;
-
-  @Column({ length: 10 })
+  @Column({name:'CodigoRechazo', length: 10 })
   rejection_code: string;
 
-  @Column({ length: 50 })
+  @Column({name:'Nombre', length: 50 })
   rejection: string;
 
-  @Column({ length: 45 })
+  @Column({name:'IdEmpresaERP', length: 45 })
   company_ERP_id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name:'FechaInsert'})
   insert_date: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 
-  @Column({ length: 100, nullable: true })
-  process_id: string;
+
 }

@@ -1,40 +1,32 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('salesmen')
+@Entity('Agentes')
 export class Salesman {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 100 })
-  internal_id: string;
-
-  @Column({ length: 45 })
+  @Column({name:'CodigoAgenteFabricante', length: 45 })
   salesman_ERP_id: string;
 
-  @Column({ length: 50 })
+  @Column({ name:'Nombre', length: 50 })
   name: string;
 
-  @Column({ length: 50 })
-  alias: string;
-
-  @Column({ length: 20, nullable: true })
+  @Column({name:'Telefono', length: 20, nullable: true })
   phone: string;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ name:'Email',length: 50, nullable: true })
   email: string;
 
-  @Column({ length: 45 })
+  @Column({name:'IdEmpresaERP' ,length: 45 })
   company_ERP_id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name:'FechaInsert'})
   insert_date: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0'})
   deleted: boolean;
 
-  @Column({ length: 100, nullable: true })
-  process_id: string;
 }

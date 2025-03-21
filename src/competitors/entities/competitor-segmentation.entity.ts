@@ -1,13 +1,13 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
 
-@Entity('competitor_segmentations')
+@Entity('Converter_SegmentacionesCompetidor')
 export class CompetitorSegmentation {
-  @PrimaryColumn()
+  @PrimaryColumn({name:'Id_Competidor'})
   competitor_id: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({name:'Id_SegmentacionProducto'})
   product_segmentation_id: number;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 }

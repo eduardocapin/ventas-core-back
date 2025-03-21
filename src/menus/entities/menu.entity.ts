@@ -1,31 +1,31 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('menu_items')
+@Entity('Conventer_Menus')
 export class MenuItem {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ name:'IdMenu',type: 'int' })
   menu_id: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({name:'IdMenuPadre', type: 'int', nullable: true })
   parent_menu_id: number;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ name:'Icono',length: 255, nullable: true })
   icon: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Etiqueta', length: 45 })
   label: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Ruta', length: 45 })
   route: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'TineSubMenu',type: 'bit', default: () => '0' })
   has_submenu: boolean;
 
-  @Column({ length: 45 })
+  @Column({name:'Idioma', length: 45 })
   language: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 }

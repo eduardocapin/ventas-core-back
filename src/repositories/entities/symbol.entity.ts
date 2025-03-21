@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('symbols')
+@Entity('Converter_SimbolosAccionCorrectora')
 export class Symbol {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 255 })
+  @Column({name:'Simbolo', length: 255 })
   symbol: string;
 }

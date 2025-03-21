@@ -1,31 +1,25 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('provinces')
+@Entity('Provincias')
 export class Province {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name: 'IdProvincia'})
   id: number;
 
-  @Column({ length: 100 })
-  internal_id: string;
-
-  @Column({ length: 50 })
+  @Column({name:'IdProvinciaERP', length: 50 })
   province_ERP_id: string;
 
-  @Column({ length: 50 })
+  @Column({name:'Provincia', length: 50 })
   name: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name:'FechaInsert'})
   insert_date: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name:'BajaEnERP',type: 'bit', default: () => '0'})
   deleted: boolean;
 
-  @Column({ length: 100, nullable: true })
-  process_id: string;
-
-  @Column({ length: 50 })
+  @Column({ name:'IdEmpresaERP', length: 50 })
   company_ERP_id: string;
 }

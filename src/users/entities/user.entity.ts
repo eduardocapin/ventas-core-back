@@ -1,34 +1,28 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from 'typeorm';
 
-@Entity('users')
+@Entity('Converter_UsuariosWeb')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 255 })
+  @Column({name:'Nombre', length: 255 })
   name: string;
 
-  @Column({ length: 255 })
-  lastname: string;
-
-  @Column({ length: 255, unique: true })
+  @Column({name:'Email', length: 255, unique: true })
   email: string;
 
-  @Column({ length: 20, nullable: true })
-  telefono: string;
-
-  @Column({ length: 255 })
+  @Column({name:'Password', length: 255 })
   password: string;
 
-  @Column({ length: 45, nullable: true })
+  @Column({name:'Cargo', length: 45, nullable: true })
   position_company: string;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 
-  @Column({ length: 250, nullable: true })
+  @Column({name:'Imagen', length: 250, nullable: true })
   image: string;
 }

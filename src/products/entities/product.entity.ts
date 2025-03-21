@@ -1,59 +1,45 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('products')
+@Entity('Articulos')
 export class Product {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'IdArticulo'})
   id: number;
 
-  @Column({ length: 100 })
-  internal_id: string;
-
-  @Column({ length: 20 })
+  @Column({name:'IdArticuloFabricante', length: 20 })
   product_ERP_id: string;
 
-  @Column({ length: 80 })
+  @Column({name:'Descripcion', length: 80 })
   product: string;
 
-  @Column('longtext')
+  @Column({name:'Observaciones',type: 'nvarchar', length: 'MAX'})
   extended_description: string;
 
-  @Column({ length: 80, nullable: true })
-  family: string;
-
-  @Column({ length: 80, nullable: true })
-  subfamily: string;
-
-  @Column({ type: 'int', nullable: true })
+  @Column({name:'IdFamiliaERP', type: 'int', nullable: true })
   segmentation_1: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({name:'IdSubFamiliaERP', type: 'int', nullable: true })
   segmentation_2: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({name:'Stock', type: 'int', default: 0 })
   stock: number;
 
-  @Column({ length: 200, nullable: true })
+  @Column({name:'Url_Foto', length: 200, nullable: true })
   image: string;
-
-  @Column({ length: 200, nullable: true })
-  url: string;
-
-  @Column({ length: 45 })
+ 
+  @Column({name:'UnidadMedida', length: 45 })
   sales_unit: string;
 
-  @Column({ length: 45 })
+  @Column({name:'IdEmpresaERP', length: 45 })
   company_ERP_id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name:'FechaInsert'})
   insert_date: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 
-  @Column({ length: 100, nullable: true })
-  process_id: string;
 }
 

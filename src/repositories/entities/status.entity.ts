@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('status')
+@Entity('Converter_EstadosRechazo')
 export class Status {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 255 })
+  @Column({name:'Nombre', length: 255 })
   name: string;
 }

@@ -1,37 +1,31 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('segmentations')
+@Entity('Converter_ClientesSegmentaciones')
 export class ClientSegmentation {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 100 })
-  internal_id: string;
-
-  @Column()
+  @Column({name:'NumeroSegmentacion'})
   segmentation_number: number;
 
-  @Column({ length: 50 })
+  @Column({name:'Nombre', length: 50 })
   name: string;
 
-  @Column()
+  @Column({name:'IdValorSegmentacion'})
   segmentation_value_id: number;
 
-  @Column({ length: 120 })
+  @Column({name:'ValorSegmentacion', length: 120 })
   segmentation_value: string;
 
-  @Column({ length: 45 })
+  @Column({name:'IdEmpresaERP', length: 45 })
   company_ERP_id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name:'FechaInsert'})
   insert_date: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({name:'FechaUpdate'})
   update_date: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
-
-  @Column({ length: 100, nullable: true })
-  process_id: string;
 }

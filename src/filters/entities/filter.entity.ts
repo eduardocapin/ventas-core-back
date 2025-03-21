@@ -1,25 +1,25 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('filters')
+@Entity('Converter_Filtros')
 export class Filter {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 45 })
+  @Column({name:'Componente', length: 45 })
   component_id: string;
 
-  @Column({ length: 45 })
+  @Column({name:'CampoFiltrado', length: 45 })
   field: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Tipo', length: 45 })
   type: string;
 
-  @Column({ length: 45 })
+  @Column({name:'Titulo', length: 45 })
   title: string;
   
-  @Column({ length: 45 })
+  @Column({name:'OrigenDeDatos', length: 45 })
   options_endpoint: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0'})
   deleted: boolean;
 }

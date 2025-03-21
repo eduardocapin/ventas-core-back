@@ -1,16 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('import_tables_names')
+@Entity('Converter_TablasImportador')
 export class ImportTableName {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ length: 45 })
+  @Column({name:'NombreTablaReal', length: 45 })
   real_table_name: string;
 
-  @Column({ length: 45 })
+  @Column({name:'NombreTablaAVisualizar', length: 45 })
   show_table_name: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({name:'BajaEnERP', type: 'bit', default: () => '0' })
   deleted: boolean;
 }

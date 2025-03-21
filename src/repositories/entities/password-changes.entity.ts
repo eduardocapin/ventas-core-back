@@ -1,22 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('password_changes')
+@Entity('Converter_CambiosPassword')
 export class PasswordChanges {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'Id'})
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({name:'IdUsuario', type: 'int' })
   user_id: number;
 
-  @Column({ length: 80 })
+  @Column({name:'Email', length: 80 })
   email: string;
 
-  @Column({ length: 15 })
+  @Column({name:'Codigo', length: 15 })
   code: string;
 
-  @Column({ type: 'datetime' })
+  @Column({name:'Fecha', type: 'datetime' })
   date: Date;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({name:'Activo', type: 'bit', default: () => '1' })
   active: boolean;
 }

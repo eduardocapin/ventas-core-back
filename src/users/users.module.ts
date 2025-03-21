@@ -7,8 +7,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from './repositories/user.repository';
 import { User } from './entities/user.entity';
 import { JwtStrategy } from 'src/strategies/jwt.strategy';
-import { MailService } from 'src/shared/mail/mail.service';
-import { UtilitiesService } from 'src/shared/utilities/utilities.service';
 import { SharedModule } from 'src/shared/shared.module';
 
 @Module({

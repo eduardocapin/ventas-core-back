@@ -1,13 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('competitors')
+@Entity('Competidores')
 export class Competitor {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name: 'Id'})
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ name: 'Competidor',length: 255 })
   name: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name:'BajaEnERP',type: 'bit', default: () => '0'})
   deleted: boolean;
 }
