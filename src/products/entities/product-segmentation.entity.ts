@@ -11,8 +11,8 @@ export class ProductSegmentation {
   @Column({name:'Nombre', length: 50 })
   name: string;
 
-  @Column({name:'IdValorSegmentacion'})
-  segmentation_value_id: number;
+  @Column({name:'IdValorSegmentacion', length: 45  })
+  segmentation_value_id: string;
 
   @Column({name:'ValorSegmentacion', length: 120 })
   segmentation_value: string;

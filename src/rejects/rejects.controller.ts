@@ -5,6 +5,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
 import { PaginatedRejectsDto } from './dto/paginated-reject.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { KPIsRejectsDto } from './dto/kpis-rejects.dto';
 
 @ApiTags('Rechazos')
 @Controller('rejects')
@@ -27,7 +28,29 @@ export class RejectsController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('KPIs')
+  @ApiOperation({ summary: 'Obtener KPIs de los rechazos' })
+  @ApiResponse({ status: 200, description: 'KPIs obtenidos con éxito.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiBody({ type: PaginatedRejectsDto })
+  async kpis(@Body() KPIsRejectsDto: KPIsRejectsDto) {
+    try {
+      // Llamar al servicio y pasar los datos validados
+      return await this.rejectsService.KPIs(KPIsRejectsDto);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -51,7 +74,7 @@ export class RejectsController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -75,7 +98,7 @@ export class RejectsController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -98,7 +121,7 @@ export class RejectsController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -122,7 +145,7 @@ export class RejectsController {
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },

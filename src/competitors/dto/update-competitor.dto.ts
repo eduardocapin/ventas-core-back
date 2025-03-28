@@ -12,10 +12,10 @@ export class UpdateCompetitorDto {
 
   @ApiPropertyOptional({
     description: 'Lista actualizada de IDs de segmentación de productos asociados al competidor',
-    type: [Number],
+    type: [String],
   })
   @IsOptional()
   @IsArray()
-  @IsInt({ each: true }) // Validar que todos los elementos del array sean números
-  product_segmentation_ids?: number[];
+  @IsString({ each: true }) // Validar que todos los elementos del array sean números
+  product_segmentation_ids?: string[];
 }

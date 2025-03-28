@@ -46,21 +46,23 @@ export class ClientRepository extends Repository<Client> {
 
         // Aplicar filtros dinámicos
         if (selectedFilters && Array.isArray(selectedFilters)) {
-            selectedFilters.forEach((filter) => {
+            selectedFilters.forEach((filter, index) => {
                 const { id, valor, tipo } = filter;
+
                 if (tipo === 'multi-select' && Array.isArray(valor)) {
-                    query.andWhere(`${id} IN (:...values)`, { values: valor.map((v) => v.id) });
+                    // Usamos un parámetro único basado en el índice para evitar sobrescribir valores
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
                 } else if (tipo === 'search' && typeof valor === 'string') {
-                    query.andWhere(`${id} LIKE :searchValue`, { searchValue: `%${valor}%` });
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
                 } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
-                    query.andWhere(`${id} BETWEEN :startDate AND :endDate`, {
-                        startDate: valor.startDate,
-                        endDate: valor.endDate,
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
                     });
-                } else if (tipo === 'range' && valor?.min !== undefined && valor?.max !== undefined) {
-                    query.andWhere(`${id} BETWEEN :min AND :max`, {
-                        min: valor.min,
-                        max: valor.max,
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
                     });
                 }
             });
@@ -90,9 +92,10 @@ export class ClientRepository extends Repository<Client> {
         const totalItems = await query.getCount();
 
         // Aplicar paginación
-        query.skip((currentPage - 1) * itemsPerPage).take(itemsPerPage);
+        query.limit(itemsPerPage).offset((currentPage - 1) * itemsPerPage);
 
         const items = await query.getMany();
+        console.log(`TOTAL Clientes:${items.length}`)
         return { items, totalItems };
     }
 

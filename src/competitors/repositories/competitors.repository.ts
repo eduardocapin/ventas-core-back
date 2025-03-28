@@ -3,6 +3,8 @@ import { Competitor } from "../entities/competitor.entity";
 import { DataSource, Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateCompetitorDto } from "../dto/create-competitor.dto";
+import { CompetitorSegmentation } from "../entities/competitor-segmentation.entity";
+import { ProductSegmentation } from "src/products/entities/product-segmentation.entity";
 
 @Injectable()
 export class CompetitorRepository extends Repository<Competitor> {
@@ -63,16 +65,11 @@ export class CompetitorRepository extends Repository<Competitor> {
     }
 
     async getFilter() {
-        const competitors = await this.repo.find({
-            where: [{
-                deleted: false,
-            },
-
-            ],
-            order: {
-                name: 'ASC',
-            },
-        });
+        const competitors = await this.repo
+            .createQueryBuilder("Competitor")
+            .where("Competitor.BajaEnERP = :deleted", { deleted: false })
+            .orderBy("CAST(Competitor.Competidor AS NVARCHAR(MAX))", "ASC")
+            .getMany();
         if (!competitors.length) {
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
@@ -83,17 +80,17 @@ export class CompetitorRepository extends Repository<Competitor> {
     async findAllWithSegmentations() {
         const competitors = await this.repo
             .createQueryBuilder("c")
-            .leftJoin("competitor_segmentations", "cs", "c.id = cs.competitor_id")
-            .leftJoin("product_segmentations", "s", "cs.product_segmentation_id = s.segmentation_value_id")
-            .where("(c.deleted = false OR c.deleted IS NULL)")
-            .andWhere("(cs.deleted = false OR cs.deleted IS NULL)")
+            .leftJoin(CompetitorSegmentation, "cs", "c.id = cs.competitor_id")
+            .leftJoin(ProductSegmentation, "s", "cs.product_segmentation_id = s.segmentation_value_id")
+            .where("(c.deleted = 0 OR c.deleted IS NULL)")
+            .andWhere("(cs.deleted = 0 OR cs.deleted IS NULL)")
             .select([
-                "c.id",
-                "c.name",
-                "COALESCE(GROUP_CONCAT(s.segmentation_value_id), '-1') AS segmentation_value_ids",
+                "c.id as c_id",
+                "CAST(c.name AS NVARCHAR(MAX)) AS c_name",
+                "COALESCE(STRING_AGG(s.segmentation_value_id, ','), '-1') AS segmentation_value_ids",
             ])
-            .groupBy("c.id, c.name")
-            .orderBy("c.name", "ASC")
+            .groupBy("c.id, CAST(c.name AS NVARCHAR(MAX))")
+            .orderBy("CAST(c.name AS NVARCHAR(MAX))", "ASC")
             .getRawMany();
 
         if (!competitors.length) {
@@ -102,7 +99,7 @@ export class CompetitorRepository extends Repository<Competitor> {
 
 
 
-        return  competitors.map((competitor) => ({
+        return competitors.map((competitor) => ({
             ...competitor,
             id: competitor.c_id,
             name: competitor.c_name
@@ -112,12 +109,12 @@ export class CompetitorRepository extends Repository<Competitor> {
     async findCompetitorsByFamily(familyId: number) {
         const competitors = await this.repo
             .createQueryBuilder("c")
-            .innerJoin("competitor_segmentations", "cs", "c.id = cs.competitor_id")
-            .where("(c.deleted = false OR c.deleted IS NULL)")
-            .andWhere("(cs.deleted = false OR cs.deleted IS NULL)")
+            .innerJoin(CompetitorSegmentation, "cs", "c.id = cs.competitor_id")
+            .where("(c.deleted = 0 OR c.deleted IS NULL)")
+            .andWhere("(cs.deleted = 0 OR cs.deleted IS NULL)")
             .andWhere("cs.product_segmentation_id IN (:...ids)", { ids: [-1, familyId] })
             .select(["c.id", "c.name"])
-            .orderBy("c.name", "ASC")
+            .orderBy("CAST(c.name AS NVARCHAR(MAX))", "ASC")
             .getMany();
 
         if (!competitors.length) {
@@ -130,11 +127,11 @@ export class CompetitorRepository extends Repository<Competitor> {
     async findCompetitorById(id: number) {
         const competitor = await this.repo
             .createQueryBuilder("c")
-            .leftJoin("competitor_segmentations", "cs", "c.id = cs.competitor_id")
-            .leftJoin("product_segmentations", "s", "cs.product_segmentation_id = s.segmentation_value_id")
+            .leftJoin(CompetitorSegmentation, "cs", "c.id = cs.competitor_id")
+            .leftJoin(ProductSegmentation, "s", "cs.product_segmentation_id = s.segmentation_value_id")
             .where("c.id = :id", { id })
-            .andWhere("(c.deleted = false OR c.deleted IS NULL)")
-            .andWhere("(cs.deleted = false OR cs.deleted IS NULL)")
+            .andWhere("(c.deleted = 0 OR c.deleted IS NULL)")
+            .andWhere("(cs.deleted = 0 OR cs.deleted IS NULL)")
             .select([
                 "c.id",
                 "c.name",
@@ -163,7 +160,7 @@ export class CompetitorRepository extends Repository<Competitor> {
                 await manager
                     .createQueryBuilder()
                     .insert()
-                    .into("competitor_segmentations")
+                    .into(CompetitorSegmentation)
                     .values(
                         product_segmentation_ids.map((segmentationId) => ({
                             competitor_id: competitorId,
@@ -182,21 +179,21 @@ export class CompetitorRepository extends Repository<Competitor> {
     }
 
     async updateComepetitor(competitor: Competitor, nombre: string) {
-        competitor.name= nombre
+        competitor.name = nombre
 
         return await this.repo.save(competitor);
     }
 
-    async updateCompetitorSegmentations(id: number, productSegmentationIds: number[]) {
+    async updateCompetitorSegmentations(id: number, productSegmentationIds: string[]) {
 
         return await this.dataSource.transaction(async (manager) => {
             // Marcar como eliminadas las segmentaciones actuales
             await manager
                 .createQueryBuilder()
-                .update("competitor_segmentations")
+                .update(CompetitorSegmentation)
                 .set({ deleted: true })
                 .where("competitor_id = :id", { id })
-                .andWhere("deleted = false")
+                .andWhere("deleted = 0")
                 .execute();
 
             if (productSegmentationIds.length > 0) {
@@ -204,7 +201,7 @@ export class CompetitorRepository extends Repository<Competitor> {
                 return await manager
                     .createQueryBuilder()
                     .insert()
-                    .into("competitor_segmentations")
+                    .into(CompetitorSegmentation)
                     .values(
                         productSegmentationIds.map((segmentationId) => ({
                             competitor_id: id,

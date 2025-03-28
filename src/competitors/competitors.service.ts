@@ -69,7 +69,7 @@ export class CompetitorsService {
     });
   }
 
-  async updateSegmentations(id: number, product_segmentation_ids: number[]) {
+  async updateSegmentations(id: number, product_segmentation_ids: string[]) {
     const comeptitor = await this.findOne(id);
     if (!comeptitor) {
       throw new HttpException('Comeptidor no encontrado.', HttpStatus.NOT_FOUND);

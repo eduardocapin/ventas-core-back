@@ -12,10 +12,10 @@ export class CreateCompetitorDto {
 
     @ApiPropertyOptional({
         description: 'Lista de IDs de segmentación de productos asociados al competidor',
-        type: [Number],
+        type: [String],
       })
     @IsOptional()
     @IsArray()
     @ArrayNotEmpty()
-    product_segmentation_ids?: number[];
+    product_segmentation_ids?: string[];
 }

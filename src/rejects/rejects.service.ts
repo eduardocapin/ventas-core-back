@@ -6,6 +6,7 @@ import { PaginatedRejectsDto } from './dto/paginated-reject.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RejectRepository } from './repositories/rejects.repository';
 import { Rejection } from './entities/reject.entity';
+import { KPIsRejectsDto } from './dto/kpis-rejects.dto';
 
 @Injectable()
 export class RejectsService {
@@ -19,7 +20,7 @@ export class RejectsService {
     if (!rejection) {
       throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
-    
+
     const updatedRejection = { ...rejection, ...updateRejectCorrectiveActionDto };
 
     const result = await this.rejectRepository.save(updatedRejection);
@@ -29,6 +30,10 @@ export class RejectsService {
 
   async findAll(paginatedRejectsDto: PaginatedRejectsDto): Promise<{ items: Rejection[]; totalItems: number }> {
     return await this.rejectRepository.findAll(paginatedRejectsDto);
+  }
+
+  async KPIs(KPIsRejectsDto: KPIsRejectsDto) {
+    return await this.rejectRepository.getRejectionKPIs(KPIsRejectsDto)
   }
 
   async findOne(id: number): Promise<Rejection> {

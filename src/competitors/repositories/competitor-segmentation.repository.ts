@@ -9,7 +9,7 @@ export class CompetitorSegmentationRepository extends Repository<CompetitorSegme
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
-    async updateCompetitorSegmentations(competitorId: number, segmentationIds: number[]) {
+    async updateCompetitorSegmentations(competitorId: number, segmentationIds: string[]) {
         await this.repo.update(
             { competitor_id: competitorId, deleted: false },
             { deleted: true },
