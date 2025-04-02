@@ -7,6 +7,9 @@ import { Product } from "src/products/entities/product.entity";
 import { Client } from "src/clients/entities/client.entity";
 import { ProductSegmentation } from "src/products/entities/product-segmentation.entity";
 import { KPIsRejectsDto } from "../dto/kpis-rejects.dto";
+import { FilterDto } from "src/filters/dto/filter.dto";
+import { Salesman } from "src/repositories/entities/salemen.entity";
+import { ClientSegmentation } from "src/clients/entities/client-segmentation.entity";
 
 @Injectable()
 export class RejectRepository extends Repository<Rejection> {
@@ -236,7 +239,7 @@ export class RejectRepository extends Repository<Rejection> {
                 baseQuery.clone().andWhere('r.status_id = 4').getCount(),
                 baseQuery.clone().andWhere('r.status_id IN (1, 2, 3, 6)').getCount(),
             ]);
-        
+
             // Ejecutar esta consulta solo si hay totalGroupedRejections
             if (totalGroupedConversions > 0) {
                 conversionsByStatus = await baseQuery.clone()
@@ -250,7 +253,7 @@ export class RejectRepository extends Repository<Rejection> {
                     .getRawMany();
             }
         }
-        
+
         return {
             totalRejections,
             rejectionByReason,
@@ -260,5 +263,739 @@ export class RejectRepository extends Repository<Rejection> {
             conversionsByStatus,
         };
 
+    }
+
+    async getRejectionGroupByReasons(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByReason = await baseQuery.clone()
+            .select([
+                'r.reason_rejection AS name',
+                'COUNT(*) AS value',
+            ])
+            .groupBy('r.reason_rejection')
+            .orderBy('COUNT(*)', 'DESC')
+            .getRawMany();
+
+        return rejectionByReason;
+    }
+
+    async getRejectionGroupByFamily(selectedFilters: FilterDto[], topN: number) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByFamily = await baseQuery.clone()
+            .select([
+                's1.segmentation_value AS name',
+                'COUNT(*) AS value',
+            ])
+            .groupBy('s1.segmentation_value_id, s1.segmentation_value')
+            .orderBy('COUNT(*)', 'DESC')
+            .limit(topN)
+            .getRawMany();
+
+        return rejectionByFamily;
+    }
+
+    async getRejectionGroupByProduct(selectedFilters: FilterDto[], topN: number) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByProduct = await baseQuery.clone()
+            .select([
+                'p.product AS name',
+                'COUNT(*) AS value',
+            ])
+            .groupBy('r.product_id, p.product')
+            .orderBy('COUNT(*)', 'DESC')
+            .limit(topN)
+            .getRawMany();
+
+        return rejectionByProduct;
+    }
+
+    async getRejectionGroupByCustomerSegmentation(selectedFilters: FilterDto[], n: number) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .leftJoin(
+                ClientSegmentation,
+                'sc1',
+                'c.segmentation_1 = sc1.segmentation_value_id AND sc1.segmentation_number = 1',
+            ) // JOIN segmentación 1
+            .leftJoin(
+                ClientSegmentation,
+                'sc2',
+                'c.segmentation_2 = sc2.segmentation_value_id AND sc2.segmentation_number = 2',
+            ) // JOIN segmentación 2
+            .leftJoin(
+                ClientSegmentation,
+                'sc3',
+                'c.segmentation_1 = sc3.segmentation_value_id AND sc3.segmentation_number = 3',
+            ) // JOIN segmentación 3
+
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByCustmerSegmentation = await baseQuery.clone()
+            .select([
+                `sc${n}.segmentation_value AS name`,
+                'COUNT(*) AS value',
+                `sc${n}.name AS title`
+            ])
+            .groupBy(`sc${n}.segmentation_value_id, sc${n}.segmentation_value, sc${n}.name`)
+            .getRawMany();
+
+        return rejectionByCustmerSegmentation;
+    }
+
+
+    async getRejectionGroupByMonth(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByMonth = await baseQuery.clone()
+            .select([
+                "MONTH(r.last_rejection_date) AS name",
+                'COUNT(*) AS value'
+            ])
+            .groupBy("MONTH(r.last_rejection_date)")
+            .orderBy('name', 'ASC')
+            .getRawMany();
+
+        return rejectionByMonth
+    }
+
+    async getRejectionGroupByDayOfWeek(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        let rejectionByDayOfWeek = await baseQuery.clone()
+            .select([
+                "DATEPART(weekday, r.last_rejection_date) AS name",
+                'COUNT(*) AS value'
+            ])
+            .groupBy("DATEPART(weekday, r.last_rejection_date)")
+            .orderBy('name', 'ASC')
+            .getRawMany();
+
+        return rejectionByDayOfWeek
+    }
+
+
+    async getClientsWithRejections(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener el número total de clientes con rechazo
+        const clientsWithRejectsQuery = await baseQuery.clone()
+            .select('COUNT(DISTINCT r.customer_id)', 'clientsWithRejects')
+            .getRawOne();
+
+        return clientsWithRejectsQuery?.clientsWithRejects || 0;
+    }
+
+    async getRejectionsSummaryGroupByCustomer(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+        // Obtener los rechazos agrupados por cliente y razón de rechazo
+        const results = await baseQuery
+            .select([
+                'r.customer_name AS name',
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+            ])
+            .groupBy('r.customer_name, r.reason_rejection')
+            .getRawMany();
+
+        return results
+    }
+
+    async getRejectionsSummaryGroupByProvince(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener los rechazos agrupados por pronvincia y razón de rechazo
+        const results = await baseQuery
+            .select([
+                'r.province AS name',
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+            ])
+            .groupBy('r.province, r.reason_rejection')
+            .getRawMany();
+        return results
+    }
+
+    async getRejectionsSummaryGroupByCity(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener los rechazos agrupados por pronvincia y razón de rechazo
+        const results = await baseQuery
+            .select([
+                'r.city AS name',
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+            ])
+            .groupBy('r.city, r.reason_rejection')
+            .getRawMany();
+        return results
+    }
+
+    async getRejectionsSummaryGroupByFamily(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener los rechazos agrupados por pronvincia y razón de rechazo
+        const results = await baseQuery
+            .select([
+                's1.segmentation_value AS name',
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+            ])
+            .groupBy('s1.segmentation_value, r.reason_rejection')
+            .getRawMany();
+        return results
+
+    }
+
+
+    async getRejectionsSummaryGroupBySalesman(selectedFilters: FilterDto[]) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .leftJoin(Salesman, 'sa', 'sa.id = r.salesman_id')
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener los rechazos agrupados por pronvincia y razón de rechazo
+        const results = await baseQuery
+            .select([
+                'sa.name AS name',
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+            ])
+            .groupBy('sa.name, r.reason_rejection')
+            .getRawMany();
+
+        return results
+    }
+
+    async getRejectionsSummaryGroupByCustomerSegmentation(selectedFilters: FilterDto[], n: number) {
+        const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
+            .leftJoin(Product, 'p', 'p.id = r.product_id')
+            .leftJoin(Client, 'c', 'c.id = r.customer_id')
+            .leftJoin(
+                ProductSegmentation,
+                's1',
+                'p.segmentation_1 = s1.segmentation_value_id AND s1.segmentation_number = 1',
+            )
+            .leftJoin(
+                ProductSegmentation,
+                's2',
+                'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
+            )
+            .leftJoin(
+                ClientSegmentation,
+                'sc1',
+                'c.segmentation_1 = sc1.segmentation_value_id AND sc1.segmentation_number = 1',
+            ) // JOIN segmentación 1
+            .leftJoin(
+                ClientSegmentation,
+                'sc2',
+                'c.segmentation_2 = sc2.segmentation_value_id AND sc2.segmentation_number = 2',
+            ) // JOIN segmentación 2
+            .leftJoin(
+                ClientSegmentation,
+                'sc3',
+                'c.segmentation_1 = sc3.segmentation_value_id AND sc3.segmentation_number = 3',
+            ) // JOIN segmentación 3
+
+            .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Aplicar filtros dinámicos
+        if (selectedFilters && Array.isArray(selectedFilters)) {
+            selectedFilters.forEach((filter, index) => {
+                const { id, valor, tipo } = filter;
+
+                if (tipo === 'multi-select' && Array.isArray(valor)) {
+                    query.andWhere(`${id} IN (:...values${index})`, { [`values${index}`]: valor.map(v => v.id) });
+                } else if (tipo === 'search' && typeof valor === 'string') {
+                    query.andWhere(`${id} LIKE :search${index}`, { [`search${index}`]: `%${valor}%` });
+                } else if (tipo === 'date' && valor?.startDate && valor?.endDate) {
+                    query.andWhere(`${id} BETWEEN :start${index} AND :end${index}`, {
+                        [`start${index}`]: valor.startDate,
+                        [`end${index}`]: valor.endDate,
+                    });
+                } else if (tipo === 'range' && valor?.min && valor?.max) {
+                    query.andWhere(`${id} BETWEEN :min${index} AND :max${index}`, {
+                        [`min${index}`]: valor.min,
+                        [`max${index}`]: valor.max,
+                    });
+                }
+            });
+        }
+        // Clonar la query base para reutilizarla en diferentes cálculos
+        const baseQuery = query.clone();
+
+        // Obtener los rechazos agrupados por pronvincia y razón de rechazo
+        const results = await baseQuery
+            .select([
+                `sc${n}.segmentation_value AS name`,
+                'r.reason_rejection AS rejection_reason',
+                'COUNT(r.id) AS rejection_count',
+                `sc${n}.name AS title`
+            ])
+            .groupBy(`sc${n}.segmentation_value, r.reason_rejection, sc${n}.name`)
+            .getRawMany();
+        
+            return results
     }
 }

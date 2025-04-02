@@ -13,6 +13,6 @@ import { ClientSegmentation } from './entities/client-segmentation.entity';
   imports: [TypeOrmModule.forFeature([Client, ClientRepository, ClientContact,ClientContactRepository, ClientSegmentation, ClientSegmentationRepository]),],
   controllers: [ClientsController],
   providers: [ClientsService, ClientRepository,ClientContactRepository, ClientSegmentationRepository],
-  exports:[ClientSegmentationRepository]
+  exports:[ClientSegmentationRepository, ClientRepository]
 })
 export class ClientsModule { }
