@@ -6,7 +6,7 @@ const scriptPath = path.join(__dirname, 'dist', 'main.js');
 
 // Configuración del servicio
 const svc = new Service({
-  name: 'ConverterBackend',           // Nombre del servicio
+  name: 'ConverterNestBackend',           // Nombre del servicio
   description: 'Servicio del Converter Backend', 
   script: scriptPath,                 // Script Node.js que quieres ejecutar
   workingDirectory: path.join(__dirname),  // Directorio de trabajo
