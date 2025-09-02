@@ -37,6 +37,7 @@
     "mssql": "^10.0.4",
     "mysql2": "^3.12.0",
     "nest-winston": "^1.10.2",
+    "node-windows": "^1.0.0-beta.8",
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
