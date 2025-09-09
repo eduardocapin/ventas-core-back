@@ -67,7 +67,7 @@ export class UsersService {
 
     await this.mailService.sendResetPasswordMail(
       existingUser,
-      `https://www.${domain}/reset-password/${code}`
+      `${domain}/reset-password/${code}`
     );
 
     const passwordChange = this.passwordChangesRepository.create({
