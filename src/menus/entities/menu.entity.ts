@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('Conventer_Menus')
+@Entity('Converter_Menus')
 export class MenuItem {
   @PrimaryGeneratedColumn({name:'Id'})
   id: number;

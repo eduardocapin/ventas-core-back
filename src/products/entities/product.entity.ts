@@ -8,7 +8,7 @@ export class Product {
   @Column({name:'IdArticuloFabricante', length: 20 })
   product_ERP_id: string;
 
-  @Column({name:'Descripcion', length: 80 })
+  @Column({name:'Descripcion', length: 250 })
   product: string;
 
   @Column({name:'Observaciones',type: 'nvarchar', length: 'MAX'})
