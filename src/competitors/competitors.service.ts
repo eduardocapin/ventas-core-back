@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RejectRepository } from 'src/rejects/repositories/rejects.repository';
@@ -18,10 +18,12 @@ export class CompetitorsService {
     @InjectRepository(CompetitorSegmentationRepository)
     private readonly competitorSegmentationRepository: CompetitorSegmentationRepository,
     private readonly dataSource: DataSource,
+    @Inject('LOGGER') private readonly logger
   ) { }
   async create(createCompetitorDto: CreateCompetitorDto) {
     const existingCompetitor = await this.competitorRepository.findByName(createCompetitorDto.nombre)
     console.log(existingCompetitor)
+    this.logger.debug(`Competidor existente: ${existingCompetitor}`)
     if (existingCompetitor) {
       throw new HttpException('Comeptidor con nombre ya existente', HttpStatus.BAD_REQUEST);
     }
@@ -64,6 +66,7 @@ export class CompetitorsService {
 
         return { status: 'Success', data: result };
       } catch (error) {
+        this.logger.error(`Error al actualizar el competidor(${id}): ${error}`)
         throw new HttpException('Error al actualizar el competidor.', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     });

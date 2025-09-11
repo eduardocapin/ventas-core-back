@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompetitorRepository } from 'src/competitors/repositories/competitors.repository';
@@ -42,6 +42,7 @@ export class FiltersService {
     private readonly symbolRepository: SymbolRepository,
     @InjectRepository(SalesmanRepository)
     private readonly salesmanRepository: SalesmanRepository,
+    @Inject('LOGGER') private readonly logger
 
   ) { }
 

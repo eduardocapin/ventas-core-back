@@ -1,12 +1,12 @@
-import {Repository, UpdateResult } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Repository, UpdateResult } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
 
-    constructor(@InjectRepository(User) private readonly repo: Repository<User>) {
+    constructor(@InjectRepository(User) private readonly repo: Repository<User>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -16,6 +16,7 @@ export class UserRepository extends Repository<User> {
 
     async findUserByEmail(email: string): Promise<User> {
         console.log(`Buscando usuario por email: ${email}`);
+        this.logger.debug(`Buscando usuario por email: ${email}`)
         return this.repo.findOne({ where: { email, deleted: false } });
     }
 

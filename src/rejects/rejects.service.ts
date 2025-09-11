@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateRejectDto } from './dto/create-reject.dto';
 import { UpdateRejectDto } from './dto/update-reject.dto';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
@@ -16,12 +16,14 @@ export class RejectsService {
     @InjectRepository(RejectRepository)
     private readonly rejectRepository: RejectRepository,
     @InjectRepository(ClientRepository)
-    private readonly clientRepository: ClientRepository) {
+    private readonly clientRepository: ClientRepository,
+    @Inject('LOGGER') private readonly logger) {
 
   }
   async updateCorrectiveAction(id: number, updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {
     const rejection = await this.findOne(id);
     if (!rejection) {
+      this.logger.warn(`Rechazo con id: ${id} no encontrado`)
       throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
 
@@ -47,6 +49,7 @@ export class RejectsService {
   async update(id: number, updateRejectDto: UpdateRejectDto) {
     const rejection = await this.findOne(id);
     if (!rejection) {
+      this.logger.warn(`Rechazo con id: ${id} no encontrado`)
       throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
     const updatedRejection = { ...rejection, ...updateRejectDto };
@@ -59,6 +62,7 @@ export class RejectsService {
   async remove(id: number) {
     const rejection = await this.findOne(id);
     if (!rejection) {
+      this.logger.warn(`Rechazo con id: ${id} no encontrado`)
       throw new HttpException('Rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
     return this.rejectRepository.removeById(id);
@@ -220,8 +224,8 @@ export class RejectsService {
     const nombreSegmentacion = processedSummary.length > 0 && summary[0]?.title ? summary[0].title : 'Desconocido';
 
     return {
-        nombre_segmentacion: nombreSegmentacion,
-        valores: processedSummary
+      nombre_segmentacion: nombreSegmentacion,
+      valores: processedSummary
     };
   }
 }

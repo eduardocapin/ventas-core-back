@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateImportDto } from './dto/create-import.dto';
 import { UpdateImportDto } from './dto/update-import.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +13,7 @@ export class ImportService {
       private readonly tableNameRepository: TableNameRepository,
       @InjectRepository(TableFieldRepository)
       private readonly tableFieldRepository: TableFieldRepository,
+      @Inject('LOGGER') private readonly logger
     ) {
   
     }

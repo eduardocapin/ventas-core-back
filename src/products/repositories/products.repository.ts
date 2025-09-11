@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { Repository, UpdateResult } from "typeorm";
 import { Product } from "../entities/product.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -7,7 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class ProductRepository extends Repository<Product> {
 
 
-    constructor(@InjectRepository(Product) private readonly repo: Repository<Product>) {
+    constructor(@InjectRepository(Product) private readonly repo: Repository<Product>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -20,6 +20,7 @@ export class ProductRepository extends Repository<Product> {
         });
 
         if (!products.length) {
+            this.logger.warn(`No se econtraron productos`)
             throw new HttpException('No se encontraron productos.', HttpStatus.NOT_FOUND);
         }
         return products;

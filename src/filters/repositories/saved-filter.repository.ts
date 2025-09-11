@@ -1,13 +1,13 @@
 import { Repository, UpdateResult } from "typeorm";
 import { SavedFilter } from "../entities/saved-filter.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject } from "@nestjs/common";
 
 export class SavedFilterRepository extends Repository<SavedFilter> {
 
 
 
-    constructor(@InjectRepository(SavedFilter) private readonly repo: Repository<SavedFilter>) {
+    constructor(@InjectRepository(SavedFilter) private readonly repo: Repository<SavedFilter>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -31,12 +31,12 @@ export class SavedFilterRepository extends Repository<SavedFilter> {
     async findByIdAndEmail(componentId: string, email: string) {
         const filters = await this.repo.find({ where: { component_id: componentId, email: email, deleted: false } });
 
-        return  filters.map((filter) => ({
+        return filters.map((filter) => ({
             id: filter.id,
             nombre: filter.name,
             filtros: JSON.parse(filter.filters),
         }));
-;
+        ;
     }
 
 

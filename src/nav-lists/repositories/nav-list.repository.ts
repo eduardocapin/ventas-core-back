@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ListItem } from "../entities/nav-list.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -7,7 +7,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class NavListsRepository extends Repository<ListItem> {
 
 
-  constructor(@InjectRepository(ListItem) private readonly repo: Repository<ListItem>) {
+  constructor(@InjectRepository(ListItem) private readonly repo: Repository<ListItem>, @Inject('LOGGER') private readonly logger) {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 
@@ -30,6 +30,7 @@ export class NavListsRepository extends Repository<ListItem> {
       .getRawMany();
 
     if (!items.length) {
+      this.logger.warn(`No se econtraron contenedores para la entidad: ${entity}`)
       throw new HttpException('No se encontraron contenedores para esta entidad.', HttpStatus.NOT_FOUND);
     }
 

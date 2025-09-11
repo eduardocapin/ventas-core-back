@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { Competitor } from "../entities/competitor.entity";
 import { DataSource, Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -9,7 +9,7 @@ import { ProductSegmentation } from "src/products/entities/product-segmentation.
 @Injectable()
 export class CompetitorRepository extends Repository<Competitor> {
 
-    constructor(@InjectRepository(Competitor) private readonly repo: Repository<Competitor>, private readonly dataSource: DataSource,) {
+    constructor(@InjectRepository(Competitor) private readonly repo: Repository<Competitor>, private readonly dataSource: DataSource, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -58,6 +58,7 @@ export class CompetitorRepository extends Repository<Competitor> {
         });
 
         if (!competitors.length) {
+            this.logger.warn('No se encontraron Competidores')
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
 
@@ -71,9 +72,10 @@ export class CompetitorRepository extends Repository<Competitor> {
             .orderBy("CAST(Competitor.Competidor AS NVARCHAR(MAX))", "ASC")
             .getMany();
         if (!competitors.length) {
+            this.logger.warn('No se encontraron competidores')
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
-
+        this.logger.debug(`Filtro competidores: ${competitors}`)
         return competitors;
     }
 
@@ -94,6 +96,7 @@ export class CompetitorRepository extends Repository<Competitor> {
             .getRawMany();
 
         if (!competitors.length) {
+            this.logger.warn('No se encontraron Competidores')
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
 
@@ -118,6 +121,7 @@ export class CompetitorRepository extends Repository<Competitor> {
             .getMany();
 
         if (!competitors.length) {
+            this.logger.warn(`No se encontraron Competidores para la familia con id: ${familyId}`)
             throw new HttpException("No se encontraron Competidores para la familia indicada", HttpStatus.NOT_FOUND);
         }
 
@@ -139,6 +143,7 @@ export class CompetitorRepository extends Repository<Competitor> {
             ])
             .groupBy("c.id, c.name")
             .getRawOne();
+        this.logger.debug(competitor)
         return competitor;
     }
 

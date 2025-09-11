@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { Rejection } from "../entities/reject.entity";
@@ -14,7 +14,7 @@ import { ClientSegmentation } from "src/clients/entities/client-segmentation.ent
 @Injectable()
 export class RejectRepository extends Repository<Rejection> {
 
-    constructor(@InjectRepository(Rejection) private readonly repo: Repository<Rejection>) {
+    constructor(@InjectRepository(Rejection) private readonly repo: Repository<Rejection>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

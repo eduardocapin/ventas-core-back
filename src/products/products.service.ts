@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ export class ProductsService {
   constructor(
     @InjectRepository(ProductRepository)
     private readonly productRepository: ProductRepository,
+    @Inject('LOGGER') private readonly logger
 
   ) {
 
@@ -26,16 +27,18 @@ export class ProductsService {
   async remove(id: number) {
     const product = await this.findOne(id);
     if (!product) {
+      this.logger.warn(`Producto con id:${id}, no encontrado`)
       throw new HttpException('Producto no encontrado.', HttpStatus.NOT_FOUND);
     }
     return this.productRepository.removeById(id);
   }
 
-  async update(id: number,updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
 
-    
+
     const product = await this.findOne(id);
     if (!product) {
+      this.logger.warn(`Producto con id:${id}, no encontrado`)
       throw new HttpException('Producto no encontrado.', HttpStatus.NOT_FOUND);
     }
     //TODO: MODIFICAR LOS VALORES DEL PRODUCTO

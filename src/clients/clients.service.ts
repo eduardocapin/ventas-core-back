@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
@@ -11,14 +11,15 @@ import { Client } from './entities/client.entity';
 @Injectable()
 export class ClientsService {
 
-constructor(
-      @InjectRepository(ClientRepository)
-      private readonly clientRepository: ClientRepository,
-      @InjectRepository(ClientContactRepository)
-      private readonly clientContactRepository: ClientContactRepository,
-    ) {
+  constructor(
+    @InjectRepository(ClientRepository)
+    private readonly clientRepository: ClientRepository,
+    @InjectRepository(ClientContactRepository)
+    private readonly clientContactRepository: ClientContactRepository,
+    @Inject('LOGGER') private readonly logger
+  ) {
 
-    }
+  }
 
   async findAll(paginatedClientsDto: PaginatedClientsDto): Promise<{ items: Client[]; totalItems: number }> {
     return await this.clientRepository.findAll(paginatedClientsDto);
@@ -36,7 +37,7 @@ constructor(
 
   async findOneContact(id: number): Promise<ClientContact> {
     return await this.clientContactRepository.findContactById(id);
-      
+
   }
 
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, UpdateResult } from "typeorm";
 import { ReasonsRejection } from "../entities/reasons-rejection.entity";
@@ -7,7 +7,7 @@ import { ReasonsRejection } from "../entities/reasons-rejection.entity";
 export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
 
 
-    constructor(@InjectRepository(ReasonsRejection) private readonly repo: Repository<ReasonsRejection>) {
+    constructor(@InjectRepository(ReasonsRejection) private readonly repo: Repository<ReasonsRejection>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -37,11 +37,12 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
         });
 
         if (!reasons.length) {
+            this.logger.warn('No se encontraron Motivos de rechazo')
             throw new HttpException('No se encontraron Motivos de rechazo.', HttpStatus.NOT_FOUND);
         }
 
         return reasons.map((reason) => ({
-           ...reason,
+            ...reason,
             name: reason.rejection,
         }));;
     }
@@ -54,14 +55,14 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
     async updateReason(reason: ReasonsRejection, codigo: string, nombre: string) {
         reason.rejection_code = codigo;
         reason.rejection = nombre;
-    
+
         return await this.repo.save(reason);
     }
 
     async getFilter() {
         const reasons = await this.find({
             where: [
-                { deleted: false }, 
+                { deleted: false },
 
             ],
             order: {
@@ -71,9 +72,10 @@ export class ReasonRejectionRepository extends Repository<ReasonsRejection> {
         });
 
         if (!reasons.length) {
+            this.logger.warn('No se econtraron motivos de rechazo')
             throw new HttpException('No se encontraron Motivos de rechazo.', HttpStatus.NOT_FOUND);
         }
-        
+
         return reasons.map((reason) => ({
             id: reason.id,
             rejection_code: reason.rejection_code,

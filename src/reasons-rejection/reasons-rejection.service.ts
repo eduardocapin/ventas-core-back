@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateReasonsRejectionDto } from './dto/create-reasons-rejection.dto';
 import { UpdateReasonsRejectionDto } from './dto/update-reasons-rejection.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,7 @@ export class ReasonsRejectionService {
     @InjectRepository(RejectRepository)
     private readonly rejectRepository: RejectRepository,
     private readonly dataSource: DataSource,
+    @Inject('LOGGER') private readonly logger
   ) {
 
   }
@@ -24,6 +25,7 @@ export class ReasonsRejectionService {
 
     const existingReason = await this.reasonRejectionRepository.findByCodeOrName(codigo, nombre);
     if (existingReason) {
+      this.logger.warn(`El motivo de rechazo con codigo o nombre ya existente: ${createReasonsRejectionDto}`)
       throw new HttpException('El Motivo de rechazo con codigo o nombre ya existente', HttpStatus.BAD_REQUEST);
     }
 
@@ -45,6 +47,7 @@ export class ReasonsRejectionService {
   async update(id: number, updateReasonsRejectionDto: UpdateReasonsRejectionDto) {
     const reason = await this.findOne(id);
     if (!reason) {
+      this.logger.warn(`Motivo de rechazo con id: ${id} no encontrado`)
       throw new HttpException('Motivo de rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
 
@@ -52,6 +55,7 @@ export class ReasonsRejectionService {
 
     const existingReason = await this.reasonRejectionRepository.findByCodeOrName(codigo, nombre);
     if (existingReason && id != existingReason.id) {
+      this.logger.warn(`El motivo de rechazo con codigo o nombre ya existente: ${updateReasonsRejectionDto}`)
       throw new HttpException('El Motivo de rechazo con codigo o nombre ya existente', HttpStatus.BAD_REQUEST);
     }
 
@@ -62,6 +66,7 @@ export class ReasonsRejectionService {
 
         return { status: 'Success', data: result };
       } catch (error) {
+        this.logger.error(`Ha ocurrido un erro al actualizar el motivo de rechazo(${updateReasonsRejectionDto}): ${error}`)
         throw new HttpException('Error al actualizar el motivo de rechazo.', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     });
@@ -70,6 +75,7 @@ export class ReasonsRejectionService {
   async remove(id: number) {
     const reason = await this.findOne(id);
     if (!reason) {
+      this.logger.warn(`Motivo de rechazo con id: ${id} no encontrado`)
       throw new HttpException('Motivo de rechazo no encontrado.', HttpStatus.NOT_FOUND);
     }
     return this.reasonRejectionRepository.removeById(id);

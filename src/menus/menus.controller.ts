@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -9,7 +9,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 @Controller('menus')
 @ApiBearerAuth()
 export class MenusController {
-  constructor(private readonly menusService: MenusService) { }
+  constructor(private readonly menusService: MenusService, @Inject('LOGGER') private readonly logger) { }
 
   @UseGuards(JwtAuthGuard)
   @Get(':menu_id/:language')

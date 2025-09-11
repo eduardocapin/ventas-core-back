@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { Client } from "../entities/client.entity";
@@ -11,7 +11,7 @@ import { FilterDto } from "src/filters/dto/filter.dto";
 export class ClientRepository extends Repository<Client> {
 
 
-    constructor(@InjectRepository(Client) private readonly repo: Repository<Client>) {
+    constructor(@InjectRepository(Client) private readonly repo: Repository<Client>, @Inject('LOGGER') private readonly logger) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 
@@ -29,6 +29,7 @@ export class ClientRepository extends Repository<Client> {
             .getOne();
 
         console.log(cliente);
+        this.logger.debug(cliente)
         return cliente;
     }
 
@@ -96,6 +97,7 @@ export class ClientRepository extends Repository<Client> {
         query.limit(itemsPerPage).offset((currentPage - 1) * itemsPerPage);
 
         const items = await query.getMany();
+        this.logger.debug(`TOTAL Clientes:${items.length}`)
         console.log(`TOTAL Clientes:${items.length}`)
         return { items, totalItems };
     }

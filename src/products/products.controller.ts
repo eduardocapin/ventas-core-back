@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Inject } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -7,9 +7,9 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 
 @ApiTags('Productos')
 @Controller('products')
-@ApiBearerAuth() 
+@ApiBearerAuth()
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService, @Inject('LOGGER') private readonly logger) { }
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -18,12 +18,14 @@ export class ProductsController {
   @ApiResponse({ status: 500, description: 'Error al obtener los productos.' })
   async findAll() {
     try {
+      this.logger.info(`Se ha solicitado la lista de productos`)
       // Llamar al servicio y pasar los datos validados
       return await this.productsService.findAll();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la solicutd de la lista de productos: ${error}`)
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
@@ -42,19 +44,21 @@ export class ProductsController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
+      this.logger.info(`Se ha solicitado el producto con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.productsService.findOne(+id);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la obtencion del producto (${id}): ${error}`)
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    
+
   }
 
   @UseGuards(JwtAuthGuard)
@@ -66,19 +70,21 @@ export class ProductsController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     try {
+      this.logger.info(`Actualizacion del producto con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.productsService.update(+id, updateProductDto);
-    } catch (error) { 
+    } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la actualizacion del producto (${id}): ${error}`)
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    
+
   }
 
   @UseGuards(JwtAuthGuard)
@@ -90,18 +96,20 @@ export class ProductsController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del producto' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
+      this.logger.info(`Solicitud de eliminacion del producto con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.productsService.remove(+id);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la eliminacion del producto(${id}): ${error}`)
       if (error instanceof HttpException) {
-        throw error; 
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    
+
   }
 }

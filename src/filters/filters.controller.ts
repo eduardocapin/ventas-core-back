@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Req, Inject } from '@nestjs/common';
 import { FiltersService } from './filters.service';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
@@ -8,7 +8,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 @Controller('filters')
 @ApiBearerAuth()
 export class FiltersController {
-  constructor(private readonly filtersService: FiltersService) { }
+  constructor(private readonly filtersService: FiltersService, @Inject('LOGGER') private readonly logger) { }
 
 
   @UseGuards(JwtAuthGuard)
@@ -17,10 +17,12 @@ export class FiltersController {
   @ApiResponse({ status: 200, description: 'Lista de poblaciones obtenida correctamente.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getCities() {
+    this.logger.info('Se ha solicitado la carga del filtro de poblaciones')
     try {
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getCities();
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error al obtener el filtro de poblaciones: ${error}`)
       console.log(error);
       if (error instanceof HttpException) {
         throw error;
@@ -40,10 +42,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   getProvinces() {
     try {
+      this.logger.info(`Se ha solicitado la carga del filtro de provincias`)
       // Llamar al servicio y pasar los datos validados
       return this.filtersService.getProvinces();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error en la carga del filtro de provincias: ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -62,10 +66,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getStatus() {
     try {
+      this.logger.info('Se ha solicitado al carga del filtro Estados')
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getStatus();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error en la carga del filtro de Estados: ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -84,10 +90,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getSymbol() {
     try {
+      this.logger.info('Se ha solicitado la lista de simbolos')
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getSymbol();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error al obtener la lista de simbolos: ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -106,10 +114,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getReasonsRejection() {
     try {
+      this.logger.info('Se ha solicitado la carga del filtro de motivos de rechazo')
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getReasonsRejection();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error en la carga del filtro de motivos de rechazo: ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -128,9 +138,11 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getCompetitors() {
     try {
+      this.logger.info('Se ha solicitado la carga del filtro de competidores')
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getCompetitors();
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error durante la carga del filtro de competidores: ${error}`)
       console.log(error);
       if (error instanceof HttpException) {
         throw error;
@@ -150,10 +162,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getSalesmen() {
     try {
+      this.logger.info('Se ha solictado la carga del filtro de vendedores')
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getSalesmen();
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la carga del filtro de vendedores: ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -174,9 +188,11 @@ export class FiltersController {
   async findFiltersByComponetId(@Param('componentId') componentId: string) {
     try {
       // Llamar al servicio y pasar los datos validados
+      this.logger.info(`Se ha solicitado la lista de filtros para el componentId: ${componentId}`)
       return await this.filtersService.findFiltersByComponetId(componentId);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error al solicitar la lista de filtros para el componentId(${componentId}): ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -196,9 +212,11 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
+      this.logger.info(`Se ha solicitado la carga del filtro de segmentacion de cliente: ${n}`)
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getSegmentation(n);
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error durante  la carga del filtro de segmentacion de cliente(${n}): ${error}`)
       console.log(error);
       if (error instanceof HttpException) {
         throw error;
@@ -219,10 +237,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getProductSegmentation(@Param('n', ParseIntPipe) n: number) {
     try {
+      this.logger.info(`Se ha solicitado la carga del filtro de segmentacion de productos: ${n}`)
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.getProductSegmentation(n);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la carga del filtro de segmentacion de producto(${n}): ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -242,11 +262,13 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getSavedByComponetId(@Req() req, @Param('componentId') componentId: string) {
     try {
+      this.logger.info(`Se ha solicitado la lista de filtros guardados para el componentId: ${componentId}`)
       // Llamar al servicio y pasar los datos validados
       const email = req.user['email']; // Se obtiene el email desde el token
       return await this.filtersService.getSavedByComponetId(componentId, email);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error al solicitar la lista de filtros guardados para el componentId(${componentId}): ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -267,10 +289,13 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async createSavedByComponetId(@Req() req, @Param('componentId') componentId: string, @Body() createFilterDto: CreateFilterDto) {
     try {
+      this.logger.info(`Se ha solicitado la creacion de un filtro guardado para el compoenntId: ${componentId}`)
+      this.logger.debug(createFilterDto)
       // Llamar al servicio y pasar los datos validados
       const email = req.user['email']; // Se obtiene el email desde el token
       return await this.filtersService.createSavedByComponetId(componentId, email, createFilterDto);
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error durante la creacion de un filrto fuardado para el componentId(${componentId}): ${error}`)
       console.log(error);
       if (error instanceof HttpException) {
         throw error;
@@ -291,10 +316,12 @@ export class FiltersController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async removeSaved(@Param('id', ParseIntPipe) id: number) {
     try {
+      this.logger.info(`Se ha solicitado la eliminación del filtro guardado con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.filtersService.removeSaved(id);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la eliminación del filtro guardado(${id}): ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }

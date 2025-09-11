@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Req, Inject } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,11 +7,12 @@ import { JwtAuthGuard } from '../guards/jwt-auth/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import e from 'express';
 
 @ApiTags('Usarios')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService, @Inject('LOGGER') private readonly logger) { }
 
 
   @Post('login')
@@ -22,11 +23,13 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async login(@Body() loginDto: LoginDto) {
     try {
+      this.logger.info(`Se ha solicitado el login para: ${loginDto}`)
       // Llamar al servicio y pasar los datos validados
       const { email, password } = loginDto;
 
       return this.usersService.login(email, password);
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error durante el login para ${loginDto}: ${error}`)
       console.log(error);
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
@@ -49,10 +52,12 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
+      this.logger.info('Se ha solicitado la creacion de un usuario')
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.create(createUserDto);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la creacion del usuario(${createUserDto}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
@@ -74,10 +79,12 @@ export class UsersController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
 
     try {
+      this.logger.info(`Se ha solicitado el usario con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.findOneById(+id);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la obtencion del usuario(${id}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
@@ -99,10 +106,10 @@ export class UsersController {
   async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const email = req.user.email; // Se obtiene del token JWT
     const { user, cargo, img, oldpass, newpass } = updateUserDto;
-
+    this.logger.info(`Se ha solicitado la actualizacion del usario: ${email}`)
     try {
       if (user || cargo) {
-       await this.usersService.updateUserInfo(email, user, cargo);
+        await this.usersService.updateUserInfo(email, user, cargo);
       }
 
       if (img) {
@@ -114,6 +121,7 @@ export class UsersController {
       }
 
       if (!user && !cargo && !img && (!oldpass || !newpass)) {
+        this.logger.warn(`Faltan campos para actualizar el usario: ${updateUserDto}`)
         throw new HttpException(
           'Ha ocurrido un error durante la petición.',
           HttpStatus.BAD_REQUEST,
@@ -123,6 +131,7 @@ export class UsersController {
       return { status: 'Success', message: 'User updated successfully' };
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la actualizacion del usario(${email}): ${error}`)
       if (error instanceof HttpException) {
         console.log(error)
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
@@ -143,11 +152,12 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async remove(@Param('id') id: string) {
-    
+    this.logger.info(`Se ha solicitado la eliminación del usario con id: ${id}`)
     try {
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.remove(+id);
     } catch (error) {
+      this.logger.error(`Ha ocurrido un error durante la eliminación del usario(${id}): ${error} `)
       console.log(error);
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
@@ -168,10 +178,12 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
+      this.logger.info(`Se ha soliciado el reseto de contraseña para el usario: ${resetPasswordDto}`)
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.resetPassword(resetPasswordDto.email);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la solicitud de reseto de contraseña para el usuario(${resetPasswordDto}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
@@ -191,8 +203,10 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async checkCode(@Body('code') code: string) {
     try {
+      this.logger.info('Se ha solicitado la comprobacion de codigo de cambio de contraseña')
       // Validar que el código no sea undefined y no contenga caracteres peligrosos
       if (!code || /['";\\%_]/.test(code)) {
+        this.logger.warn(`El codigo (${code}) tiene un formato invalido`)
         throw new HttpException(
           'El código proporcionado no es válido.',
           HttpStatus.BAD_REQUEST,
@@ -212,6 +226,7 @@ export class UsersController {
       return { status: 'Success', email };
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la comprobacion del codigo de cambio de contraseña(${code}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
@@ -231,9 +246,11 @@ export class UsersController {
   async newPassword(@Body() newPasswordDto: NewPasswordDto) {
     try {
       const { email, newpass } = newPasswordDto;
+      this.logger.info(`Se establece una nueva contraseña para el usario: ${email}`)
       return await this.usersService.newPassword(email, newpass);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error al establecer la nueva contraseña al usario(${newPasswordDto}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }
