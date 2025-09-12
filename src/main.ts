@@ -20,12 +20,18 @@ async function bootstrap() {
       }),
       // Log de rotación diaria
       new winston.transports.DailyRotateFile({
-        filename: 'logs/%DATE%-converter-back.txt', // Usará la fecha para nombrar los archivos
-        datePattern: 'YYYY-MM-DD', // Formato de fecha en el nombre del archivo
-        level: 'info', // Nivel de log mínimo
-        zippedArchive: true, // Comprime los logs antiguos
-        maxSize: '20m', // Tamaño máximo del archivo antes de rotar (20MB)
-        maxFiles: '14d', // Cuántos días mantener los logs
+        filename: 'logs/%DATE%-converter-back.log', // Nombre con fecha
+        datePattern: 'YYYY-MM-DD',                  // Formato de fecha en el nombre
+        level: 'info',                              // Nivel mínimo de log
+        zippedArchive: true,                        // Comprimir los antiguos
+        maxSize: '20m',                             // Máximo 20MB por archivo
+        maxFiles: '14d',                            // Mantener 14 días
+        format: winston.format.combine(
+          winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+          winston.format.printf(({ timestamp, level, message, context }) => {
+            return `${timestamp} [${level.toUpperCase()}]${context ? ' [' + context + ']' : ''} ${message}`;
+          }),
+        ),
       }),
     ],
   });
