@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('Competidores')
+@Entity('Converter_Competidores')
 export class Competitor {
   @PrimaryGeneratedColumn({name: 'Id'})
   id: number;
