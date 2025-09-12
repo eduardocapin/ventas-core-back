@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Inject, Logger } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
@@ -8,7 +8,8 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 @Controller('clients')
 @ApiBearerAuth()
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService, @Inject('LOGGER') private readonly logger) { }
+  private readonly logger = new Logger(ClientsController.name);
+  constructor(private readonly clientsService: ClientsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post('list')
@@ -17,7 +18,7 @@ export class ClientsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: PaginatedClientsDto })
   async findAll(@Body() paginatedClientsDto: PaginatedClientsDto) {
-    this.logger.info('Se ha solicitado la lista de clientes');
+    this.logger.log('Se ha solicitado la lista de clientes');
 
     this.logger.debug(`Paginacion de clientes: ${paginatedClientsDto}`);
     console.log(paginatedClientsDto)
@@ -45,7 +46,7 @@ export class ClientsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del cliente' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    this.logger.info('Se ha solicitado una busqueda de cliente');
+    this.logger.log('Se ha solicitado una busqueda de cliente');
     try {
       // Llamar al servicio y pasar los datos validados
       const cliente = await this.clientsService.findOne(id);
@@ -76,7 +77,7 @@ export class ClientsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del cliente' })
   async findAllContacts(@Param('id', ParseIntPipe) id: number) {
-    this.logger.info('Se ha solicitado la lista de conctactos de un cliente');
+    this.logger.log('Se ha solicitado la lista de conctactos de un cliente');
     try {
       // Llamar al servicio y pasar los datos validados
 
@@ -108,7 +109,7 @@ export class ClientsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del contacto' })
   async findOneContact(@Param('id', ParseIntPipe) id: number) {
-    this.logger.info('Se ha solicitado un contacto');
+    this.logger.log('Se ha solicitado un contacto');
     try {
       // Llamar al servicio y pasar los datos validados
       const contacto = await this.clientsService.findOneContact(+id);

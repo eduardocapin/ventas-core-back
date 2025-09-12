@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateImportDto } from './dto/create-import.dto';
 import { UpdateImportDto } from './dto/update-import.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,12 +8,13 @@ import { TableFieldRepository } from './repositories/table-field.repository';
 @Injectable()
 export class ImportService {
 
+  private readonly logger = new Logger(ImportService.name);
+
    constructor(
       @InjectRepository(TableNameRepository)
       private readonly tableNameRepository: TableNameRepository,
       @InjectRepository(TableFieldRepository)
-      private readonly tableFieldRepository: TableFieldRepository,
-      @Inject('LOGGER') private readonly logger
+      private readonly tableFieldRepository: TableFieldRepository
     ) {
   
     }

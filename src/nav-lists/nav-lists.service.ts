@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NavListsRepository } from './repositories/nav-list.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -6,10 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class NavListsService {
 
+  private readonly logger = new Logger(NavListsService.name);
+
   constructor(
     @InjectRepository(NavListsRepository)
-    private readonly navListRepository: NavListsRepository,
-    @Inject('LOGGER') private readonly logger
+    private readonly navListRepository: NavListsRepository
   ) {
 
   }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { PaginatedClientsDto } from './dto/paginated-client.dto';
@@ -11,12 +11,12 @@ import { Client } from './entities/client.entity';
 @Injectable()
 export class ClientsService {
 
+  private readonly logger = new Logger(ClientsService.name);
   constructor(
     @InjectRepository(ClientRepository)
     private readonly clientRepository: ClientRepository,
     @InjectRepository(ClientContactRepository)
     private readonly clientContactRepository: ClientContactRepository,
-    @Inject('LOGGER') private readonly logger
   ) {
 
   }

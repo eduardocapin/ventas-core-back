@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,10 +7,11 @@ import { ProductRepository } from './repositories/products.repository';
 @Injectable()
 export class ProductsService {
 
+  private readonly logger = new Logger(ProductsService.name);
+  
   constructor(
     @InjectRepository(ProductRepository)
     private readonly productRepository: ProductRepository,
-    @Inject('LOGGER') private readonly logger
 
   ) {
 

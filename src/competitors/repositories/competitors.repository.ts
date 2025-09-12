@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { Competitor } from "../entities/competitor.entity";
 import { DataSource, Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -9,7 +9,8 @@ import { ProductSegmentation } from "src/products/entities/product-segmentation.
 @Injectable()
 export class CompetitorRepository extends Repository<Competitor> {
 
-    constructor(@InjectRepository(Competitor) private readonly repo: Repository<Competitor>, private readonly dataSource: DataSource, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(CompetitorRepository.name);
+    constructor(@InjectRepository(Competitor) private readonly repo: Repository<Competitor>, private readonly dataSource: DataSource) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

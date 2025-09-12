@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject, Logger } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -9,7 +9,10 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 @Controller('menus')
 @ApiBearerAuth()
 export class MenusController {
-  constructor(private readonly menusService: MenusService, @Inject('LOGGER') private readonly logger) { }
+
+  private readonly logger = new Logger(MenusController.name);
+  
+  constructor(private readonly menusService: MenusService) { }
 
   @UseGuards(JwtAuthGuard)
   @Get(':menu_id/:language')
@@ -20,10 +23,12 @@ export class MenusController {
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' }) // Respuesta de error
   async getMenuItems(@Param('menu_id', ParseIntPipe) menu_id: number, @Param('language') language: string) {
     try {
+      this.logger.log(`Obtener los itedemes del menuco con id: ${menu_id} e idioma: ${language}`)
       // Llamar al servicio y pasar los datos validados
       return await this.menusService.getMenuItems(+menu_id, language);
     } catch (error) {
       console.log(error);
+      this.logger.error(`Ha ocurrido un error al obtener los itedemes del menuco con id: ${menu_id} e idioma: ${language}: ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
       }

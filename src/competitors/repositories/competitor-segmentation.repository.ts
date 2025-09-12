@@ -1,12 +1,13 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { CompetitorSegmentation } from '../entities/competitor-segmentation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 
 @EntityRepository(CompetitorSegmentation)
 export class CompetitorSegmentationRepository extends Repository<CompetitorSegmentation> {
 
-    constructor(@InjectRepository(CompetitorSegmentation) private readonly repo: Repository<CompetitorSegmentation>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(CompetitorSegmentationRepository.name);
+    constructor(@InjectRepository(CompetitorSegmentation) private readonly repo: Repository<CompetitorSegmentation>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateRejectDto } from './dto/create-reject.dto';
 import { UpdateRejectDto } from './dto/update-reject.dto';
 import { UpdateRejectCorrectiveActionDto } from './dto/update-reject-corrective-action.dto';
@@ -12,12 +12,14 @@ import { FilterDto } from 'src/filters/dto/filter.dto';
 
 @Injectable()
 export class RejectsService {
+
+  private readonly logger = new Logger(RejectsService.name);
+  
   constructor(
     @InjectRepository(RejectRepository)
     private readonly rejectRepository: RejectRepository,
     @InjectRepository(ClientRepository)
-    private readonly clientRepository: ClientRepository,
-    @Inject('LOGGER') private readonly logger) {
+    private readonly clientRepository: ClientRepository) {
 
   }
   async updateCorrectiveAction(id: number, updateRejectCorrectiveActionDto: UpdateRejectCorrectiveActionDto) {

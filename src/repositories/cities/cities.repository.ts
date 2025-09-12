@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { City } from "../entities/cities.entity";
@@ -7,7 +7,9 @@ import { City } from "../entities/cities.entity";
 @Injectable()
 export class CityRepository extends Repository<City> {
 
-    constructor(@InjectRepository(City) private readonly repo: Repository<City>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(CityRepository.name);
+    
+    constructor(@InjectRepository(City) private readonly repo: Repository<City>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

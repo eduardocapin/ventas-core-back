@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductSegmentation } from "../entities/product-segmentation.entity";
@@ -8,7 +8,9 @@ import { ProductSegmentation } from "../entities/product-segmentation.entity";
 @Injectable()
 export class ProductSegmentationRepository extends Repository<ProductSegmentation> {
 
-    constructor(@InjectRepository(ProductSegmentation) private readonly repo: Repository<ProductSegmentation>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(ProductSegmentationRepository.name);
+
+    constructor(@InjectRepository(ProductSegmentation) private readonly repo: Repository<ProductSegmentation>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { Client } from "../entities/client.entity";
@@ -10,8 +10,8 @@ import { FilterDto } from "src/filters/dto/filter.dto";
 @Injectable()
 export class ClientRepository extends Repository<Client> {
 
-
-    constructor(@InjectRepository(Client) private readonly repo: Repository<Client>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(ClientRepository.name);
+    constructor(@InjectRepository(Client) private readonly repo: Repository<Client>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

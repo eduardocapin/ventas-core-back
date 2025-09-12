@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateReasonsRejectionDto } from './dto/create-reasons-rejection.dto';
 import { UpdateReasonsRejectionDto } from './dto/update-reasons-rejection.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,13 +9,14 @@ import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ReasonsRejectionService {
+  private readonly logger = new Logger(ReasonsRejectionService.name);
+  
   constructor(
     @InjectRepository(ReasonRejectionRepository)
     private readonly reasonRejectionRepository: ReasonRejectionRepository,
     @InjectRepository(RejectRepository)
     private readonly rejectRepository: RejectRepository,
     private readonly dataSource: DataSource,
-    @Inject('LOGGER') private readonly logger
   ) {
 
   }

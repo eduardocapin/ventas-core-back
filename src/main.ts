@@ -38,6 +38,7 @@ async function bootstrap() {
     transform: true, // Convierte los parámetros de tipo string a tipo correcto
   }));
 
+  app.useLogger(logger);
   //Documentación
   const config = new DocumentBuilder()
     .setTitle('API Documentation')

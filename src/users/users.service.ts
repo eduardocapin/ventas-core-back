@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -14,6 +14,8 @@ import { DataSource } from 'typeorm';
 @Injectable()
 export class UsersService {
 
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
@@ -24,8 +26,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     private readonly utilitiesService: UtilitiesService,
-    private readonly dataSource: DataSource,
-    @Inject('LOGGER') private readonly logger) {
+    private readonly dataSource: DataSource) {
 
   }
 

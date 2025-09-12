@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject, Logger } from '@nestjs/common';
 import { CompetitorsService } from './competitors.service';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
 import { UpdateCompetitorDto } from './dto/update-competitor.dto';
@@ -9,7 +9,10 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 @Controller('competitors')
 @ApiBearerAuth() 
 export class CompetitorsController {
-  constructor(private readonly competitorsService: CompetitorsService, @Inject('LOGGER') private readonly logger) { }
+
+  private readonly logger = new Logger(CompetitorsController.name);
+
+  constructor(private readonly competitorsService: CompetitorsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -18,7 +21,7 @@ export class CompetitorsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: CreateCompetitorDto })
   async create(@Body() createCompetitorDto: CreateCompetitorDto) {
-    this.logger.info(`Se ha solicitado crear un competidor`)
+    this.logger.log(`Se ha solicitado crear un competidor`)
     this.logger.debug(createCompetitorDto)
     try {
       // Llamar al servicio y pasar los datos validados
@@ -44,7 +47,7 @@ export class CompetitorsController {
   @ApiResponse({ status: 200, description: 'Lista de competidores obtenida con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async findAll() {
-    this.logger.info(`Se ha solicitado la lista de competidores`)
+    this.logger.log(`Se ha solicitado la lista de competidores`)
     try {
       // Llamar al servicio y pasar los datos validados
       return await this.competitorsService.findAll();
@@ -69,7 +72,7 @@ export class CompetitorsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    this.logger.info('Se ha solicitado un competidor')
+    this.logger.log('Se ha solicitado un competidor')
     try {
       // Llamar al servicio y pasar los datos validados
       const competidor =  await this.competitorsService.findOneWithSegmentations(id);
@@ -98,7 +101,7 @@ export class CompetitorsController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   async findFamilies(@Param('id', ParseIntPipe) id: number) {
-    this.logger.info('Se ha solicitado las familas de un competidor')
+    this.logger.log('Se ha solicitado las familas de un competidor')
     try {
       // Llamar al servicio y pasar los datos validados
       return await this.competitorsService.findFamiliesByCompetitorId(+id);
@@ -127,7 +130,7 @@ export class CompetitorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCompetitorDto: UpdateCompetitorDto
   ) {
-    this.logger.info(`Actualizar el competidor con id:${id}`)
+    this.logger.log(`Actualizar el competidor con id:${id}`)
     try {
       const { name, product_segmentation_ids } = updateCompetitorDto;
       this.logger.debug(  `Nueva info competidor: ${updateCompetitorDto}`)
@@ -171,7 +174,7 @@ export class CompetitorsController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del competidor' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      this.logger.info(`Eliminar el competidor con id: ${id}`)
+      this.logger.log(`Eliminar el competidor con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       const result = await this.competitorsService.remove(id);
       return { status: 'Success', message: 'Competidor eliminado correctamente'};

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject, Logger } from '@nestjs/common';
 import { ReasonsRejectionService } from './reasons-rejection.service';
 import { CreateReasonsRejectionDto } from './dto/create-reasons-rejection.dto';
 import { UpdateReasonsRejectionDto } from './dto/update-reasons-rejection.dto';
@@ -9,7 +9,10 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 @Controller('reasons-rejection')
 @ApiBearerAuth() 
 export class ReasonsRejectionController {
-  constructor(private readonly reasonsRejectionService: ReasonsRejectionService, @Inject('LOGGER') private readonly logger) { }
+
+  private readonly logger = new Logger(ReasonsRejectionController.name);
+  
+  constructor(private readonly reasonsRejectionService: ReasonsRejectionService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -19,7 +22,7 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   async create(@Body() createReasonsRejectionDto: CreateReasonsRejectionDto) {
     try {
-      this.logger.info(`Creacion de un nuevo rechazo: ${createReasonsRejectionDto}`)
+      this.logger.log(`Creacion de un nuevo rechazo: ${createReasonsRejectionDto}`)
       const data = await this.reasonsRejectionService.create(createReasonsRejectionDto);
       return {status: "Success", data}
     } catch (error) {
@@ -43,7 +46,7 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   async findAll() {
     try {
-      this.logger.info(`Solicitud de los motivos de rechazo`)
+      this.logger.log(`Solicitud de los motivos de rechazo`)
       // Llamar al servicio y pasar los datos validados
       return await this.reasonsRejectionService.findAll();
     } catch (error) {
@@ -69,7 +72,7 @@ export class ReasonsRejectionController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
-      this.logger.info(`Obtener el motivo de rechazo con id: ${id}`)
+      this.logger.log(`Obtener el motivo de rechazo con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.reasonsRejectionService.findOne(+id);
     } catch (error) {
@@ -94,7 +97,7 @@ export class ReasonsRejectionController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateReasonsRejectionDto: UpdateReasonsRejectionDto) {
     try {
-      this.logger.info(`Actualizacion del motivo de rechazo (${id}): ${updateReasonsRejectionDto}`)
+      this.logger.log(`Actualizacion del motivo de rechazo (${id}): ${updateReasonsRejectionDto}`)
       console.log(updateReasonsRejectionDto)
       this.logger.debug(updateReasonsRejectionDto)
       // Llamar al servicio y pasar los datos validados
@@ -123,7 +126,7 @@ export class ReasonsRejectionController {
   @ApiParam({ name: 'id', type: Number, description: 'ID del motivo de rechazo' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      this.logger.info(`Solicitud de eliminar un motivo de rechazo con id: ${id}`)
+      this.logger.log(`Solicitud de eliminar un motivo de rechazo con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       const data = await this.reasonsRejectionService.remove(+id);
       return {status: "Success", data}

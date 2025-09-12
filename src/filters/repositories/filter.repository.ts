@@ -1,11 +1,13 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Filter } from "../entities/filter.entity";
-import { HttpException, HttpStatus, Inject } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Logger } from "@nestjs/common";
 
 export class FilterRepository extends Repository<Filter> {
 
-    constructor(@InjectRepository(Filter) private readonly repo: Repository<Filter>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(FilterRepository.name);
+    
+    constructor(@InjectRepository(Filter) private readonly repo: Repository<Filter>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

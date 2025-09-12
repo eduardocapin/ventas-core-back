@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Req, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Req, Inject, Logger } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,7 +12,10 @@ import e from 'express';
 @ApiTags('Usarios')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService, @Inject('LOGGER') private readonly logger) { }
+
+  private readonly logger = new Logger(UsersController.name);
+  
+  constructor(private readonly usersService: UsersService) { }
 
 
   @Post('login')
@@ -23,7 +26,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async login(@Body() loginDto: LoginDto) {
     try {
-      this.logger.info(`Se ha solicitado el login para: ${loginDto}`)
+      this.logger.log(`Se ha solicitado el login para: ${loginDto}`)
       // Llamar al servicio y pasar los datos validados
       const { email, password } = loginDto;
 
@@ -52,7 +55,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      this.logger.info('Se ha solicitado la creacion de un usuario')
+      this.logger.log('Se ha solicitado la creacion de un usuario')
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.create(createUserDto);
     } catch (error) {
@@ -79,7 +82,7 @@ export class UsersController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
 
     try {
-      this.logger.info(`Se ha solicitado el usario con id: ${id}`)
+      this.logger.log(`Se ha solicitado el usario con id: ${id}`)
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.findOneById(+id);
     } catch (error) {
@@ -106,7 +109,7 @@ export class UsersController {
   async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const email = req.user.email; // Se obtiene del token JWT
     const { user, cargo, img, oldpass, newpass } = updateUserDto;
-    this.logger.info(`Se ha solicitado la actualizacion del usario: ${email}`)
+    this.logger.log(`Se ha solicitado la actualizacion del usario: ${email}`)
     try {
       if (user || cargo) {
         await this.usersService.updateUserInfo(email, user, cargo);
@@ -152,7 +155,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async remove(@Param('id') id: string) {
-    this.logger.info(`Se ha solicitado la eliminación del usario con id: ${id}`)
+    this.logger.log(`Se ha solicitado la eliminación del usario con id: ${id}`)
     try {
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.remove(+id);
@@ -178,7 +181,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
-      this.logger.info(`Se ha soliciado el reseto de contraseña para el usario: ${resetPasswordDto}`)
+      this.logger.log(`Se ha soliciado el reseto de contraseña para el usario: ${resetPasswordDto}`)
       // Llamar al servicio y pasar los datos validados
       return await this.usersService.resetPassword(resetPasswordDto.email);
     } catch (error) {
@@ -203,7 +206,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async checkCode(@Body('code') code: string) {
     try {
-      this.logger.info('Se ha solicitado la comprobacion de codigo de cambio de contraseña')
+      this.logger.log('Se ha solicitado la comprobacion de codigo de cambio de contraseña')
       // Validar que el código no sea undefined y no contenga caracteres peligrosos
       if (!code || /['";\\%_]/.test(code)) {
         this.logger.warn(`El codigo (${code}) tiene un formato invalido`)
@@ -246,7 +249,7 @@ export class UsersController {
   async newPassword(@Body() newPasswordDto: NewPasswordDto) {
     try {
       const { email, newpass } = newPasswordDto;
-      this.logger.info(`Se establece una nueva contraseña para el usario: ${email}`)
+      this.logger.log(`Se establece una nueva contraseña para el usario: ${email}`)
       return await this.usersService.newPassword(email, newpass);
     } catch (error) {
       console.log(error);

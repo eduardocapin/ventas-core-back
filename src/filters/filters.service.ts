@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompetitorRepository } from 'src/competitors/repositories/competitors.repository';
@@ -18,6 +18,8 @@ import { SalesmanRepository } from 'src/repositories/salesmen/salesmen.repositor
 
 @Injectable()
 export class FiltersService {
+
+  private readonly logger = new Logger(FiltersService.name);
 
   constructor(
     @InjectRepository(CompetitorRepository)
@@ -41,8 +43,7 @@ export class FiltersService {
     @InjectRepository(SymbolRepository)
     private readonly symbolRepository: SymbolRepository,
     @InjectRepository(SalesmanRepository)
-    private readonly salesmanRepository: SalesmanRepository,
-    @Inject('LOGGER') private readonly logger
+    private readonly salesmanRepository: SalesmanRepository
 
   ) { }
 
@@ -53,6 +54,7 @@ export class FiltersService {
   async removeSaved(id: number) {
     const filter = await this.findOne(id);
     if (!filter) {
+      this.logger.warn(`Filtro guardado con id ${id} no encontrado`)
       throw new HttpException('Filtro no encontrado.', HttpStatus.NOT_FOUND);
     }
     return await this.savedFilterRepository.removeById(id);
@@ -64,6 +66,7 @@ export class FiltersService {
 
     const existingFilter = await this.savedFilterRepository.findByNameCompenetIdEmail(componentId,email, nombre);
     if (existingFilter) {
+      this.logger.warn(`Filtro guardado con nombre(${nombre}) ya existente`)
       throw new HttpException('Filtro con nombre ya existente' ,HttpStatus.BAD_REQUEST);
     }
 

@@ -1,12 +1,14 @@
 import { Repository, UpdateResult } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
 
-    constructor(@InjectRepository(User) private readonly repo: Repository<User>, @Inject('LOGGER') private readonly logger) {
+    private readonly logger = new Logger(UserRepository.name);
+    
+    constructor(@InjectRepository(User) private readonly repo: Repository<User>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
 

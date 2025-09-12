@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MenusRepository } from './repositories/menus.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MenusService {
+
+  private readonly logger = new Logger(MenusService.name);
+  
   constructor(
     @InjectRepository(MenusRepository)
-    private readonly menusRepository: MenusRepository,
-    @Inject('LOGGER') private readonly logger
+    private readonly menusRepository: MenusRepository
   ) {
 
   }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { ListItem } from "../entities/nav-list.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -6,8 +6,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class NavListsRepository extends Repository<ListItem> {
 
+  private readonly logger = new Logger(NavListsRepository.name);
 
-  constructor(@InjectRepository(ListItem) private readonly repo: Repository<ListItem>, @Inject('LOGGER') private readonly logger) {
+  constructor(@InjectRepository(ListItem) private readonly repo: Repository<ListItem>) {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 

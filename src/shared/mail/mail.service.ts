@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { UtilitiesService } from 'src/shared/utilities/utilities.service';
 import * as nodemailer from 'nodemailer';
 import { User } from 'src/users/entities/user.entity';
@@ -8,8 +8,10 @@ export class MailService {
 
     private transporter;
 
+    private readonly logger = new Logger(MailService.name);
+    
     constructor(
-        private readonly utilitiesService: UtilitiesService, @Inject('LOGGER') private readonly logger) {
+        private readonly utilitiesService: UtilitiesService) {
 
         this.transporter = nodemailer.createTransport({
             service: "gmail",
@@ -63,7 +65,7 @@ export class MailService {
         try {
             await this.transporter.sendMail(mailOptions);
             console.log("Correo enviado con éxito");
-            this.logger.info(`Correo de reseto enviado con exito a: ${to}`)
+            this.logger.log(`Correo de reseto enviado con exito a: ${to}`)
         } catch (error) {
             console.error("Error al enviar el correo:", error);
             this.logger.error(`Error al enviar el correo de reseto de contraseña a: ${to}, ${error}`)

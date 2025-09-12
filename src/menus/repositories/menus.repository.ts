@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { MenuItem } from "../entities/menu.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -6,8 +6,9 @@ import { Repository } from "typeorm";
 @Injectable()
 export class MenusRepository extends Repository<MenuItem> {
 
+  private readonly logger = new Logger(MenusRepository.name);
 
-  constructor(@InjectRepository(MenuItem) private readonly repo: Repository<MenuItem>, @Inject('LOGGER') private readonly logger) {
+  constructor(@InjectRepository(MenuItem) private readonly repo: Repository<MenuItem>) {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 

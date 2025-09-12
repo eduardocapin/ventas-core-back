@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import handlebars from "handlebars";
 @Injectable()
 export class UtilitiesService {
+
+    private readonly logger = new Logger(UtilitiesService.name);
+    
     generateCode(n: number): string {
         let result = "";
         const chars =
