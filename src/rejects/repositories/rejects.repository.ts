@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
+import { IsNull, Repository, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { Rejection } from "../entities/reject.entity";
 import { PaginatedRejectsDto } from "../dto/paginated-reject.dto";
 import { Product } from "src/products/entities/product.entity";
@@ -15,7 +15,7 @@ import { ClientSegmentation } from "src/clients/entities/client-segmentation.ent
 export class RejectRepository extends Repository<Rejection> {
 
     private readonly logger = new Logger(RejectRepository.name);
-    
+
     constructor(@InjectRepository(Rejection) private readonly repo: Repository<Rejection>) {
         super(repo.target, repo.manager, repo.queryRunner);
     }
@@ -142,7 +142,12 @@ export class RejectRepository extends Repository<Rejection> {
     }
 
     async findById(id: number): Promise<Rejection> {
-        return await this.repo.findOne({ where: { id, deleted: false } });
+        return await this.repo.findOne({
+            where: [
+                { id, deleted: false },
+                { id, deleted: IsNull() }
+            ]
+        });
     }
 
     async removeById(id: number): Promise<UpdateResult> {
@@ -997,7 +1002,7 @@ export class RejectRepository extends Repository<Rejection> {
             ])
             .groupBy(`sc${n}.segmentation_value, r.reason_rejection, sc${n}.name`)
             .getRawMany();
-        
-            return results
+
+        return results
     }
 }
