@@ -109,5 +109,12 @@ export class Rejection {
 
   @Column({name:'BajaEnERP',type: 'bit', default: () => '0'})
   deleted: boolean;
+
+    @Column({name:'idEmpresa', type: 'int', nullable: true })
+  empresa_id: number;
+
+  @Column({name:'idEmpresaERP', length: 45, nullable: true })
+  empresa_name: string;
+
 }
 

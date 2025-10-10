@@ -28,6 +28,7 @@ export class RejectRepository extends Repository<Rejection> {
             itemsPerPage,
             sortColumn,
             sortDirection,
+            selectedEmpresa
         } = paginatedRejectsDto;
 
         console.log(paginatedRejectsDto)
@@ -46,6 +47,11 @@ export class RejectRepository extends Repository<Rejection> {
             ) // JOIN segmentación 2
             .where('(r.deleted = 0 OR r.deleted IS NULL)');
 
+        //  Filtro de empresa si no es 'all'
+
+        if (selectedEmpresa && selectedEmpresa !== 'all') {
+            query.andWhere('r.empresa_id = :empresaId', { empresaId: selectedEmpresa });
+        }
 
 
         // Seleccionar todos los campos requeridos
@@ -88,6 +94,8 @@ export class RejectRepository extends Repository<Rejection> {
             's1.segmentation_value AS family',
             's1.segmentation_value_id AS family_id',
             's2.segmentation_value AS subfamily',
+            'r.empresa_id',
+            'r.empresa_name'
         ]);
         // Aplicar filtros dinámicos
         if (selectedFilters && Array.isArray(selectedFilters)) {
@@ -123,7 +131,9 @@ export class RejectRepository extends Repository<Rejection> {
               r.pvp_competitor LIKE :search OR r.competitor_promo LIKE :search OR
               r.competitor_name LIKE :search OR r.corrective_action_value LIKE :search OR
               r.corrective_action_symbol LIKE :search OR r.corrective_action_status LIKE :search OR
-              r.salesman_proposal LIKE :search OR r.notes LIKE :search)`,
+              r.salesman_proposal LIKE :search OR r.notes LIKE :search) OR
+              r.empresa_name LIKE :search`,
+              
                 { search: `%${searchTerm}%` },
             );
         }
