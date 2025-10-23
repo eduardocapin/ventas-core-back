@@ -117,5 +117,32 @@ export class FiltersService {
     return await this.provinceRepository.getFilter()
   }
 
+  /**
+   * Obtiene la configuración de filtros para un componente específico
+   * Esto incluye el campo correcto de empresa_id según el contexto del módulo
+   * A configurar segun convenga se haga mas paginas en la app
+   */
+  async getFilterConfig(componentId: string) {
+    // Mapeo de componentId al campo correcto de empresa_id
+    const empresaFieldMap: { [key: string]: string } = {
+      'dashboard-general': 'r.empresa_id',  
+      'rechazos-general': 'r.empresa_id',   
+      'clients-general': 'c.empresa_id',   
+      
+
+      // Agregar más módulos según sea necesario aqui abajo.
+
+    };
+
+    const empresaFieldName = empresaFieldMap[componentId] || 'r.empresa_id'; // valor por defecto
+
+    this.logger.log(`Configuración de filtro para ${componentId}: empresaFieldName = ${empresaFieldName}`);
+
+    return {
+      componentId,
+      empresaFieldName,
+    };
+  }
+
 
 }
