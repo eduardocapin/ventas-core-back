@@ -335,28 +335,7 @@ export class FiltersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('config/:componentId')
-  @ApiOperation({ summary: 'Obtener configuración de filtros para un componente específico' })
-  @ApiParam({ name: 'componentId', description: 'ID del componente' })
-  @ApiResponse({ status: 200, description: 'Configuración obtenida correctamente.' })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  async getFilterConfig(@Param('componentId') componentId: string) {
-    try {
-      this.logger.log(`Se ha solicitado la configuración de filtros para el componentId: ${componentId}`)
-      return await this.filtersService.getFilterConfig(componentId);
-    } catch (error) {
-      console.log(error);
-      this.logger.error(`Ha ocurrido un error al obtener la configuración de filtros para el componentId(${componentId}): ${error}`)
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+  
 
 
 }
