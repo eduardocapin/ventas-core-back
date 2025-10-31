@@ -19,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RepositoriesModule } from './repositories/repositories.module';
 import { SharedModule } from './shared/shared.module';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { EmpresasModule } from './empresas/empresas.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -46,7 +47,7 @@ import { ConfigurationModule } from './configuration/configuration.module';
       };
     }
   }),
-    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule,
+    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
