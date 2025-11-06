@@ -29,11 +29,12 @@ export class ProductSegmentationRepository extends Repository<ProductSegmentatio
         */
        const segmentations = await this.createQueryBuilder('segmentation')
             .select([
-                'DISTINCT segmentation.segmentation_value_id AS id',
-                'segmentation.name AS name',
+                'DISTINCT segmentation.segmentation_value AS name',
+                'segmentation.segmentation_value_id AS id',
             ])
             .where('segmentation.deleted = :deleted', { deleted: false })
-            .orderBy('segmentation.name', 'ASC')
+            .andWhere('segmentation.segmentation_number = :n', { n })
+            .orderBy('segmentation.segmentation_value', 'ASC')
             .getRawMany();
         
 
@@ -43,8 +44,8 @@ export class ProductSegmentationRepository extends Repository<ProductSegmentatio
         }
 
         return segmentations.map((segmentation) => ({
-            id: segmentation.segmentation_value_id,
-            name: segmentation.segmentation_value,
+            id: segmentation.id,
+            name: segmentation.name,
         }));
     }
 
