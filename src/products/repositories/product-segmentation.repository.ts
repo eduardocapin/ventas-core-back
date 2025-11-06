@@ -15,6 +15,7 @@ export class ProductSegmentationRepository extends Repository<ProductSegmentatio
     }
 
     async getFilter(n: number) {
+        /*
         const segmentations = await this.find({
             where: [
                 { deleted: false, segmentation_number: n },
@@ -25,6 +26,16 @@ export class ProductSegmentationRepository extends Repository<ProductSegmentatio
             },
             select: ['segmentation_value_id', 'segmentation_value',],
         });
+        */
+       const segmentations = await this.createQueryBuilder('segmentation')
+            .select([
+                'DISTINCT segmentation.segmentation_value_id AS id',
+                'segmentation.name AS name',
+            ])
+            .where('segmentation.deleted = :deleted', { deleted: false })
+            .orderBy('segmentation.name', 'ASC')
+            .getRawMany();
+        
 
         if (!segmentations.length) {
             this.logger.warn(`No se econtraron valores para la segmentacion de producto: ${n}`)

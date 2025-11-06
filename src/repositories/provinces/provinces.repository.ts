@@ -13,6 +13,7 @@ export class ProvinceRepository extends Repository<Province> {
     }
 
     async getFilter() {
+        /*
         const provinces = await this.find({
             where: [
                 { deleted: false },
@@ -23,10 +24,17 @@ export class ProvinceRepository extends Repository<Province> {
             },
             select: ['id', 'name',],
         });
-
+        */
+    const provinces = await this.createQueryBuilder('province')
+            .select([
+                'DISTINCT province.province_ERP_id AS id',
+                'province.name AS name',
+            ])
+            .where('province.deleted = :deleted', { deleted: false })
+            .orderBy('province.name', 'ASC')
+            .getRawMany();
         if (!provinces.length) {
-            this.logger.warn('No se encontraron provincias')
-            throw new HttpException('No se encontraron provincias.', HttpStatus.NOT_FOUND);
+            throw new HttpException('No se encontraron poblaciones.', HttpStatus.NOT_FOUND);
         }
 
         return provinces
