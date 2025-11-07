@@ -183,31 +183,6 @@ export class FiltersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':componentId')
-  @ApiOperation({ summary: 'Obtener filtros por componentId' })
-  @ApiParam({ name: 'componentId', description: 'ID del componente' })
-  @ApiResponse({ status: 200, description: 'Filtros obtenidos correctamente.' })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
-  async findFiltersByComponetId(@Param('componentId') componentId: string) {
-    try {
-      // Llamar al servicio y pasar los datos validados
-      this.logger.log(`Se ha solicitado la lista de filtros para el componentId: ${componentId}`)
-      return await this.filtersService.findFiltersByComponetId(componentId);
-    } catch (error) {
-      console.log(error);
-      this.logger.error(`Ha ocurrido un error al solicitar la lista de filtros para el componentId(${componentId}): ${error}`)
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get('segmentation/:n')
   @ApiOperation({ summary: 'Obtener segmentación de clientes por el número de segmentación' })
   @ApiParam({ name: 'n', description: 'Número de segmentación', type: Number })
@@ -246,6 +221,31 @@ export class FiltersController {
     } catch (error) {
       console.log(error);
       this.logger.error(`Ha ocurrido un error durante la carga del filtro de segmentacion de producto(${n}): ${error}`)
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('config/:componentId')
+  @ApiOperation({ summary: 'Obtener configuración de filtros por componentId' })
+  @ApiParam({ name: 'componentId', description: 'ID del componente' })
+  @ApiResponse({ status: 200, description: 'Configuración obtenida correctamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getFilterConfig(@Param('componentId') componentId: string) {
+    try {
+      this.logger.log(`Se ha solicitado la configuración de filtros para el componentId: ${componentId}`)
+      // Llamar al servicio y pasar los datos validados
+      return await this.filtersService.getFilterConfig(componentId);
+    } catch (error) {
+      console.log(error);
+      this.logger.error(`Ha ocurrido un error al solicitar la configuración de filtros para el componentId(${componentId}): ${error}`)
       if (error instanceof HttpException) {
         throw error;
       }
@@ -335,7 +335,31 @@ export class FiltersController {
     }
   }
 
-  
+  // IMPORTANTE: Esta ruta debe estar al final porque es genérica y capturaría otras rutas si estuviera antes
+  @UseGuards(JwtAuthGuard)
+  @Get(':componentId')
+  @ApiOperation({ summary: 'Obtener filtros por componentId' })
+  @ApiParam({ name: 'componentId', description: 'ID del componente' })
+  @ApiResponse({ status: 200, description: 'Filtros obtenidos correctamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async findFiltersByComponetId(@Param('componentId') componentId: string) {
+    try {
+      // Llamar al servicio y pasar los datos validados
+      this.logger.log(`Se ha solicitado la lista de filtros para el componentId: ${componentId}`)
+      return await this.filtersService.findFiltersByComponetId(componentId);
+    } catch (error) {
+      console.log(error);
+      this.logger.error(`Ha ocurrido un error al solicitar la lista de filtros para el componentId(${componentId}): ${error}`)
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+  }
 
 
 }

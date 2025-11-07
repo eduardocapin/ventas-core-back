@@ -117,5 +117,31 @@ export class FiltersService {
     return await this.provinceRepository.getFilter()
   }
 
+  async getFilterConfig(componentId: string) {
+    // Configuración según el componente
+    const configs = {
+      'dashboard-general': {
+        empresaFieldName: 'r.empresa_id'
+      },
+      'rechazos-general': {
+        empresaFieldName: 'r.empresa_id'
+      },
+      'clients-general': {
+        empresaFieldName: 'c.empresa_id'
+      },
+    };
+
+    const config = configs[componentId];
+    if (!config) {
+      this.logger.warn(`Configuración no encontrada para componentId: ${componentId}`)
+      // Retornar configuración por defecto
+      return {
+        empresaFieldName: 'r.empresa_id'
+      };
+    }
+
+    return config;
+  }
+
 
 }
