@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -133,6 +134,98 @@ export class UsersService {
       });
     } catch (error) {
       this.logger.error(`Error al obtener usuarios: ${error}`);
+      throw new HttpException(
+        'Error al obtener usuarios',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findAllPaginated(paginatedUsersDto: PaginatedUsersDto) {
+    try {
+      const { searchTerm, currentPage, itemsPerPage, sortColumn, sortDirection } = paginatedUsersDto;
+      
+      // Construir query builder
+      const queryBuilder = this.userRepository.createQueryBuilder('user')
+        .leftJoinAndSelect('user.roles', 'role')
+        .leftJoinAndSelect('role.permissions', 'rolePermission')
+        .leftJoinAndSelect('user.permissions', 'userPermission')
+        .where('user.deleted = :deleted', { deleted: 0 }); // Filtrar usuarios no eliminados
+
+      // Aplicar búsqueda
+      if (searchTerm && searchTerm.trim() !== '') {
+        queryBuilder.andWhere(
+          '(user.name LIKE :searchTerm OR user.email LIKE :searchTerm OR user.position_company LIKE :searchTerm)',
+          { searchTerm: `%${searchTerm}%` }
+        );
+      }
+
+      // Aplicar ordenamiento
+      if (sortColumn && sortDirection) {
+        const direction = sortDirection.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+        queryBuilder.orderBy(`user.${sortColumn}`, direction);
+      } else {
+        queryBuilder.orderBy('user.name', 'ASC');
+      }
+
+      // Calcular offset
+      const skip = (currentPage - 1) * itemsPerPage;
+
+      // Obtener total y datos paginados
+      const [users, totalItems] = await queryBuilder
+        .skip(skip)
+        .take(itemsPerPage)
+        .getManyAndCount();
+
+      // Mapear usuarios para incluir información clara de roles y permisos
+      const mappedUsers = users.map(user => {
+        // Obtener permisos directos del usuario
+        const directPermissions = user.permissions.map(permission => ({
+          id: permission.id,
+          name: permission.nombre,
+          description: permission.descripcion
+        }));
+
+        // Obtener permisos que vienen de los roles
+        const rolePermissionsMap = new Map();
+        user.roles.forEach(role => {
+          if (role.permissions) {
+            role.permissions.forEach(permission => {
+              rolePermissionsMap.set(permission.id, {
+                id: permission.id,
+                name: permission.nombre,
+                description: permission.descripcion
+              });
+            });
+          }
+        });
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          position_company: user.position_company,
+          image: user.image,
+          deleted: user.deleted,
+          roles: user.roles.map(role => ({
+            id: role.id,
+            name: role.nombre,
+            description: role.descripcion
+          })),
+          permissions: directPermissions,
+          rolePermissions: Array.from(rolePermissionsMap.values())
+        };
+      });
+
+      return {
+        items: mappedUsers,
+        totalItems,
+        currentPage,
+        itemsPerPage,
+        totalPages: Math.ceil(totalItems / itemsPerPage)
+      };
+    } catch (error) {
+      this.logger.error(`Error al obtener usuarios paginados: ${error}`);
       throw new HttpException(
         'Error al obtener usuarios',
         HttpStatus.INTERNAL_SERVER_ERROR,

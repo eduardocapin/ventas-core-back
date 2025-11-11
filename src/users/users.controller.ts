@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from './dto/login.dto';
+import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
@@ -53,16 +54,17 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @Roles('Admin')
   @Permissions('VISUALIZADO_USUARIOS')
-  @Get()
+  @Post('list')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Obtener todos los usuarios con roles y permisos (Admin o con permiso VISUALIZADO_USUARIOS)' })
+  @ApiOperation({ summary: 'Obtener usuarios paginados con roles y permisos (Admin o con permiso VISUALIZADO_USUARIOS)' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios con roles y permisos' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  async findAll() {
+  @ApiBody({ type: PaginatedUsersDto })
+  async findAll(@Body() paginatedUsersDto: PaginatedUsersDto) {
     try {
-      this.logger.log('Se ha solicitado la lista de todos los usuarios');
-      return await this.usersService.findAll();
+      this.logger.log('Se ha solicitado la lista de todos los usuarios paginados');
+      return await this.usersService.findAllPaginated(paginatedUsersDto);
     } catch (error) {
       this.logger.error(`Error al obtener usuarios: ${error}`);
       throw new HttpException(
