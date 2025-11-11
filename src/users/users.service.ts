@@ -416,4 +416,34 @@ export class UsersService {
       );
     }
   }
+
+  async deleteUser(userId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId }
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Borrado lógico: actualizar el campo BajaEnERP a true
+      await this.dataSource.query(
+        `UPDATE Converter_Usuarios SET BajaEnERP = 1 WHERE Id = @0`,
+        [userId]
+      );
+
+      this.logger.log(`Usuario ${userId} marcado como eliminado (borrado lógico)`);
+      return { status: 'Success', message: 'Usuario eliminado correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al eliminar usuario: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al eliminar usuario: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

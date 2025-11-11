@@ -99,7 +99,7 @@ export class UsersController {
       );
     }
   }
-  
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Get(':id')
@@ -391,6 +391,31 @@ export class UsersController {
       }
       throw new HttpException(
         { message: 'Error al remover permiso', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
+  @Delete(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Eliminar usuario (borrado lógico - Solo Admin)' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del usuario a eliminar' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado correctamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado: Solo Admin' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    try {
+      this.logger.log(`Eliminando usuario con ID: ${id}`);
+      return await this.usersService.deleteUser(id);
+    } catch (error) {
+      this.logger.error(`Error al eliminar usuario: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error al eliminar usuario', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
