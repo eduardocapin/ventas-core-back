@@ -20,6 +20,7 @@ import { RepositoriesModule } from './repositories/repositories.module';
 import { SharedModule } from './shared/shared.module';
 import { ConfigurationModule } from './configuration/configuration.module';
 import { EmpresasModule } from './empresas/empresas.module';
+import { AuthorizationModule } from './authorization/authorization.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -47,7 +48,7 @@ import { EmpresasModule } from './empresas/empresas.module';
       };
     }
   }),
-    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule,
+    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

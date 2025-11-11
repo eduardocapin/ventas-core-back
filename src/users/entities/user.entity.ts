@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Role } from 'src/authorization/entities/role.entity';
+import { Permission } from 'src/authorization/entities/permission.entity';
 
 @Entity('Converter_UsuariosWeb')
 export class User {
@@ -25,4 +27,22 @@ export class User {
 
   @Column({name:'Imagen', length: 250, nullable: true })
   image: string;
+
+  // Relación Many-to-Many con Role a través de Converter_UsuariosRoles
+  @ManyToMany(() => Role, role => role.users)
+  @JoinTable({
+    name: 'Converter_UsuariosRoles',
+    joinColumn: { name: 'usuario_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'rol_id', referencedColumnName: 'id' }
+  })
+  roles: Role[];
+
+  // Relación Many-to-Many con Permission a través de Converter_UsuariosPermisos
+  @ManyToMany(() => Permission, permission => permission.users)
+  @JoinTable({
+    name: 'Converter_UsuariosPermisos',
+    joinColumn: { name: 'Usuario_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'Permiso_id', referencedColumnName: 'id' }
+  })
+  permissions: Permission[];
 }

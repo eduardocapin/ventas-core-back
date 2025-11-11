@@ -7,6 +7,10 @@ import { JwtAuthGuard } from '../guards/jwt-auth/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { Permissions } from '../authorization/decorators/permissions.decorator';
+import { Roles } from '../authorization/decorators/roles.decorator';
+import { RolesGuard } from '../authorization/guards/roles.guard';
 import e from 'express';
 
 @ApiTags('Usarios')
@@ -46,12 +50,15 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @Post()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Crear un nuevo usuario' })
+  @ApiOperation({ summary: 'Crear un nuevo usuario (Solo Admin)' })
   @ApiBody({ type: CreateUserDto, description: 'Datos del usuario a crear' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos de usuario inválidos' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado: Solo Admin' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -71,12 +78,14 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @Get(':id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Obtener usuario por ID' })
+  @ApiOperation({ summary: 'Obtener usuario por ID (Solo Admin)' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado: Solo Admin' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -147,11 +156,14 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @Delete(':id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Eliminar usuario por ID' })
+  @ApiOperation({ summary: 'Eliminar usuario por ID (Solo Admin)' })
   @ApiParam({ name: 'id', type: String, description: 'ID del usuario a eliminar' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado: Solo Admin' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   async remove(@Param('id') id: string) {
