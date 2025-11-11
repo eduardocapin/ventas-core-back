@@ -94,8 +94,14 @@ export class AuthorizationService {
   /**
    * Obtener todos los permisos
    */
-  async getAllPermissions(): Promise<Permission[]> {
-    return this.permissionRepository.findAllPermissions();
+  async getAllPermissions(): Promise<any[]> {
+    const permissions = await this.permissionRepository.findAllPermissions();
+    // Mapear los nombres de las propiedades para el frontend
+    return permissions.map(permission => ({
+      id: permission.id,
+      name: permission.nombre,
+      description: permission.descripcion
+    }));
   }
 
   /**

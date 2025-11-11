@@ -50,6 +50,28 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+  @Roles('Admin')
+  @Permissions('VISUALIZADO_USUARIOS')
+  @Get()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener todos los usuarios con roles y permisos (Admin o con permiso VISUALIZADO_USUARIOS)' })
+  @ApiResponse({ status: 200, description: 'Lista de usuarios con roles y permisos' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
+  async findAll() {
+    try {
+      this.logger.log('Se ha solicitado la lista de todos los usuarios');
+      return await this.usersService.findAll();
+    } catch (error) {
+      this.logger.error(`Error al obtener usuarios: ${error}`);
+      throw new HttpException(
+        { message: 'Error al obtener usuarios', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Post()
@@ -77,7 +99,7 @@ export class UsersController {
       );
     }
   }
-
+  
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Get(':id')
@@ -271,6 +293,104 @@ export class UsersController {
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Endpoints para gestión de roles
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_ROLES_USUARIOS')
+  @Post('assign-role')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Asignar rol a usuario (requiere permiso ASIGNACION_ROLES_USUARIOS)' })
+  @ApiResponse({ status: 200, description: 'Rol asignado correctamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async assignRole(@Body() body: { userId: number; roleId: number }) {
+    try {
+      this.logger.log(`Asignando rol ${body.roleId} al usuario ${body.userId}`);
+      return await this.usersService.assignRole(body.userId, body.roleId);
+    } catch (error) {
+      this.logger.error(`Error al asignar rol: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error al asignar rol', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_ROLES_USUARIOS')
+  @Post('remove-role')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Quitar rol a usuario (requiere permiso ASIGNACION_ROLES_USUARIOS)' })
+  @ApiResponse({ status: 200, description: 'Rol removido correctamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async removeRole(@Body() body: { userId: number; roleId: number }) {
+    try {
+      this.logger.log(`Removiendo rol ${body.roleId} del usuario ${body.userId}`);
+      return await this.usersService.removeRole(body.userId, body.roleId);
+    } catch (error) {
+      this.logger.error(`Error al remover rol: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error al remover rol', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Endpoints para gestión de permisos
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_PERMISOS_USUARIOS')
+  @Post('assign-permission')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Asignar permiso a usuario (requiere permiso ASIGNACION_PERMISOS_USUARIOS)' })
+  @ApiResponse({ status: 200, description: 'Permiso asignado correctamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async assignPermission(@Body() body: { userId: number; permissionId: number }) {
+    try {
+      this.logger.log(`Asignando permiso ${body.permissionId} al usuario ${body.userId}`);
+      return await this.usersService.assignPermission(body.userId, body.permissionId);
+    } catch (error) {
+      this.logger.error(`Error al asignar permiso: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error al asignar permiso', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_PERMISOS_USUARIOS')
+  @Post('remove-permission')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Quitar permiso a usuario (requiere permiso ASIGNACION_PERMISOS_USUARIOS)' })
+  @ApiResponse({ status: 200, description: 'Permiso removido correctamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async removePermission(@Body() body: { userId: number; permissionId: number }) {
+    try {
+      this.logger.log(`Removiendo permiso ${body.permissionId} del usuario ${body.userId}`);
+      return await this.usersService.removePermission(body.userId, body.permissionId);
+    } catch (error) {
+      this.logger.error(`Error al remover permiso: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error al remover permiso', error },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

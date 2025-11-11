@@ -86,6 +86,60 @@ export class UsersService {
     return { status: "Success", data: result }
   }
 
+  async findAll() {
+    try {
+      const users = await this.userRepository.find({
+        relations: ['roles', 'roles.permissions', 'permissions'],
+      });
+      
+      // Mapear usuarios para incluir información clara de roles y permisos
+      return users.map(user => {
+        // Obtener permisos directos del usuario
+        const directPermissions = user.permissions.map(permission => ({
+          id: permission.id,
+          name: permission.nombre,
+          description: permission.descripcion
+        }));
+
+        // Obtener permisos que vienen de los roles
+        const rolePermissionsMap = new Map();
+        user.roles.forEach(role => {
+          if (role.permissions) {
+            role.permissions.forEach(permission => {
+              rolePermissionsMap.set(permission.id, {
+                id: permission.id,
+                name: permission.nombre,
+                description: permission.descripcion
+              });
+            });
+          }
+        });
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          position_company: user.position_company,
+          image: user.image,
+          deleted: user.deleted,
+          roles: user.roles.map(role => ({
+            id: role.id,
+            name: role.nombre,
+            description: role.descripcion
+          })),
+          permissions: directPermissions,
+          rolePermissions: Array.from(rolePermissionsMap.values())
+        };
+      });
+    } catch (error) {
+      this.logger.error(`Error al obtener usuarios: ${error}`);
+      throw new HttpException(
+        'Error al obtener usuarios',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async create(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
 
@@ -211,5 +265,155 @@ export class UsersService {
     user.password = hashedPassword;
     const result = this.userRepository.save(user)
     return { status: 'Success', data: result };
+  }
+
+  // Gestión de roles
+  async assignRole(userId: number, roleId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['roles']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si el rol ya está asignado
+      const hasRole = user.roles.some(role => role.id === roleId);
+      if (hasRole) {
+        throw new HttpException('El usuario ya tiene este rol', HttpStatus.BAD_REQUEST);
+      }
+
+      // Asignar rol mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `INSERT INTO Converter_UsuariosRoles (usuario_id, rol_id) VALUES (@0, @1)`,
+        [userId, roleId]
+      );
+
+      this.logger.log(`Rol ${roleId} asignado al usuario ${userId}`);
+      return { status: 'Success', message: 'Rol asignado correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al asignar rol: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al asignar rol: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removeRole(userId: number, roleId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['roles']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si el usuario tiene el rol
+      const hasRole = user.roles.some(role => role.id === roleId);
+      if (!hasRole) {
+        throw new HttpException('El usuario no tiene este rol', HttpStatus.BAD_REQUEST);
+      }
+
+      // Eliminar rol mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `DELETE FROM Converter_UsuariosRoles WHERE usuario_id = @0 AND rol_id = @1`,
+        [userId, roleId]
+      );
+
+      this.logger.log(`Rol ${roleId} removido del usuario ${userId}`);
+      return { status: 'Success', message: 'Rol removido correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al remover rol: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al remover rol: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Gestión de permisos
+  async assignPermission(userId: number, permissionId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['permissions']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si el permiso ya está asignado
+      const hasPermission = user.permissions.some(permission => permission.id === permissionId);
+      if (hasPermission) {
+        throw new HttpException('El usuario ya tiene este permiso', HttpStatus.BAD_REQUEST);
+      }
+
+      // Asignar permiso mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `INSERT INTO Converter_UsuariosPermisos (Usuario_id, Permiso_id) VALUES (@0, @1)`,
+        [userId, permissionId]
+      );
+
+      this.logger.log(`Permiso ${permissionId} asignado al usuario ${userId}`);
+      return { status: 'Success', message: 'Permiso asignado correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al asignar permiso: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al asignar permiso: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removePermission(userId: number, permissionId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['permissions']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si el usuario tiene el permiso
+      const hasPermission = user.permissions.some(permission => permission.id === permissionId);
+      if (!hasPermission) {
+        throw new HttpException('El usuario no tiene este permiso', HttpStatus.BAD_REQUEST);
+      }
+
+      // Eliminar permiso mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `DELETE FROM Converter_UsuariosPermisos WHERE Usuario_id = @0 AND Permiso_id = @1`,
+        [userId, permissionId]
+      );
+
+      this.logger.log(`Permiso ${permissionId} removido del usuario ${userId}`);
+      return { status: 'Success', message: 'Permiso removido correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al remover permiso: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al remover permiso: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
