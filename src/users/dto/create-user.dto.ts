@@ -1,26 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsEmail, IsString, Length, IsPhoneNumber, Matches } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, Length, IsOptional, Matches, IsArray, IsNumber } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
-    description: 'Nombre del usuario',
+    description: 'Nombre completo del usuario',
     type: String,
-    example: 'Juan',
+    example: 'Juan Pérez',
   })
   @IsNotEmpty({ message: 'El nombre es obligatorio' })
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
   @Matches(/^[^'";\\%_]*$/, { message: 'El texto del nombre contiene caracteres no permitidos' })
   name: string;
-
-  @ApiProperty({
-    description: 'Apellido del usuario',
-    type: String,
-    example: 'Pérez',
-  })
-  @IsNotEmpty({ message: 'El apellido es obligatorio' })
-  @IsString({ message: 'El apellido debe ser una cadena de texto' })
-  @Matches(/^[^'";\\%_]*$/, { message: 'El texto de direccion del apellido contiene caracteres no permitidos' })
-  lastname: string;
 
   @ApiProperty({
     description: 'Correo electrónico del usuario',
@@ -32,23 +22,54 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    description: 'Número de teléfono del usuario',
+    description: 'Contraseña del usuario (debe tener entre 6 y 20 caracteres, ya encriptada con MD5)',
     type: String,
-    example: '+5491133344455',
-  })
-  @IsNotEmpty({ message: 'El teléfono es obligatorio' })
-  @IsPhoneNumber(null, { message: 'El teléfono debe ser válido' })
-  @Matches(/^[^'";\\%_]*$/, { message: 'El texto del número contiene caracteres no permitidos' })
-  telefono: string;
-
-  @ApiProperty({
-    description: 'Contraseña del usuario (debe tener entre 6 y 20 caracteres)',
-    type: String,
-    example: 'securePass123',
+    example: 'a1b2c3d4e5f6...',
   })
   @IsNotEmpty({ message: 'La contraseña es obligatoria' })
-  @Length(6, 20, { message: 'La contraseña debe tener entre 6 y 20 caracteres' })
-  @Matches(/^[^'";\\%_]*$/, { message: 'El texto de la contraseña contiene caracteres no permitidos' })
+  @IsString({ message: 'La contraseña debe ser una cadena de texto' })
   password: string;
+
+  @ApiProperty({
+    description: 'Cargo del usuario en la empresa',
+    type: String,
+    example: 'Gerente de Ventas',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'El cargo debe ser una cadena de texto' })
+  @Matches(/^[^'";\\%_]*$/, { message: 'El texto del cargo contiene caracteres no permitidos' })
+  position_company?: string;
+
+  @ApiProperty({
+    description: 'Imagen de perfil del usuario (base64)',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'La imagen debe ser una cadena de texto' })
+  image?: string;
+
+  @ApiProperty({
+    description: 'IDs de los roles a asignar al usuario',
+    type: [Number],
+    example: [1, 2],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray({ message: 'Los roles deben ser un array' })
+  @IsNumber({}, { each: true, message: 'Cada rol debe ser un número' })
+  roleIds?: number[];
+
+  @ApiProperty({
+    description: 'IDs de los permisos adicionales a asignar al usuario',
+    type: [Number],
+    example: [11, 12],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray({ message: 'Los permisos deben ser un array' })
+  @IsNumber({}, { each: true, message: 'Cada permiso debe ser un número' })
+  permissionIds?: number[];
 }
 

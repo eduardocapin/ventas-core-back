@@ -234,20 +234,48 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
+    const { email, password, roleIds, permissionIds, ...userData } = createUserDto;
 
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
-      this.logger.warn(`El usario con email (${email}) ya existe`)
+      this.logger.warn(`El usuario con email (${email}) ya existe`)
       throw new HttpException('El usuario ya existe', HttpStatus.BAD_REQUEST);
     }
 
+    // La contraseña viene encriptada con MD5 desde el frontend, la hasheamos con bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.userRepository.createUser({
-      ...createUserDto,
+    // Crear el usuario
+    const newUser = await this.userRepository.createUser({
+      ...userData,
+      email,
       password: hashedPassword,
     });
+
+    // Asignar roles si se especificaron
+    if (roleIds && roleIds.length > 0) {
+      for (const roleId of roleIds) {
+        try {
+          await this.assignRole(newUser.id, roleId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar el rol ${roleId} al usuario ${newUser.id}: ${error.message}`);
+        }
+      }
+    }
+
+    // Asignar permisos adicionales si se especificaron
+    if (permissionIds && permissionIds.length > 0) {
+      for (const permissionId of permissionIds) {
+        try {
+          await this.assignPermission(newUser.id, permissionId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar el permiso ${permissionId} al usuario ${newUser.id}: ${error.message}`);
+        }
+      }
+    }
+
+    // Retornar el usuario con sus relaciones
+    return this.findOneById(newUser.id);
   }
 
   async remove(id: number) {
