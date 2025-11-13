@@ -25,8 +25,19 @@ export class AuthorizationService {
   /**
    * Obtener todos los roles con sus permisos
    */
-  async getAllRoles(): Promise<Role[]> {
-    return this.roleRepository.findAllWithPermissions();
+  async getAllRoles(): Promise<any[]> {
+    const roles = await this.roleRepository.findAllWithPermissions();
+    // Mapear los nombres de las propiedades para el frontend
+    return roles.map(role => ({
+      id: role.id,
+      name: role.nombre,
+      description: role.descripcion,
+      permissions: role.permissions ? role.permissions.map(permission => ({
+        id: permission.id,
+        name: permission.nombre,
+        description: permission.descripcion
+      })) : []
+    }));
   }
 
   /**
