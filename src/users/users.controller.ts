@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpExcep
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth/jwt-auth.guard';
@@ -123,6 +124,35 @@ export class UsersController {
       this.logger.error(`Ha ocurrido un error durante la obtencion del usuario(${id}): ${error}`)
       if (error instanceof HttpException) {
         throw error; // Re-lanzamos el error HTTP específico si ya fue manejado.
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
+  @Patch(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar usuario completo por ID (Solo Admin)' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del usuario' })
+  @ApiBody({ type: AdminUpdateUserDto, description: 'Datos del usuario a actualizar' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Datos de usuario inválidos' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado: Solo Admin' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
+  async adminUpdateUser(@Param('id', ParseIntPipe) id: number, @Body() adminUpdateUserDto: AdminUpdateUserDto) {
+    try {
+      this.logger.log(`Se ha solicitado la actualización del usuario con id: ${id}`);
+      return await this.usersService.adminUpdate(id, adminUpdateUserDto);
+    } catch (error) {
+      console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la actualización del usuario(${id}): ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
       }
       throw new HttpException(
         { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },

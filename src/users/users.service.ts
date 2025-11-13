@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -276,6 +277,94 @@ export class UsersService {
 
     // Retornar el usuario con sus relaciones
     return this.findOneById(newUser.id);
+  }
+
+  async adminUpdate(userId: number, updateData: any) {
+    // Buscar el usuario existente
+    const user = await this.findOneById(userId);
+    if (!user) {
+      this.logger.warn(`No se ha encontrado el usuario con id: ${userId}`);
+      throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    // Verificar si el email ya existe en otro usuario
+    if (updateData.email && updateData.email !== user.email) {
+      const existingUser = await this.userRepository.findUserByEmail(updateData.email);
+      if (existingUser && existingUser.id !== userId) {
+        this.logger.warn(`El email (${updateData.email}) ya está en uso por otro usuario`);
+        throw new HttpException('El email ya está en uso', HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    // Actualizar campos básicos
+    if (updateData.name !== undefined) user.name = updateData.name;
+    if (updateData.email !== undefined) user.email = updateData.email;
+    if (updateData.position_company !== undefined) user.position_company = updateData.position_company;
+    if (updateData.image !== undefined) user.image = updateData.image;
+
+    // Actualizar contraseña si se proporcionó
+    if (updateData.password) {
+      const hashedPassword = await bcrypt.hash(updateData.password, 10);
+      user.password = hashedPassword;
+    }
+
+    // Guardar cambios básicos
+    await this.userRepository.save(user);
+
+    // Actualizar roles si se especificaron
+    if (updateData.roleIds !== undefined) {
+      // Obtener roles actuales
+      const currentRoles = user.roles.map(r => r.id);
+      
+      // Remover roles que ya no están
+      const rolesToRemove = currentRoles.filter(id => !updateData.roleIds.includes(id));
+      for (const roleId of rolesToRemove) {
+        try {
+          await this.removeRole(userId, roleId);
+        } catch (error) {
+          this.logger.warn(`No se pudo remover el rol ${roleId} del usuario ${userId}: ${error.message}`);
+        }
+      }
+      
+      // Añadir nuevos roles
+      const rolesToAdd = updateData.roleIds.filter(id => !currentRoles.includes(id));
+      for (const roleId of rolesToAdd) {
+        try {
+          await this.assignRole(userId, roleId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar el rol ${roleId} al usuario ${userId}: ${error.message}`);
+        }
+      }
+    }
+
+    // Actualizar permisos si se especificaron
+    if (updateData.permissionIds !== undefined) {
+      // Obtener permisos actuales (solo directos, no los heredados de roles)
+      const currentPermissions = user.permissions.map(p => p.id);
+      
+      // Remover permisos que ya no están
+      const permsToRemove = currentPermissions.filter(id => !updateData.permissionIds.includes(id));
+      for (const permId of permsToRemove) {
+        try {
+          await this.removePermission(userId, permId);
+        } catch (error) {
+          this.logger.warn(`No se pudo remover el permiso ${permId} del usuario ${userId}: ${error.message}`);
+        }
+      }
+      
+      // Añadir nuevos permisos
+      const permsToAdd = updateData.permissionIds.filter(id => !currentPermissions.includes(id));
+      for (const permId of permsToAdd) {
+        try {
+          await this.assignPermission(userId, permId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar el permiso ${permId} al usuario ${userId}: ${error.message}`);
+        }
+      }
+    }
+
+    // Retornar el usuario actualizado con todas sus relaciones
+    return this.findOneById(userId);
   }
 
   async remove(id: number) {
