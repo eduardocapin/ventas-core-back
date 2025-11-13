@@ -52,4 +52,17 @@ export class RoleRepository extends Repository<Role> {
     const count = await this.roleRepository.count({ where: { nombre } });
     return count > 0;
   }
+
+  /**
+   * Obtener roles para filtros (formato {id, name})
+   */
+  async getFilter() {
+    const roles = await this.roleRepository
+      .createQueryBuilder('role')
+      .select(['role.id as id', 'role.Nombre as name'])
+      .orderBy('role.Nombre', 'ASC')
+      .getRawMany();
+
+    return roles;
+  }
 }

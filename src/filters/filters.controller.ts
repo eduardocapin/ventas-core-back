@@ -15,6 +15,50 @@ export class FiltersController {
 
 
   @UseGuards(JwtAuthGuard)
+  @Get('/roles')
+  @ApiOperation({ summary: 'Obtener lista de roles' })
+  @ApiResponse({ status: 200, description: 'Lista de roles obtenida correctamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getRoles() {
+    this.logger.log('Se ha solicitado la carga del filtro de roles')
+    try {
+      return await this.filtersService.getRoles();
+    } catch (error) {
+      this.logger.error(`Ha ocurrido un error al obtener el filtro de roles: ${error}`)
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/permissions')
+  @ApiOperation({ summary: 'Obtener lista de permisos' })
+  @ApiResponse({ status: 200, description: 'Lista de permisos obtenida correctamente.' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getPermissions() {
+    this.logger.log('Se ha solicitado la carga del filtro de permisos')
+    try {
+      return await this.filtersService.getPermissions();
+    } catch (error) {
+      this.logger.error(`Ha ocurrido un error al obtener el filtro de permisos: ${error}`)
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        { message: 'Error en el servidor. Intenta de nuevo más tarde.', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('/cities')
   @ApiOperation({ summary: 'Obtener lista de poblaciones' })
   @ApiResponse({ status: 200, description: 'Lista de poblaciones obtenida correctamente.' })

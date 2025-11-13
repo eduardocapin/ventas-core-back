@@ -15,6 +15,8 @@ import { StatusRepository } from 'src/repositories/status/status.repository';
 import { SymbolRepository } from 'src/repositories/symbol/symbol.repository';
 import { Salesman } from 'src/repositories/entities/salemen.entity';
 import { SalesmanRepository } from 'src/repositories/salesmen/salesmen.repository';
+import { RoleRepository } from 'src/authorization/repositories/role.repository';
+import { PermissionRepository } from 'src/authorization/repositories/permission.repository';
 
 @Injectable()
 export class FiltersService {
@@ -43,7 +45,11 @@ export class FiltersService {
     @InjectRepository(SymbolRepository)
     private readonly symbolRepository: SymbolRepository,
     @InjectRepository(SalesmanRepository)
-    private readonly salesmanRepository: SalesmanRepository
+    private readonly salesmanRepository: SalesmanRepository,
+    @InjectRepository(RoleRepository)
+    private readonly roleRepository: RoleRepository,
+    @InjectRepository(PermissionRepository)
+    private readonly permissionRepository: PermissionRepository
 
   ) { }
 
@@ -117,6 +123,14 @@ export class FiltersService {
     return await this.provinceRepository.getFilter()
   }
 
+  async getRoles() {
+    return await this.roleRepository.getFilter();
+  }
+
+  async getPermissions() {
+    return await this.permissionRepository.getFilter();
+  }
+
   async getFilterConfig(componentId: string) {
     // Configuración según el componente
     const configs = {
@@ -128,6 +142,9 @@ export class FiltersService {
       },
       'clients-general': {
         empresaFieldName: 'c.empresa_id'
+      },
+      'users-global': {
+        empresaFieldName: null // No aplica para usuarios
       },
     };
 

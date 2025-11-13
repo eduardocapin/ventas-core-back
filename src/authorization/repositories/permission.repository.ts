@@ -51,4 +51,17 @@ export class PermissionRepository extends Repository<Permission> {
     const count = await this.permissionRepository.count({ where: { nombre } });
     return count > 0;
   }
+
+  /**
+   * Obtener permisos para filtros (formato {id, name})
+   */
+  async getFilter() {
+    const permissions = await this.permissionRepository
+      .createQueryBuilder('permission')
+      .select(['permission.id as id', 'permission.Descripcion as name'])
+      .orderBy('permission.Descripcion', 'ASC')
+      .getRawMany();
+
+    return permissions;
+  }
 }

@@ -144,7 +144,7 @@ export class UsersService {
 
   async findAllPaginated(paginatedUsersDto: PaginatedUsersDto) {
     try {
-      const { searchTerm, currentPage, itemsPerPage, sortColumn, sortDirection } = paginatedUsersDto;
+      const { selectedFilters, searchTerm, currentPage, itemsPerPage, sortColumn, sortDirection } = paginatedUsersDto;
       
       // Construir query builder
       const queryBuilder = this.userRepository.createQueryBuilder('user')
@@ -152,6 +152,34 @@ export class UsersService {
         .leftJoinAndSelect('role.permissions', 'rolePermission')
         .leftJoinAndSelect('user.permissions', 'userPermission')
         .where('user.deleted = :deleted', { deleted: 0 }); // Filtrar usuarios no eliminados
+
+      // Aplicar filtros dinámicos
+      if (selectedFilters && Array.isArray(selectedFilters)) {
+        selectedFilters.forEach((filter, index) => {
+          const { id, valor, tipo } = filter;
+
+          if (tipo === 'multi-select' && Array.isArray(valor)) {
+            // Para filtros de roles
+            if (id === 'role.id') {
+              queryBuilder.andWhere(`role.id IN (:...roleValues${index})`, { 
+                [`roleValues${index}`]: valor.map(v => v.id) 
+              });
+            }
+            // Para filtros de permisos (directos del usuario)
+            else if (id === 'userPermission.id') {
+              queryBuilder.andWhere(`userPermission.id IN (:...permValues${index})`, { 
+                [`permValues${index}`]: valor.map(v => v.id) 
+              });
+            }
+            // Para filtros de permisos (incluyendo los de roles)
+            else if (id === 'rolePermission.id') {
+              queryBuilder.andWhere(`rolePermission.id IN (:...rolePermValues${index})`, { 
+                [`rolePermValues${index}`]: valor.map(v => v.id) 
+              });
+            }
+          }
+        });
+      }
 
       // Aplicar búsqueda
       if (searchTerm && searchTerm.trim() !== '') {

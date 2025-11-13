@@ -1,12 +1,21 @@
 import {
   IsOptional,
   IsString,
-  IsNumber
+  IsNumber,
+  IsArray
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PaginatedUsersDto {
+  @ApiPropertyOptional({
+    description: 'Filtros dinámicos seleccionados',
+    type: [Object],
+  })
+  @IsOptional()
+  @IsArray()
+  selectedFilters?: any[];
+
   @ApiPropertyOptional({
     description: 'Término de búsqueda para filtrar usuarios',
     type: String,
