@@ -525,7 +525,7 @@ export class UsersService {
 
       // Asignar rol mediante query directa con sintaxis SQL Server
       await this.dataSource.query(
-        `INSERT INTO Converter_UsuariosRoles (usuario_id, rol_id) VALUES (@0, @1)`,
+        `INSERT INTO UsuariosRoles (usuario_id, rol_id) VALUES (@0, @1)`,
         [userId, roleId]
       );
 
@@ -562,7 +562,7 @@ export class UsersService {
 
       // Eliminar rol mediante query directa con sintaxis SQL Server
       await this.dataSource.query(
-        `DELETE FROM Converter_UsuariosRoles WHERE usuario_id = @0 AND rol_id = @1`,
+        `DELETE FROM UsuariosRoles WHERE usuario_id = @0 AND rol_id = @1`,
         [userId, roleId]
       );
 
@@ -600,7 +600,7 @@ export class UsersService {
 
       // Asignar permiso mediante query directa con sintaxis SQL Server
       await this.dataSource.query(
-        `INSERT INTO Converter_UsuariosPermisos (Usuario_id, Permiso_id) VALUES (@0, @1)`,
+        `INSERT INTO UsuariosPermisos (Usuario_id, Permiso_id) VALUES (@0, @1)`,
         [userId, permissionId]
       );
 
@@ -637,7 +637,7 @@ export class UsersService {
 
       // Eliminar permiso mediante query directa con sintaxis SQL Server
       await this.dataSource.query(
-        `DELETE FROM Converter_UsuariosPermisos WHERE Usuario_id = @0 AND Permiso_id = @1`,
+        `DELETE FROM UsuariosPermisos WHERE Usuario_id = @0 AND Permiso_id = @1`,
         [userId, permissionId]
       );
 

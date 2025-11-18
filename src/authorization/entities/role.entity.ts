@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Permission } from './permission.entity';
 import { User } from 'src/users/entities/user.entity';
 
-@Entity('Converter_Roles')
+@Entity('Roles')
 export class Role {
   @PrimaryColumn()
   id: number;
@@ -13,16 +13,16 @@ export class Role {
   @Column({ name: 'Descripcion', length: 255, nullable: true })
   descripcion: string;
 
-  // Relación Many-to-Many con Permission a través de Converter_RolesPermisos
+  // Relación Many-to-Many con Permission a través de RolesPermisos
   @ManyToMany(() => Permission, permission => permission.roles)
   @JoinTable({
-    name: 'Converter_RolesPermisos',
+    name: 'RolesPermisos',
     joinColumn: { name: 'Rol_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'Permiso_id', referencedColumnName: 'id' }
   })
   permissions: Permission[];
 
-  // Relación Many-to-Many con User a través de Converter_UsuariosRoles
+  // Relación Many-to-Many con User a través de UsuariosRoles
   @ManyToMany(() => User, user => user.roles)
   users: User[];
 }

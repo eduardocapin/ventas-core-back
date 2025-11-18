@@ -6,8 +6,8 @@ import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
  * Guard para proteger rutas basándose en permisos
  * Verifica si el usuario tiene al menos uno de los permisos requeridos
  * Los permisos pueden venir de:
- * - Permisos directos asignados al usuario (Converter_UsuariosPermisos)
- * - Permisos heredados de sus roles (Converter_RolesPermisos)
+ * - Permisos directos asignados al usuario (UsuariosPermisos)
+ * - Permisos heredados de sus roles (RolesPermisos)
  */
 @Injectable()
 export class PermissionsGuard implements CanActivate {

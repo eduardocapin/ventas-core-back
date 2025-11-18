@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import { Role } from './role.entity';
 import { User } from 'src/users/entities/user.entity';
 
-@Entity('Converter_Permisos')
+@Entity('Permisos')
 export class Permission {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,7 +17,7 @@ export class Permission {
   @ManyToMany(() => Role, role => role.permissions)
   roles: Role[];
 
-  // Relación Many-to-Many con User a través de Converter_UsuariosPermisos
+  // Relación Many-to-Many con User a través de UsuariosPermisos
   @ManyToMany(() => User, user => user.permissions)
   users: User[];
 }
