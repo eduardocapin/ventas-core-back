@@ -262,6 +262,24 @@ export class UsersService {
     }
   }
 
+  async getActiveUsersCount(): Promise<number> {
+    try {
+      // Contar usuarios que NO están eliminados (deleted = false)
+      const count = await this.userRepository.count({
+        where: { deleted: false }
+      });
+      
+      this.logger.log(`Conteo de usuarios activos: ${count}`);
+      return count;
+    } catch (error) {
+      this.logger.error(`Error al contar usuarios activos: ${error}`);
+      throw new HttpException(
+        'Error al contar usuarios activos',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async create(createUserDto: CreateUserDto) {
     const { email, password, roleIds, permissionIds, ...userData } = createUserDto;
 

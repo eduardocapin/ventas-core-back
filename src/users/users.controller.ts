@@ -75,6 +75,29 @@ export class UsersController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+  @Roles('Admin')
+  @Permissions('VISUALIZADO_USUARIOS')
+  @Get('active-count')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener conteo de usuarios activos (no eliminados ni dados de baja en ERP)' })
+  @ApiResponse({ status: 200, description: 'Conteo de usuarios activos' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiResponse({ status: 500, description: 'Error en el servidor' })
+  async getActiveUsersCount() {
+    try {
+      this.logger.log('Se ha solicitado el conteo de usuarios activos');
+      const count = await this.usersService.getActiveUsersCount();
+      return { count };
+    } catch (error) {
+      this.logger.error(`Error al obtener conteo de usuarios activos: ${error}`);
+      throw new HttpException(
+        { message: 'Error al obtener conteo de usuarios activos', error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Post()
