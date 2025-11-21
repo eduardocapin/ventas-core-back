@@ -11,6 +11,7 @@ import { MailService } from 'src/shared/mail/mail.service';
 import { UtilitiesService } from 'src/shared/utilities/utilities.service';
 import { ConfigRepository } from 'src/repositories/config/config.repository';
 import { PasswordChangesRepository } from 'src/repositories/password-changes/password-changes.repository';
+import { SessionService } from './services/session.service';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -28,6 +29,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     private readonly utilitiesService: UtilitiesService,
+    private readonly sessionService: SessionService,
     private readonly dataSource: DataSource) {
 
   }
@@ -428,7 +430,7 @@ export class UsersService {
     return await this.userRepository.findUserById(userId);
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, deviceInfo?: any) {
     const user = await this.findOneByEmail(email);
     console.log(user)
     this.logger.debug(user)
@@ -449,15 +451,24 @@ export class UsersService {
     }
 
     const payload = { email: user.email, sub: user.id };
+    const token = this.jwtService.sign(payload);
+
+    // Crear sesión y desactivar sesiones anteriores automáticamente
+    await this.sessionService.createSession(user.id, token, deviceInfo || {});
+
     return {
       msg: "Login exitoso",
-      token: this.jwtService.sign(payload),
+      token,
       name: user.name,
       cargo: user.position_company,
       id: user.id
     };
   }
 
+  async logout(token: string): Promise<void> {
+    await this.sessionService.closeSession(token);
+    this.logger.log('Sesión cerrada exitosamente');
+  }
 
   async findOneByEmail(email: string): Promise<User> {
     console.log();
