@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Role } from 'src/authorization/entities/role.entity';
 import { Permission } from 'src/authorization/entities/permission.entity';
+import { Empresa } from 'src/empresas/entities/empresa.entity';
 
 @Entity('UsuariosWeb')
 export class User {
@@ -45,4 +46,13 @@ export class User {
     inverseJoinColumn: { name: 'Permiso_id', referencedColumnName: 'id' }
   })
   permissions: Permission[];
+
+  // Relación Many-to-Many con Empresa a través de UsuariosEmpresas
+  @ManyToMany(() => Empresa, empresa => empresa.users)
+  @JoinTable({
+    name: 'UsuariosEmpresas',
+    joinColumn: { name: 'usuario_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'empresa_id', referencedColumnName: 'idEmpresa' }
+  })
+  empresas: Empresa[];
 }

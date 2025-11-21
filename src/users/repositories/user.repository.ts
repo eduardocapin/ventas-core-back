@@ -15,7 +15,7 @@ export class UserRepository extends Repository<User> {
     async findUserById(id: number): Promise<User> {
         return this.repo.findOne({ 
             where: { id, deleted: false },
-            relations: ['roles', 'roles.permissions', 'permissions']
+            relations: ['roles', 'roles.permissions', 'permissions', 'empresas']
         });
     }
 
@@ -24,7 +24,7 @@ export class UserRepository extends Repository<User> {
         this.logger.debug(`Buscando usuario por email: ${email}`)
         return this.repo.findOne({ 
             where: { email, deleted: false },
-            relations: ['roles', 'roles.permissions', 'permissions']
+            relations: ['roles', 'roles.permissions', 'permissions', 'empresas']
         });
     }
 

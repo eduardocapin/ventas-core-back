@@ -71,5 +71,16 @@ export class CreateUserDto {
   @IsArray({ message: 'Los permisos deben ser un array' })
   @IsNumber({}, { each: true, message: 'Cada permiso debe ser un número' })
   permissionIds?: number[];
+
+  @ApiProperty({
+    description: 'IDs de las empresas a asignar al usuario',
+    type: [Number],
+    example: [1, 2],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray({ message: 'Las empresas deben ser un array' })
+  @IsNumber({}, { each: true, message: 'Cada empresa debe ser un número' })
+  empresaIds?: number[];
 }
 

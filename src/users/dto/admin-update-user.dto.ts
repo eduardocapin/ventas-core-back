@@ -66,4 +66,14 @@ export class AdminUpdateUserDto {
   @IsArray()
   @IsNumber({}, { each: true })
   permissionIds?: number[];
+
+  @ApiPropertyOptional({
+    description: 'Array de IDs de empresas a asignar',
+    type: [Number],
+    example: [1, 2],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  empresaIds?: number[];
 }

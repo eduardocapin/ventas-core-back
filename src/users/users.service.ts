@@ -153,6 +153,7 @@ export class UsersService {
         .leftJoinAndSelect('user.roles', 'role')
         .leftJoinAndSelect('role.permissions', 'rolePermission')
         .leftJoinAndSelect('user.permissions', 'userPermission')
+        .leftJoinAndSelect('user.empresas', 'empresa')
         .where('user.deleted = :deleted', { deleted: 0 }); // Filtrar usuarios no eliminados
 
       // Aplicar filtros dinámicos
@@ -244,7 +245,11 @@ export class UsersService {
             description: role.descripcion
           })),
           permissions: directPermissions,
-          rolePermissions: Array.from(rolePermissionsMap.values())
+          rolePermissions: Array.from(rolePermissionsMap.values()),
+          empresas: user.empresas ? user.empresas.map(empresa => ({
+            id: empresa.idEmpresa,
+            nombre: empresa.Nombre
+          })) : []
         };
       });
 
@@ -283,7 +288,7 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { email, password, roleIds, permissionIds, ...userData } = createUserDto;
+    const { email, password, roleIds, permissionIds, empresaIds, ...userData } = createUserDto;
 
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
@@ -319,6 +324,17 @@ export class UsersService {
           await this.assignPermission(newUser.id, permissionId);
         } catch (error) {
           this.logger.warn(`No se pudo asignar el permiso ${permissionId} al usuario ${newUser.id}: ${error.message}`);
+        }
+      }
+    }
+
+    // Asignar empresas si se especificaron
+    if (empresaIds && empresaIds.length > 0) {
+      for (const empresaId of empresaIds) {
+        try {
+          await this.assignEmpresa(newUser.id, empresaId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar la empresa ${empresaId} al usuario ${newUser.id}: ${error.message}`);
         }
       }
     }
@@ -407,6 +423,32 @@ export class UsersService {
           await this.assignPermission(userId, permId);
         } catch (error) {
           this.logger.warn(`No se pudo asignar el permiso ${permId} al usuario ${userId}: ${error.message}`);
+        }
+      }
+    }
+
+    // Actualizar empresas si se especificaron
+    if (updateData.empresaIds !== undefined) {
+      // Obtener empresas actuales
+      const currentEmpresas = user.empresas.map(e => e.idEmpresa);
+      
+      // Remover empresas que ya no están
+      const empresasToRemove = currentEmpresas.filter(id => !updateData.empresaIds.includes(id));
+      for (const empresaId of empresasToRemove) {
+        try {
+          await this.removeEmpresa(userId, empresaId);
+        } catch (error) {
+          this.logger.warn(`No se pudo remover la empresa ${empresaId} del usuario ${userId}: ${error.message}`);
+        }
+      }
+      
+      // Añadir nuevas empresas
+      const empresasToAdd = updateData.empresaIds.filter(id => !currentEmpresas.includes(id));
+      for (const empresaId of empresasToAdd) {
+        try {
+          await this.assignEmpresa(userId, empresaId);
+        } catch (error) {
+          this.logger.warn(`No se pudo asignar la empresa ${empresaId} al usuario ${userId}: ${error.message}`);
         }
       }
     }
@@ -679,6 +721,81 @@ export class UsersService {
       }
       throw new HttpException(
         `Error al remover permiso: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Gestión de empresas
+  async assignEmpresa(userId: number, empresaId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['empresas']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si la empresa ya está asignada
+      const hasEmpresa = user.empresas.some(empresa => empresa.idEmpresa === empresaId);
+      if (hasEmpresa) {
+        throw new HttpException('El usuario ya tiene esta empresa asignada', HttpStatus.BAD_REQUEST);
+      }
+
+      // Asignar empresa mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `INSERT INTO UsuariosEmpresas (usuario_id, empresa_id) VALUES (@0, @1)`,
+        [userId, empresaId]
+      );
+
+      this.logger.log(`Empresa ${empresaId} asignada al usuario ${userId}`);
+      return { status: 'Success', message: 'Empresa asignada correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al asignar empresa: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al asignar empresa: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removeEmpresa(userId: number, empresaId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['empresas']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Verificar si el usuario tiene la empresa
+      const hasEmpresa = user.empresas.some(empresa => empresa.idEmpresa === empresaId);
+      if (!hasEmpresa) {
+        throw new HttpException('El usuario no tiene esta empresa asignada', HttpStatus.BAD_REQUEST);
+      }
+
+      // Eliminar empresa mediante query directa con sintaxis SQL Server
+      await this.dataSource.query(
+        `DELETE FROM UsuariosEmpresas WHERE usuario_id = @0 AND empresa_id = @1`,
+        [userId, empresaId]
+      );
+
+      this.logger.log(`Empresa ${empresaId} removida del usuario ${userId}`);
+      return { status: 'Success', message: 'Empresa removida correctamente' };
+    } catch (error) {
+      this.logger.error(`Error al remover empresa: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al remover empresa: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

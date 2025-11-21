@@ -230,4 +230,23 @@ export class UsersController {
   async removePermission(@Body() body: { userId: number; permissionId: number }) {
     return this.usersService.removePermission(body.userId, body.permissionId);
   }
+
+  // Gestión de empresas
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_ROLES_USUARIOS')
+  @Post('assign-empresa')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Asignar empresa a usuario' })
+  async assignEmpresa(@Body() body: { userId: number; empresaId: number }) {
+    return this.usersService.assignEmpresa(body.userId, body.empresaId);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('ASIGNACION_ROLES_USUARIOS')
+  @Post('remove-empresa')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Quitar empresa a usuario' })
+  async removeEmpresa(@Body() body: { userId: number; empresaId: number }) {
+    return this.usersService.removeEmpresa(body.userId, body.empresaId);
+  }
 }
