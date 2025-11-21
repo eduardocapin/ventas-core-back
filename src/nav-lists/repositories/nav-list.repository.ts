@@ -12,10 +12,11 @@ export class NavListsRepository extends Repository<ListItem> {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 
-  async getContainersByEntity(entity: string): Promise<ListItem[]> {
+  async getContainersByEntity(entity: string, hasUserViewPermission: boolean = false): Promise<ListItem[]> {
     const items = await this.repo
       .createQueryBuilder('o')
       .select([
+        'g.Id AS containerId',
         'g.Titulo AS groupTitle',
         'o.label AS itemLabel',
         'o.description AS itemDescription',
@@ -39,10 +40,19 @@ export class NavListsRepository extends Repository<ListItem> {
     const containers: { [key: string]: any } = {};
 
     items.forEach(row => {
-      const { groupTitle, itemLabel, itemDescription, itemType, itemRoute, itemPopupFunction } = row;
+      const { containerId, groupTitle, itemLabel, itemDescription, itemType, itemRoute, itemPopupFunction } = row;
+
+      // Filtrar el contenedor ID 5 (Administración de Usuarios) si el usuario no tiene el permiso VISUALIZADO_USUARIOS
+      if (containerId === 5 && !hasUserViewPermission) {
+        return; // Saltar este item
+      }
 
       if (!containers[groupTitle]) {
-        containers[groupTitle] = { title: groupTitle, items: [] };
+        containers[groupTitle] = { 
+          id: containerId,
+          title: groupTitle,
+          items: [] 
+        };
       }
 
       const listItem = {

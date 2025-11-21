@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,6 +19,10 @@ import { ImportModule } from './import/import.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RepositoriesModule } from './repositories/repositories.module';
 import { SharedModule } from './shared/shared.module';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { EmpresasModule } from './empresas/empresas.module';
+import { AuthorizationModule } from './authorization/authorization.module';
+import { SessionGuard } from './guards/session/session.guard';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -45,10 +50,16 @@ import { SharedModule } from './shared/shared.module';
       };
     }
   }),
-    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule,
+    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: SessionGuard,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

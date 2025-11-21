@@ -101,12 +101,10 @@ export class CompetitorRepository extends Repository<Competitor> {
             throw new HttpException('No se encontraron Competidores', HttpStatus.NOT_FOUND);
         }
 
-
-
-        return competitors.map((competitor) => ({
-            ...competitor,
-            id: competitor.c_id,
-            name: competitor.c_name
+        return competitors.map(c => ({
+            id: c.c_id,
+            name: c.c_name,
+            segmentation_value_ids: c.segmentation_value_ids
         }));
     }
 

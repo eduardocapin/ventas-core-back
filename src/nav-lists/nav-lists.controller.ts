@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Inject, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, Inject, Logger, Req } from '@nestjs/common';
 import { NavListsService } from './nav-lists.service';
 import { CreateNavListDto } from './dto/create-nav-list.dto';
 import { UpdateNavListDto } from './dto/update-nav-list.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @ApiTags('Listas navegables')
 @Controller('nav-lists')
@@ -19,11 +20,20 @@ export class NavListsController {
   @ApiParam({ name: 'entity', type: 'string', description: 'Nombre de la entidad' })
   @ApiResponse({ status: 200, description: 'Lista de contenedores de la entidad.' })
   @ApiResponse({ status: 500, description: 'Error interno en el servidor.' })
-  async getContainers(@Param('entity') entity: string) {
+  async getContainers(@Param('entity') entity: string, @Req() req: Request) {
     this.logger.log(`Se han solicitado los contenedores para la entidad: ${entity}`)
     try {
-      // Llamar al servicio y pasar los datos validados
-      return await this.navListsService.getContainersByEntity(entity);
+      // Extraer permisos del usuario del JWT
+      const user = req['user'];
+      const userPermissionNames = user?.permissions || [];
+      
+      this.logger.log(`Usuario con permisos: [${userPermissionNames.join(', ')}]`);
+      
+      // Verificar si tiene el permiso VISUALIZADO_USUARIOS
+      const hasUserViewPermission = userPermissionNames.includes('VISUALIZADO_USUARIOS');
+      
+      // Llamar al servicio y pasar si tiene el permiso
+      return await this.navListsService.getContainersByEntity(entity, hasUserViewPermission);
     } catch (error) {
       this.logger.error(`Ha ocurrido un error durante la solicitud de los contenedores para la entidad(${entity}): ${error}`)
       console.log(error);
