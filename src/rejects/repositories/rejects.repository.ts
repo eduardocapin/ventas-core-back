@@ -28,10 +28,10 @@ export class RejectRepository extends Repository<Rejection> {
             itemsPerPage,
             sortColumn,
             sortDirection,
-            selectedEmpresa
+            selectedEmpresa,
+            userEmpresaIds
         } = paginatedRejectsDto;
 
-        console.log(paginatedRejectsDto)
         const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
             .leftJoin(Product, 'p', 'p.id = r.product_id') // JOIN con productos
             .leftJoin(Client, 'c', 'c.id = r.customer_id') // JOIN con clientes
@@ -47,9 +47,18 @@ export class RejectRepository extends Repository<Rejection> {
             ) // JOIN segmentación 2
             .where('(r.deleted = 0 OR r.deleted IS NULL)');
 
-        //  Filtro de empresa si no es 'all'
-
-        if (selectedEmpresa && selectedEmpresa !== 'all') {
+        //  Filtro de empresa - SIEMPRE basado en las empresas del usuario
+        if (userEmpresaIds && userEmpresaIds.length > 0) {
+            // El controlador ya validó que selectedEmpresa está en userEmpresaIds
+            // Si hay selectedEmpresa específica, filtrar solo por esa
+            if (selectedEmpresa && selectedEmpresa !== 'all') {
+                query.andWhere('r.empresa_id = :empresaId', { empresaId: selectedEmpresa });
+            } else {
+                // Si es 'all' o null, filtrar por todas las empresas del usuario
+                query.andWhere('r.empresa_id IN (:...userEmpresaIds)', { userEmpresaIds });
+            }
+        } else if (selectedEmpresa && selectedEmpresa !== 'all') {
+            // Caso legacy: si por alguna razón no hay userEmpresaIds pero sí selectedEmpresa
             query.andWhere('r.empresa_id = :empresaId', { empresaId: selectedEmpresa });
         }
 
@@ -173,7 +182,7 @@ export class RejectRepository extends Repository<Rejection> {
     }
 
     async getRejectionKPIs(KPIsRejectsDto: KPIsRejectsDto) {
-        let { selectedFilters, searchTerm } = KPIsRejectsDto;
+        let { selectedFilters, searchTerm, selectedEmpresa, userEmpresaIds } = KPIsRejectsDto;
 
         const query: SelectQueryBuilder<Rejection> = this.createQueryBuilder('r')
             .leftJoin(Product, 'p', 'p.id = r.product_id')
@@ -189,6 +198,21 @@ export class RejectRepository extends Repository<Rejection> {
                 'p.segmentation_2 = s2.segmentation_value_id AND s2.segmentation_number = 2',
             )
             .where('(r.deleted = 0 OR r.deleted IS NULL)');
+
+        // Filtro de empresa - SIEMPRE basado en las empresas del usuario
+        if (userEmpresaIds && userEmpresaIds.length > 0) {
+            // El controlador ya validó que selectedEmpresa está en userEmpresaIds
+            // Si hay selectedEmpresa específica, filtrar solo por esa
+            if (selectedEmpresa && selectedEmpresa !== 'all') {
+                query.andWhere('r.empresa_id = :empresaId', { empresaId: selectedEmpresa });
+            } else {
+                // Si es 'all' o null, filtrar por todas las empresas del usuario
+                query.andWhere('r.empresa_id IN (:...userEmpresaIds)', { userEmpresaIds });
+            }
+        } else if (selectedEmpresa && selectedEmpresa !== 'all') {
+            // Caso legacy: si por alguna razón no hay userEmpresaIds pero sí selectedEmpresa
+            query.andWhere('r.empresa_id = :empresaId', { empresaId: selectedEmpresa });
+        }
 
         // Aplicar filtros dinámicos
         if (selectedFilters && Array.isArray(selectedFilters)) {

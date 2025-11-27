@@ -33,5 +33,12 @@ import { FilterDto } from 'src/filters/dto/filter.dto';
     @Matches(/^[^'";\\%_]*$/, { message: 'El termino de busqueda contiene caracteres no permitidos' })
     searchTerm?: string;
 
+    // Empresa seleccionada
+    @IsOptional()
+    selectedEmpresa?: number | string;
+
+    // IDs de empresas del usuario para filtrado automático
+    @IsOptional()
+    userEmpresaIds?: number[];
+
   }
-  

@@ -74,5 +74,8 @@ export class PaginatedRejectsDto {
   @IsOptional()
   selectedEmpresa?: number | string;
 
-}
+  // IDs de empresas del usuario para filtrado automático
+  @IsOptional()
+  userEmpresaIds?: number[];
 
+}

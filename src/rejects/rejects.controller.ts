@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpException, HttpStatus, Inject, Logger, Req } from '@nestjs/common';
 import { RejectsService } from './rejects.service';
 import { UpdateRejectDto } from './dto/update-reject.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
@@ -8,6 +8,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 import { KPIsRejectsDto } from './dto/kpis-rejects.dto';
 import { FilterDto } from 'src/filters/dto/filter.dto';
 import { SelectedFilterDto } from 'src/filters/dto/selected-filters.dto';
+import { UserRepository } from 'src/users/repositories/user.repository';
 
 @ApiTags('Rechazos')
 @Controller('rejects')
@@ -16,7 +17,10 @@ export class RejectsController {
 
   private readonly logger = new Logger(RejectsController.name);
   
-  constructor(private readonly rejectsService: RejectsService) { }
+  constructor(
+    private readonly rejectsService: RejectsService,
+    private readonly userRepository: UserRepository,
+  ) { }
 
 
 
@@ -26,10 +30,39 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'Lista de rechazos obtenida con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: PaginatedRejectsDto })
-  async findAll(@Body() paginatedRejectsDto: PaginatedRejectsDto) {
+  async findAll(@Req() req: any, @Body() paginatedRejectsDto: PaginatedRejectsDto) {
     try {
       this.logger.log('Obtener la lista de rechazos')
       this.logger.debug(paginatedRejectsDto)
+      
+      // Obtener empresas del usuario autenticado
+      const userId = req.user.userId;
+      const userWithEmpresas = await this.userRepository.findUserById(userId);
+      const userEmpresaIds = userWithEmpresas.empresas.map(e => e.idEmpresa);
+      
+      // Si el usuario no tiene empresas, no debe ver nada
+      if (userEmpresaIds.length === 0) {
+        return { items: [], totalItems: 0 };
+      }
+      
+      // SIEMPRE asignar userEmpresaIds para validación en el repositorio
+      paginatedRejectsDto.userEmpresaIds = userEmpresaIds;
+      
+      // Validar que selectedEmpresa pertenezca a las empresas del usuario
+      if (paginatedRejectsDto.selectedEmpresa && 
+          paginatedRejectsDto.selectedEmpresa !== 'all') {
+        const selectedEmpresaId = parseInt(paginatedRejectsDto.selectedEmpresa.toString());
+        if (!userEmpresaIds.includes(selectedEmpresaId)) {
+          throw new HttpException(
+            { message: 'No tienes acceso a esta empresa' },
+            HttpStatus.FORBIDDEN,
+          );
+        }
+      } else {
+        // Si es 'all' o no hay selección, limpiar selectedEmpresa
+        paginatedRejectsDto.selectedEmpresa = null;
+      }
+      
       // Llamar al servicio y pasar los datos validados
       return await this.rejectsService.findAll(paginatedRejectsDto);
     } catch (error) {
@@ -51,10 +84,39 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'KPIs obtenidos con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: KPIsRejectsDto })
-  async kpis(@Body() KPIsRejectsDto: KPIsRejectsDto) {
+  async kpis(@Req() req: any, @Body() KPIsRejectsDto: KPIsRejectsDto) {
     try {
       this.logger.log('Obtener kpis de los rechazos')
       this.logger.debug(KPIsRejectsDto)
+      
+      // Obtener empresas del usuario autenticado
+      const userId = req.user.userId;
+      const userWithEmpresas = await this.userRepository.findUserById(userId);
+      const userEmpresaIds = userWithEmpresas.empresas.map(e => e.idEmpresa);
+      
+      // Si el usuario no tiene empresas, retornar KPIs vacíos
+      if (userEmpresaIds.length === 0) {
+        return {};
+      }
+      
+      // SIEMPRE asignar userEmpresaIds para validación en el repositorio
+      KPIsRejectsDto.userEmpresaIds = userEmpresaIds;
+      
+      // Validar que selectedEmpresa pertenezca a las empresas del usuario
+      if (KPIsRejectsDto.selectedEmpresa && 
+          KPIsRejectsDto.selectedEmpresa !== 'all') {
+        const selectedEmpresaId = parseInt(KPIsRejectsDto.selectedEmpresa.toString());
+        if (!userEmpresaIds.includes(selectedEmpresaId)) {
+          throw new HttpException(
+            { message: 'No tienes acceso a esta empresa' },
+            HttpStatus.FORBIDDEN,
+          );
+        }
+      } else {
+        // Si es 'all' o no hay selección, limpiar selectedEmpresa
+        KPIsRejectsDto.selectedEmpresa = null;
+      }
+      
       // Llamar al servicio y pasar los datos validados
       return await this.rejectsService.KPIs(KPIsRejectsDto);
     } catch (error) {

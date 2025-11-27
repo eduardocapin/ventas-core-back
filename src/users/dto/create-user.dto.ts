@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsEmail, IsString, Length, IsOptional, Matches, IsArray, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, Length, IsOptional, Matches, IsArray, IsNumber, ArrayMinSize } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -73,14 +73,14 @@ export class CreateUserDto {
   permissionIds?: number[];
 
   @ApiProperty({
-    description: 'IDs de las empresas a asignar al usuario',
+    description: 'IDs de las empresas a asignar al usuario (al menos una es obligatoria)',
     type: [Number],
     example: [1, 2],
-    required: false,
+    required: true,
   })
-  @IsOptional()
+  @IsNotEmpty({ message: 'Debe asignar al menos una empresa al usuario' })
   @IsArray({ message: 'Las empresas deben ser un array' })
+  @ArrayMinSize(1, { message: 'Debe asignar al menos una empresa al usuario' })
   @IsNumber({}, { each: true, message: 'Cada empresa debe ser un número' })
-  empresaIds?: number[];
+  empresaIds: number[];
 }
-

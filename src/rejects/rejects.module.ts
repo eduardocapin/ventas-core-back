@@ -5,9 +5,14 @@ import { RejectRepository } from './repositories/rejects.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Rejection } from './entities/reject.entity';
 import { ClientsModule } from 'src/clients/clients.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Rejection, RejectRepository]), ClientsModule],
+  imports: [
+    TypeOrmModule.forFeature([Rejection, RejectRepository]), 
+    ClientsModule,
+    UsersModule
+  ],
   controllers: [RejectsController],
   providers: [RejectsService, RejectRepository],
   exports:[RejectRepository]

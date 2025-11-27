@@ -29,7 +29,7 @@ export class User {
   @Column({name:'Imagen', length: 250, nullable: true })
   image: string;
 
-  // Relación Many-to-Many con Role a través de UsuariosRoles
+  // Many-to-Many con Role a través de UsuariosRoles
   @ManyToMany(() => Role, role => role.users)
   @JoinTable({
     name: 'UsuariosRoles',
@@ -38,7 +38,7 @@ export class User {
   })
   roles: Role[];
 
-  // Relación Many-to-Many con Permission a través de UsuariosPermisos
+  // Many-to-Many con Permission a través de UsuariosPermisos
   @ManyToMany(() => Permission, permission => permission.users)
   @JoinTable({
     name: 'UsuariosPermisos',
@@ -47,7 +47,7 @@ export class User {
   })
   permissions: Permission[];
 
-  // Relación Many-to-Many con Empresa a través de UsuariosEmpresas
+  //Many-to-Many con Empresa a través de UsuariosEmpresas
   @ManyToMany(() => Empresa, empresa => empresa.users)
   @JoinTable({
     name: 'UsuariosEmpresas',
