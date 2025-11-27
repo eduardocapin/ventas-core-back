@@ -830,4 +830,72 @@ export class UsersService {
       );
     }
   }
+
+  /**
+   * Obtener perfil completo del usuario actual con sus empresas
+   */
+  async getCurrentUserProfile(userId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['roles', 'roles.permissions', 'permissions', 'empresas']
+      });
+
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      // Obtener permisos de roles
+      const rolePermissionsMap = new Map<number, any>();
+      user.roles.forEach(role => {
+        role.permissions?.forEach(permission => {
+          if (!rolePermissionsMap.has(permission.id)) {
+            rolePermissionsMap.set(permission.id, {
+              id: permission.id,
+              name: permission.nombre,
+              description: permission.descripcion,
+            });
+          }
+        });
+      });
+
+      // Permisos directos
+      const directPermissions = user.permissions.map(p => ({
+        id: p.id,
+        name: p.nombre,
+        description: p.descripcion,
+      }));
+
+      // Empresas
+      const empresas = user.empresas ? user.empresas.map(empresa => ({
+        id: empresa.idEmpresa,
+        nombre: empresa.Nombre
+      })) : [];
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        position_company: user.position_company,
+        image: user.image,
+        roles: user.roles.map(role => ({
+          id: role.id,
+          name: role.nombre,
+          description: role.descripcion,
+        })),
+        permissions: directPermissions,
+        rolePermissions: Array.from(rolePermissionsMap.values()),
+        empresas: empresas
+      };
+    } catch (error) {
+      this.logger.error(`Error al obtener perfil del usuario: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        `Error al obtener perfil del usuario: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

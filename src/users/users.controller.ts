@@ -98,6 +98,16 @@ export class UsersController {
     return { message: 'Sesión cerrada correctamente' };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('profile/me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener perfil del usuario actual con empresas asignadas' })
+  @ApiResponse({ status: 200, description: 'Perfil del usuario' })
+  async getCurrentProfile(@Req() req) {
+    const userId = req.user.userId;
+    return this.usersService.getCurrentUserProfile(userId);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Post()
