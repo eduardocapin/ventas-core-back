@@ -12,7 +12,7 @@ export class NavListsRepository extends Repository<ListItem> {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 
-  async getContainersByEntity(entity: string, hasUserViewPermission: boolean = false): Promise<ListItem[]> {
+  async getContainersByEntity(entity: string, hasUserViewPermission: boolean = false, idioma: string = 'es'): Promise<ListItem[]> {
     const items = await this.repo
       .createQueryBuilder('o')
       .select([
@@ -24,9 +24,16 @@ export class NavListsRepository extends Repository<ListItem> {
         'o.route AS itemRoute',
         'o.popup_function_name AS itemPopupFunction',
       ])
-      .innerJoin('Converter_ContenedoresConfiguracion', 'g', 'g.id = o.container_id')
-      .where('(o.deleted = 0 OR o.deleted IS NULL)')
+      // Unir por id_contenedor (mismo contenedor lógico en todos los idiomas)
+      .innerJoin('Converter_ContenedoresConfiguracion', 'g', 'g.id_contenedor = o.Id_Contenedor')
+      // Filtrar por entidad solicitada
+      .where('o.Entidad = :entity', { entity })
+      // Filtrar bajas
+      .andWhere('(o.BajaEnERP = 0 OR o.BajaEnERP IS NULL)')
       .andWhere('(g.BajaEnERP = 0 OR g.BajaEnERP IS NULL)')
+      // Filtrar idioma tanto en grupo como en item
+      .andWhere('g.Idioma = :idioma', { idioma })
+      .andWhere('(o.Idioma = :idioma OR o.Idioma IS NULL)', { idioma })
       .orderBy('g.Id', 'ASC')
       .addOrderBy('o.id', 'ASC')
       .getRawMany();

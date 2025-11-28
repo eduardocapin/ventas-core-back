@@ -129,6 +129,25 @@ export class UsersController {
     return this.usersService.findOneById(id);
   }
 
+  // IMPORTANTE: Las rutas específicas deben ir ANTES de las rutas con parámetros dinámicos (:id)
+  @UseGuards(JwtAuthGuard)
+  @Patch('language')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar idioma del usuario actual' })
+  @ApiBody({ 
+    schema: { 
+      type: 'object', 
+      properties: { 
+        idioma: { type: 'string', enum: ['es', 'en', 'ca'], example: 'es' } 
+      } 
+    } 
+  })
+  @ApiResponse({ status: 200, description: 'Idioma actualizado' })
+  async updateLanguage(@Req() req, @Body('idioma') idioma: string) {
+    const email = req.user.email;
+    return this.usersService.updateUserLanguage(email, idioma);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Patch(':id')

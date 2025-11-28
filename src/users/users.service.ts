@@ -503,7 +503,8 @@ export class UsersService {
       token,
       name: user.name,
       cargo: user.position_company,
-      id: user.id
+      id: user.id,
+      idioma: user.idioma || 'es' // Idioma por defecto español si es null
     };
   }
 
@@ -538,6 +539,27 @@ export class UsersService {
     const result = this.userRepository.save(user)
     return { status: 'Success', data: result };
 
+  }
+
+  async updateUserLanguage(email: string, idioma: string) {
+    // Validar idioma
+    const validLanguages = ['es', 'en', 'ca'];
+    if (!validLanguages.includes(idioma)) {
+      this.logger.warn(`Idioma inválido: ${idioma}`);
+      throw new HttpException('Idioma inválido. Debe ser: es, en o ca', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.findOneByEmail(email);
+    if (!user) {
+      this.logger.warn(`Usuario con email (${email}) no encontrado`);
+      throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    user.idioma = idioma;
+    const result = await this.userRepository.save(user);
+    
+    this.logger.log(`Idioma actualizado a '${idioma}' para usuario: ${email}`);
+    return { status: 'Success', data: result, idioma };
   }
 
   async updateImage(email: string, img: string) {

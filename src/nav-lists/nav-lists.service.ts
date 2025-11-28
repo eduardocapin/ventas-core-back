@@ -14,8 +14,8 @@ export class NavListsService {
   ) {
 
   }
-  async getContainersByEntity(entity: string, hasUserViewPermission: boolean = false) {
-    return await this.navListRepository.getContainersByEntity(entity, hasUserViewPermission);
+  async getContainersByEntity(entity: string, hasUserViewPermission: boolean = false, idioma: string = 'es') {
+    return await this.navListRepository.getContainersByEntity(entity, hasUserViewPermission, idioma);
   }
 
 

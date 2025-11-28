@@ -28,4 +28,7 @@ export class ListItem {
 
   @Column({name:'BajaEnERP', type: 'bit', default: () => '0'})
   deleted: boolean;
+
+  @Column({name:'Idioma', type: 'nvarchar', length: 10, nullable: true})
+  idioma: string;
 }

@@ -29,6 +29,11 @@ export class User {
   @Column({name:'Imagen', length: 250, nullable: true })
   image: string;
 
+  @Column({name:'Idioma', type: 'nvarchar', length: 10, nullable: true})
+  idioma: string;
+
+  
+
   // Many-to-Many con Role a través de UsuariosRoles
   @ManyToMany(() => Role, role => role.users)
   @JoinTable({
