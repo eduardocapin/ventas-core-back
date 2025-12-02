@@ -341,7 +341,7 @@ export class RejectsController {
   async getRejectionGroupByMonth(@Body() body: SelectedFilterDto) {
     try {
       this.logger.log(`Agrupar rechazos por mes, ${body}`)
-      return await this.rejectsService.getRejectionGroupByMonth(body.selectedFilters, body.idioma || 'es');
+      return await this.rejectsService.getRejectionGroupByMonth(body.selectedFilters);
     } catch (error) {
       console.log(error);
       this.logger.error(`Ha ocurrido un error al agrupar rechazos por mes: ${error}`)
@@ -364,7 +364,7 @@ export class RejectsController {
   async getRejectionGroupByDayOfWeek(@Body() body: SelectedFilterDto) {
     try {
       this.logger.log(`Agrupar rechazos por dia de la semana: ${body}`)
-      return await this.rejectsService.getRejectionGroupByDayOfWeek(body.selectedFilters, body.idioma || 'es');
+      return await this.rejectsService.getRejectionGroupByDayOfWeek(body.selectedFilters);
     } catch (error) {
       console.log(error);
       this.logger.error(`Ha ocurrido un error al agrupr rechazos por dia de la semana: ${error}`)
@@ -387,7 +387,7 @@ export class RejectsController {
   async getClientsWithRejections(@Body() body: SelectedFilterDto) {
     try {
       this.logger.log(`Obtener cleintes con y sin rechazos, ${body}`)
-      return await this.rejectsService.getClientsWithRejections(body.selectedFilters, body.idioma || 'es');
+      return await this.rejectsService.getClientsWithRejections(body.selectedFilters);
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
