@@ -119,13 +119,17 @@ export class RejectsService {
     return { titulo, categorias, valores };
   }
 
-  async getRejectionGroupByMonth(selectedFilters: FilterDto[]) {
+  async getRejectionGroupByMonth(selectedFilters: FilterDto[], idioma: string = 'es') {
     const rawData = await this.rejectRepository.getRejectionGroupByMonth(selectedFilters);
 
-    const mesesMap = [
-      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ];
+    // Mapas de meses en diferentes idiomas
+    const mesesMaps = {
+      es: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      ca: ['Gen', 'Febr', 'Març', 'Abr', 'Maig', 'Juny', 'Jul', 'Ag', 'Set', 'Oct', 'Nov', 'Des']
+    };
+    
+    const mesesMap = mesesMaps[idioma] || mesesMaps['es'];
 
     // Inicializar estructura con 0 en todos los meses
     const valores = Array(12).fill(0);
@@ -141,10 +145,18 @@ export class RejectsService {
   }
 
 
-  async getRejectionGroupByDayOfWeek(selectedFilters: FilterDto[]) {
+  async getRejectionGroupByDayOfWeek(selectedFilters: FilterDto[], idioma: string = 'es') {
 
     const rawData = await this.rejectRepository.getRejectionGroupByDayOfWeek(selectedFilters);
-    const diasMap = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    
+    // Mapas de días en diferentes idiomas
+    const diasMaps = {
+      es: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      ca: ['Dll', 'Dmt', 'Dmc', 'Dij', 'Div', 'Dis', 'Diu']
+    };
+    
+    const diasMap = diasMaps[idioma] || diasMaps['es'];
     const valores = Array(7).fill(0);
 
     rawData.forEach(({ name, value }) => {
@@ -157,10 +169,23 @@ export class RejectsService {
     return { categorias: diasMap, valores };
   }
 
-  async getClientsWithRejections(selectedFilters: FilterDto[]) {
+  async getClientsWithRejections(selectedFilters: FilterDto[], idioma: string = 'es') {
     const clientsWithRejections = await this.rejectRepository.getClientsWithRejections(selectedFilters)
     const totalClients = await this.clientRepository.getCount(selectedFilters)
-    return [{ value: clientsWithRejections, name: 'Con rechazos' }, { value: totalClients - clientsWithRejections, name: 'Sin rechazos' }]
+    
+    // Etiquetas en diferentes idiomas
+    const labels = {
+      es: { with: 'Con rechazos', without: 'Sin rechazos' },
+      en: { with: 'With rejections', without: 'Without rejections' },
+      ca: { with: 'Amb rebutjos', without: 'Sense rebutjos' }
+    };
+    
+    const label = labels[idioma] || labels['es'];
+    
+    return [
+      { value: clientsWithRejections, name: label.with }, 
+      { value: totalClients - clientsWithRejections, name: label.without }
+    ];
   }
 
   private processRejectionSummary(

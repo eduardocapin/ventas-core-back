@@ -338,10 +338,10 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'Datos agrupados obtenidos con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: [SelectedFilterDto] })
-  async getRejectionGroupByMonth(@Body() selectedFilters: SelectedFilterDto) {
+  async getRejectionGroupByMonth(@Body() body: SelectedFilterDto) {
     try {
-      this.logger.log(`Agrupar rechazos por mes, ${selectedFilters}`)
-      return await this.rejectsService.getRejectionGroupByMonth(selectedFilters.selectedFilters);
+      this.logger.log(`Agrupar rechazos por mes, ${body}`)
+      return await this.rejectsService.getRejectionGroupByMonth(body.selectedFilters, body.idioma || 'es');
     } catch (error) {
       console.log(error);
       this.logger.error(`Ha ocurrido un error al agrupar rechazos por mes: ${error}`)
@@ -361,10 +361,10 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'Datos agrupados obtenidos con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: [SelectedFilterDto] })
-  async getRejectionGroupByDayOfWeek(@Body() selectedFilters: SelectedFilterDto) {
+  async getRejectionGroupByDayOfWeek(@Body() body: SelectedFilterDto) {
     try {
-      this.logger.log(`Agrupar rechazos por dia de la semana: ${selectedFilters}`)
-      return await this.rejectsService.getRejectionGroupByDayOfWeek(selectedFilters.selectedFilters);
+      this.logger.log(`Agrupar rechazos por dia de la semana: ${body}`)
+      return await this.rejectsService.getRejectionGroupByDayOfWeek(body.selectedFilters, body.idioma || 'es');
     } catch (error) {
       console.log(error);
       this.logger.error(`Ha ocurrido un error al agrupr rechazos por dia de la semana: ${error}`)
@@ -384,10 +384,10 @@ export class RejectsController {
   @ApiResponse({ status: 200, description: 'Datos agrupados obtenidos con éxito.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBody({ type: [SelectedFilterDto] })
-  async getClientsWithRejections(@Body() selectedFilters: SelectedFilterDto) {
+  async getClientsWithRejections(@Body() body: SelectedFilterDto) {
     try {
-      this.logger.log(`Obtener cleintes con y sin rechazos, ${selectedFilters}`)
-      return await this.rejectsService.getClientsWithRejections(selectedFilters.selectedFilters);
+      this.logger.log(`Obtener cleintes con y sin rechazos, ${body}`)
+      return await this.rejectsService.getClientsWithRejections(body.selectedFilters, body.idioma || 'es');
     } catch (error) {
       console.log(error);
       if (error instanceof HttpException) {
