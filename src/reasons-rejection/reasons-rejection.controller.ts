@@ -22,12 +22,13 @@ export class ReasonsRejectionController {
   @ApiResponse({ status: 500, description: 'Error del servidor.' })
   async create(@Body() createReasonsRejectionDto: CreateReasonsRejectionDto) {
     try {
-      this.logger.log(`Creacion de un nuevo rechazo: ${createReasonsRejectionDto}`)
+      this.logger.log(`Creacion de un nuevo rechazo:`)
+      console.log('DTO recibido:', createReasonsRejectionDto);
       const data = await this.reasonsRejectionService.create(createReasonsRejectionDto);
       return {status: "Success", data}
     } catch (error) {
-      this.logger.error(`Ha ocurrido un error durante la creacion del rechazo (${createReasonsRejectionDto}): ${error}`)
-      console.log(error);
+      this.logger.error(`Ha ocurrido un error durante la creacion del rechazo: ${error.message}`)
+      console.log('Error completo:', error);
       if (error instanceof HttpException) {
         throw error; 
       }

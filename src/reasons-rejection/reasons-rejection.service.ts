@@ -33,6 +33,7 @@ export class ReasonsRejectionService {
     return this.reasonRejectionRepository.createReasonRejection({
       rejection_code: codigo,
       rejection: nombre,
+      company_ERP_id: '', // Valor por defecto vacío para cumplir con la restricción NOT NULL
     });
 
   }

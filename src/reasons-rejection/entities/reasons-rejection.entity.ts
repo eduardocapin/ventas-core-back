@@ -11,7 +11,7 @@ export class ReasonsRejection {
   @Column({name:'Nombre', length: 50 })
   rejection: string;
 
-  @Column({name:'IdEmpresaERP', length: 45 })
+  @Column({name:'IdEmpresaERP', length: 45, nullable: true })
   company_ERP_id: string;
 
   @CreateDateColumn({name:'FechaInsert'})
