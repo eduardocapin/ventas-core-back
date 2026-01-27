@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UtilitiesService } from './utilities/utilities.service';
 import { MailService } from './mail/mail.service';
-import { RepositoriesModule } from 'src/repositories/repositories.module';
+import { RepositoriesModule } from 'src/core/repositories/repositories.module';
 
 @Module({
     imports: [RepositoriesModule],

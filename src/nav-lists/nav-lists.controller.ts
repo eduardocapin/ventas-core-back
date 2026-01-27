@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpExcep
 import { NavListsService } from './nav-lists.service';
 import { CreateNavListDto } from './dto/create-nav-list.dto';
 import { UpdateNavListDto } from './dto/update-nav-list.dto';
-import { JwtAuthGuard } from 'src/guards/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 

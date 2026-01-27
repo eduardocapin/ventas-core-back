@@ -3,26 +3,24 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ClientsModule } from './clients/clients.module';
-import { CompetitorsModule } from './competitors/competitors.module';
+
 import { FiltersModule } from './filters/filters.module';
 import { MenusModule } from './menus/menus.module';
 import { NavListsModule } from './nav-lists/nav-lists.module';
-import { ProductsModule } from './products/products.module';
-import { ReasonsRejectionModule } from './reasons-rejection/reasons-rejection.module';
-import { RejectsModule } from './rejects/rejects.module';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { CorsMiddleware } from './middleware/cors/cors.middleware';
-import { CompressionMiddleware } from './middleware/compression/compression.middleware';
-import { ImportModule } from './import/import.module';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RepositoriesModule } from './repositories/repositories.module';
 import { SharedModule } from './shared/shared.module';
-import { ConfigurationModule } from './configuration/configuration.module';
-import { EmpresasModule } from './empresas/empresas.module';
-import { AuthorizationModule } from './authorization/authorization.module';
-import { SessionGuard } from './guards/session/session.guard';
+import { ConfigurationModule } from './core/configuration/configuration.module';
+
+import { EmpresasModule } from './core/empresas/empresas.module';
+import { SessionGuard } from './core/guards/session/session.guard';
+import { RepositoriesModule } from './core/repositories/repositories.module';
+import { AuthorizationModule } from './core/authorization/authorization.module';
+import { CorsMiddleware } from './core/middleware/cors/cors.middleware';
+import { CompressionMiddleware } from './core/middleware/compression/compression.middleware';
+import { UsersModule } from './core/users/users.module';
+
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -50,7 +48,7 @@ import { SessionGuard } from './guards/session/session.guard';
       };
     }
   }),
-    ClientsModule, CompetitorsModule, FiltersModule, MenusModule, NavListsModule, ProductsModule, ReasonsRejectionModule, RejectsModule, UsersModule, ImportModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
+     FiltersModule, MenusModule, NavListsModule, UsersModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
   ],
   controllers: [AppController],
   providers: [
