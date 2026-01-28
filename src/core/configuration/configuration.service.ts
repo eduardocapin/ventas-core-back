@@ -50,16 +50,30 @@ export class ConfigurationService {
 
   // Métodos para gestión de idiomas
   async getLanguages(): Promise<Language[]> {
-    return await this.languagesRepository.find({
-      where: { active: 1 },
-      order: { isDefault: 'DESC' }
-    });
+    try {
+      const languages = await this.languagesRepository.find({
+        where: { active: 1 },
+        order: { isDefault: 'DESC' }
+      });
+      return languages;
+    } catch (error) {
+      console.error('Error al obtener idiomas de la BD:', error);
+      // Si la tabla no existe, devolver idiomas por defecto
+      return [
+        { code: 'es', name: 'Español', isDefault: 1, active: 1, createdAt: new Date() }
+      ] as Language[];
+    }
   }
 
   async getDefaultLanguage(): Promise<string> {
-    const language = await this.languagesRepository.findOne({
-      where: { isDefault: 1, active: 1 }
-    });
-    return language ? language.code : 'es'; // Fallback a español si no hay idioma por defecto
+    try {
+      const language = await this.languagesRepository.findOne({
+        where: { isDefault: 1, active: 1 }
+      });
+      return language ? language.code : 'es';
+    } catch (error) {
+      console.error('Error al obtener idioma por defecto:', error);
+      return 'es'; // Fallback a español
+    }
   }
 }

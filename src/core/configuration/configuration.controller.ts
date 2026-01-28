@@ -9,12 +9,6 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class ConfigurationController {
   constructor(private readonly configurationService: ConfigurationService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Obtener todas las configuraciones' })
-  findAll(): Promise<Configuracion[]> {
-    return this.configurationService.findAll();
-  }
-
   @Get('languages')
   @ApiOperation({ summary: 'Obtener idiomas activos' })
   @ApiResponse({ status: 200, description: 'Lista de idiomas activos' })
@@ -29,6 +23,12 @@ export class ConfigurationController {
   async getDefaultLanguage(): Promise<{ code: string }> {
     const code = await this.configurationService.getDefaultLanguage();
     return { code };
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Obtener todas las configuraciones' })
+  findAll(): Promise<Configuracion[]> {
+    return this.configurationService.findAll();
   }
 
   @Get(':name')
