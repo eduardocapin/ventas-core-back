@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Configuracion } from './entities/configuracion.entity';
+import { Language } from './entities/language.entity';
 
 @Injectable()
 export class ConfigurationService {
   constructor(
     @InjectRepository(Configuracion)
     private configuracionesRepository: Repository<Configuracion>,
+    @InjectRepository(Language)
+    private languagesRepository: Repository<Language>,
   ) {}
 
   async findAll(): Promise<any> {
@@ -43,5 +46,20 @@ export class ConfigurationService {
       ...config,
       Valor: this.parseValue(config.Valor)
     };
+  }
+
+  // Métodos para gestión de idiomas
+  async getLanguages(): Promise<Language[]> {
+    return await this.languagesRepository.find({
+      where: { active: 1 },
+      order: { isDefault: 'DESC' }
+    });
+  }
+
+  async getDefaultLanguage(): Promise<string> {
+    const language = await this.languagesRepository.findOne({
+      where: { isDefault: 1, active: 1 }
+    });
+    return language ? language.code : 'es'; // Fallback a español si no hay idioma por defecto
   }
 }

@@ -823,6 +823,37 @@ export class UsersService {
     }
   }
 
+  // Actualización de idioma
+  async updateLanguage(email: string, lang: string): Promise<any> {
+    this.logger.log(`[updateLanguage] Actualizando idioma para: ${email} a ${lang}`);
+    
+    const user = await this.userRepository.findUserByEmail(email);
+    if (!user) {
+      this.logger.warn(`[updateLanguage] Usuario no encontrado: ${email}`);
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Validar que el idioma sea válido
+    const validLanguages = ['es', 'en', 'pt', 'zh', 'ar', 'fr'];
+    if (!validLanguages.includes(lang)) {
+      this.logger.warn(`[updateLanguage] Idioma inválido: ${lang}`);
+      throw new HttpException(
+        "Idioma no válido. Debe ser 'es', 'en', 'pt', 'zh', 'ar' o 'fr'",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    user.idioma = lang;
+    await this.userRepository.save(user);
+
+    this.logger.log(`[updateLanguage] Idioma actualizado correctamente: ${email} → ${lang}`);
+    return {
+      status: 'Success',
+      msg: 'Idioma actualizado correctamente',
+      lang: lang
+    };
+  }
+
   async deleteUser(userId: number) {
     try {
       const user = await this.userRepository.findOne({

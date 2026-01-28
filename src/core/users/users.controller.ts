@@ -7,6 +7,7 @@ import { LoginDto } from './dto/login.dto';
 import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { NewPasswordDto } from './dto/new-password.dto';
+import { UpdateLanguageDto } from './dto/update-language.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionsGuard } from '../authorization/guards/permissions.guard';
 import { Permissions } from '../authorization/decorators/permissions.decorator';
@@ -277,5 +278,18 @@ export class UsersController {
   @ApiOperation({ summary: 'Quitar empresa a usuario' })
   async removeEmpresa(@Body() body: { userId: number; empresaId: number }) {
     return this.usersService.removeEmpresa(body.userId, body.empresaId);
+  }
+
+  // Actualización de idioma
+  @UseGuards(JwtAuthGuard)
+  @Post('update-language')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar idioma del usuario' })
+  @ApiBody({ type: UpdateLanguageDto })
+  @ApiResponse({ status: 200, description: 'Idioma actualizado correctamente' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async updateLanguage(@Body() updateLanguageDto: UpdateLanguageDto) {
+    return this.usersService.updateLanguage(updateLanguageDto.email, updateLanguageDto.lang);
   }
 }
