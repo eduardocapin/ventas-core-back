@@ -1,6 +1,6 @@
 # 📉 REGISTRO DE DEUDA TÉCNICA
 
-Este documento captura los compromisos técnicos hechos en **{{PROJECT_NAME}}** para priorizar velocidad. Es responsabilidad de los agentes registrar aquí cualquier código que no cumpla al 100% con los `Quality_Standards.md`.
+Este documento captura los compromisos técnicos hechos en **VentasCore_IA** para priorizar velocidad. Es responsabilidad de los agentes registrar aquí cualquier código que no cumpla al 100% con los `Quality_Standards.md`.
 
 ---
 

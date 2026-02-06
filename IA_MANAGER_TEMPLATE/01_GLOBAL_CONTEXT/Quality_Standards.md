@@ -1,6 +1,6 @@
 # 🏆 QUALITY STANDARDS & DEFINITION OF DONE
 
-Este documento define el umbral de calidad para **{{PROJECT_NAME}}**. Ninguna tarea se considera "Terminada" (Done) si no cumple con estos criterios.
+Este documento define el umbral de calidad para **VentasCore_IA**. Ninguna tarea se considera "Terminada" (Done) si no cumple con estos criterios.
 
 ---
 

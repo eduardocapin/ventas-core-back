@@ -1,4 +1,4 @@
-# 🛠️ TECH STACK: {{PROJECT_NAME}}
+# 🛠️ TECH STACK: VentasCore_IA
 
 Este documento actúa como la **Fuente Única de Verdad (SSOT)** para las versiones de frameworks y herramientas utilizadas en el proyecto. Ningún agente debe utilizar versiones distintas a las aquí especificadas sin una actualización previa de este archivo.
 
@@ -57,4 +57,4 @@ Este documento actúa como la **Fuente Única de Verdad (SSOT)** para las versio
 
 ## 🕒 CONTROL DE CAMBIOS DEL STACK
 
-*   **{{CURRENT_DATE}}:** Alineación del Tech Stack con SarigaboMobentis_Back y SarigaboMobentis_Front (versiones reales de package.json).
+*   **2026-02-06:** Alineación del Tech Stack con SarigaboMobentis_Back y SarigaboMobentis_Front (versiones reales de package.json).

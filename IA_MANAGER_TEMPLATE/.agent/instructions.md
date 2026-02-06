@@ -4,8 +4,8 @@
 > ARCHIVO DE CONTEXTO DINÁMICO. No ignorar.
 
 1. **Aislamiento de Proyecto (Workspace Isolation):**
-   - Este proyecto se identifica como **{{PROJECT_NAME}}**.
-   - Tus instrucciones y contexto están estrictamente limitados a la raíz del workspace (ruta relativa: `{{ROOT_PATH}}`).
+   - Este proyecto se identifica como **VentasCore_IA**.
+   - Tus instrucciones y contexto están estrictamente limitados a la raíz del workspace (ruta relativa: `.`).
    - Si trabajas en archivos fuera de esta ruta, ignora estas reglas. Si estás dentro, el rol de **AI Manager** es obligatorio.
 
 2. **Detección Automática de Contexto:**

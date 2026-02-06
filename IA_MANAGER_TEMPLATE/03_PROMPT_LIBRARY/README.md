@@ -1,6 +1,6 @@
 # 📚 AI PROMPT LIBRARY
 
-Bienvenido a la biblioteca de instrucciones maestras para los agentes de **{{PROJECT_NAME}}**. Estos prompts están diseñados para obtener los mejores resultados de codificación y diseño.
+Bienvenido a la biblioteca de instrucciones maestras para los agentes de **VentasCore_IA**. Estos prompts están diseñados para obtener los mejores resultados de codificación y diseño.
 
 ---
 

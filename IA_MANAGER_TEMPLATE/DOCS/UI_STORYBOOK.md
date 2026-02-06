@@ -1,6 +1,6 @@
 # 🎨 UI STORYBOOK: CATÁLOGO DE COMPONENTES
 
-Este documento registra los componentes visuales de **{{PROJECT_NAME}}** para asegurar que la interfaz sea coherente y no se dupliquen estilos.
+Este documento registra los componentes visuales de **VentasCore_IA** para asegurar que la interfaz sea coherente y no se dupliquen estilos.
 
 ---
 

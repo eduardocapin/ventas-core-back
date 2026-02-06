@@ -1,6 +1,6 @@
 ---
 METADATA_AGENT:
-  ID: "AG-{{PROJECT_CODE}}-05-QA"
+  ID: "AG-VC-05-QA"
   NAME: "QA & Testing Engineer"
   VERSION: "1.0.0"
   ROLE: "Validación de calidad, detección de bugs y automatización de pruebas"

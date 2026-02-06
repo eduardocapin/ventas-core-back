@@ -50,12 +50,12 @@ Para el protocolo detallado del Manager ante errores críticos, ver `00_CORE_MAN
 
 ## 3. Enlaces rotos o referencias incorrectas en el template
 
-**Síntomas:** Documentos que referencian archivos o carpetas que no existen, o rutas con `{{PROJECT_NAME}}` / `{{PROJECT_CODE}}` sin sustituir.
+**Síntomas:** Documentos que referencian archivos o carpetas que no existen, o rutas con `VentasCore_IA` / `VC` sin sustituir.
 
 **Qué hacer:**
 
 1. Ejecutar de nuevo `setup_project.ps1` si los placeholders no se sustituyeron en la primera configuración.
-2. Invocar al **Jardinero** (`AG-{{PROJECT_CODE}}-09-GARDENER`): pide *"Revisar el template"*, *"Auditar IA_MANAGER_TEMPLATE"* o *"Comprobar enlaces del template"*. El Jardinero valida la coherencia y puede proponer o aplicar correcciones (ver `02_AGENTS_REGISTRY/09_GARDENER.md`).
+2. Invocar al **Jardinero** (`AG-VC-09-GARDENER`): pide *"Revisar el template"*, *"Auditar IA_MANAGER_TEMPLATE"* o *"Comprobar enlaces del template"*. El Jardinero valida la coherencia y puede proponer o aplicar correcciones (ver `02_AGENTS_REGISTRY/09_GARDENER.md`).
 
 ---
 

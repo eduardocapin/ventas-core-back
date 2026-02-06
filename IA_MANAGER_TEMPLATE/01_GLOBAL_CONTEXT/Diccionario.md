@@ -1,4 +1,4 @@
-# 📖 DICCIONARIO DE DOMINIO: {{PROJECT_NAME}}
+# 📖 DICCIONARIO DE DOMINIO: VentasCore_IA
 
 Este documento define los términos técnicos y de negocio para asegurar la consistencia en todo el ecosistema de agentes. **Es de obligado cumplimiento y actúa como la Única Fuente de Verdad (SSOT) del proyecto.**
 
@@ -62,6 +62,7 @@ Este documento define los términos técnicos y de negocio para asegurar la cons
 ---
 
 ## 📅 SEGUIMIENTO TÉCNICO
+*   **Contexto operativo (IA):** Consultar [Sistema_Mobentis_Sales_Contexto_IA.md](./Sistema_Mobentis_Sales_Contexto_IA.md) para el rol de asistencia en BackOffice, estados de integración, leyenda de colores y protocolo de resolución de errores de integración con ERP.
 *   **Versionado:** Consultar [Tech_Stack.md](./Tech_Stack.md) para cumplir con las versiones oficiales.
 *   **Base de Datos:** Consultar [Historial_DB.md](./Historial_DB.md) para trazabilidad de cambios.
 *   **Tablas, columnas y alias de UI:** Consultar [Tablas_Columnas_Alias.md](./Tablas_Columnas_Alias.md) para el detalle de cada tabla y vista, significado de columnas, tipos de dato y etiquetas para pantalla. Si se añade una tabla o un campo nuevo, debe agregarse a la entidad adecuada en ese fichero; si la descripción o función no está clara, solicitar al usuario que la indique.

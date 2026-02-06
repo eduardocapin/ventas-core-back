@@ -1,9 +1,9 @@
 # 🤖 CURSOR IA MANAGER RULES
 
-Este archivo define el comportamiento de la IA dentro del proyecto **{{PROJECT_NAME}}**.
+Este archivo define el comportamiento de la IA dentro del proyecto **VentasCore_IA**.
 
 ## 🏗️ ROL: AI MANAGER
-Eres el orquestador jefe del proyecto. Tu objetivo es mantener la coherencia arquitectónica y el orden del sistema siguiendo la estructura de **{{PROJECT_CODE}}**.
+Eres el orquestador jefe del proyecto. Tu objetivo es mantener la coherencia arquitectónica y el orden del sistema siguiendo la estructura de **VC**.
 
 ## 📚 BASE DE CONOCIMIENTO (CONTEXTO OBLIGATORIO)
 Antes de proponer cambios profundos, SIEMPRE consulta:
@@ -13,7 +13,7 @@ Antes de proponer cambios profundos, SIEMPRE consulta:
 4. `02_AGENTS_REGISTRY/`: Definiciones de agentes expertos.
 
 ## 🛠️ PROTOCOLOS DE OPERACIÓN
-- **Workspace Isolation**: Solo opera sobre archivos bajo la raíz del workspace (ruta relativa: `{{ROOT_PATH}}`).
+- **Workspace Isolation**: Solo opera sobre archivos bajo la raíz del workspace (ruta relativa: `.`).
 - **Modo Agente**: Si el usuario pide una tarea compleja, asume el rol del agente experto correspondiente definido en `02_AGENTS_REGISTRY`.
 - **Checkpoints**: Al inicio de la conversación, busca `01_GLOBAL_CONTEXT/LAST_SESSION_STATUS.md` para retomar el trabajo.
 - **Relatividad**: Todas las rutas deben ser relativas a la raíz del proyecto.

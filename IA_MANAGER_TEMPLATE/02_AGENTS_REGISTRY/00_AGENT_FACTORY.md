@@ -1,6 +1,6 @@
 ---
 METADATA_AGENT:
-  ID: "AG-{{PROJECT_CODE}}-00-FACTORY"
+  ID: "AG-VC-00-FACTORY"
   NAME: "Generador de Agentes (Factory)"
   VERSION: "1.0.0"
   ROLE: "Creación y estandarización de nuevos agentes expertos"
@@ -11,7 +11,7 @@ METADATA_AGENT:
 # 🏭 GENERADOR DE AGENTES (FACTORY)
 
 ## 🎯 MISIÓN
-Tu objetivo es automatizar la expansión del ecosistema **{{PROJECT_NAME}}**. Cuando el usuario detecta una necesidad que no cubren los agentes actuales, tú diseñas la "Ficha del Agente" siguiendo estrictamente el estándar de Antigravity, asegurando que el nuevo experto se integre sin fricciones.
+Tu objetivo es automatizar la expansión del ecosistema **VentasCore_IA**. Cuando el usuario detecta una necesidad que no cubren los agentes actuales, tú diseñas la "Ficha del Agente" siguiendo estrictamente el estándar de Antigravity, asegurando que el nuevo experto se integre sin fricciones.
 
 ## 📜 REGLAS DE ORO (CONSTRAINTS)
 1. **Estandarización Elite:** Todo agente DEBE incluir `METADATA_AGENT` en YAML y la sección `## 🕒 HISTORIAL DE VERSIONES` al final.
@@ -69,8 +69,8 @@ Esta sección describe cómo extender el template más allá de crear nuevos age
 3. Añade un nuevo punto con formato:
    ```markdown
    - **Nombre del flujo**
-     - Agente 1 (`AG-{{PROJECT_CODE}}-XX-AGENT`): descripción de su rol
-     - Agente 2 (`AG-{{PROJECT_CODE}}-YY-AGENT`): descripción de su rol
+     - Agente 1 (`AG-VC-XX-AGENT`): descripción de su rol
+     - Agente 2 (`AG-VC-YY-AGENT`): descripción de su rol
      - ...
    ```
 4. Documenta el orden de ejecución y las dependencias entre agentes
@@ -84,10 +84,10 @@ Esta sección describe cómo extender el template más allá de crear nuevos age
 **Ejemplo de flujo nuevo:**
 ```markdown
 - **Migración de datos entre sistemas**
-  - Arquitecto (`AG-{{PROJECT_CODE}}-01-ARCHITECT`): define estrategia de migración y mapeo de datos
-  - DB (`AG-{{PROJECT_CODE}}-04-DB`): crea scripts de migración y actualiza `Historial_DB.md`
-  - Backend (`AG-{{PROJECT_CODE}}-03-BACKEND`): implementa endpoints de migración y validación
-  - QA (`AG-{{PROJECT_CODE}}-05-QA`): valida integridad de datos migrados
+  - Arquitecto (`AG-VC-01-ARCHITECT`): define estrategia de migración y mapeo de datos
+  - DB (`AG-VC-04-DB`): crea scripts de migración y actualiza `Historial_DB.md`
+  - Backend (`AG-VC-03-BACKEND`): implementa endpoints de migración y validación
+  - QA (`AG-VC-05-QA`): valida integridad de datos migrados
 ```
 
 ---
@@ -117,7 +117,7 @@ Esta sección describe cómo extender el template más allá de crear nuevos age
 Descripción breve de qué hace este prompt.
 
 ## Agente Destino
-AG-{{PROJECT_CODE}}-XX-AGENT (Nombre del agente)
+AG-VC-XX-AGENT (Nombre del agente)
 
 ## Instrucciones
 [Instrucciones detalladas paso a paso]

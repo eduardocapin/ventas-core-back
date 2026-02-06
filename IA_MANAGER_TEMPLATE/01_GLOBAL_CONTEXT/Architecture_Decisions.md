@@ -1,6 +1,6 @@
 # 🏗️ ARCHITECTURE DECISION RECORDS (ADR)
 
-Este documento registra las decisiones técnicas clave tomadas durante el ciclo de vida de **{{PROJECT_NAME}}**. Cada registro explica el contexto, la decisión y las consecuencias.
+Este documento registra las decisiones técnicas clave tomadas durante el ciclo de vida de **VentasCore_IA**. Cada registro explica el contexto, la decisión y las consecuencias.
 
 ---
 
@@ -10,7 +10,7 @@ Este documento registra las decisiones técnicas clave tomadas durante el ciclo 
 | :--- | :--- | :--- | :--- |
 | **ADR-001** | 2024-02-04 | Uso de Arquitectura Basada en Agentes | Aceptado |
 | **ADR-002** | 2024-02-04 | Estandarización de Frameworks (referencia) | Sustituido por ADR-003 |
-| **ADR-003** | {{CURRENT_DATE}} | Stack real: Angular 16, NestJS 10, MySQL/MSSQL | Aceptado |
+| **ADR-003** | 2026-02-06 | Stack real: Angular 16, NestJS 10, MySQL/MSSQL | Aceptado |
 
 ---
 

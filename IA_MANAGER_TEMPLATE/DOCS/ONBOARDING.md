@@ -13,14 +13,17 @@ Guía rápida para incorporarte al proyecto que usa el IA_MANAGER_TEMPLATE y el 
 2. **Diccionario de negocio** (`01_GLOBAL_CONTEXT/Diccionario.md`)  
    - Términos del dominio, entidades principales y vocabulario del proyecto.
 
-3. **Reglas de oro**  
+3. **Contexto operativo Mobentis Sales** (`01_GLOBAL_CONTEXT/Sistema_Mobentis_Sales_Contexto_IA.md`)  
+   - Rol de asistencia en BackOffice, multiempresa, Importador de Documentos, estados de integración (leyenda de colores) y protocolo de resolución de errores ERP. Formato optimizado para IA.
+
+4. **Reglas de oro**  
    - `01_GLOBAL_CONTEXT/AI_Safety_Guardrails.md` — qué no se puede hacer (Core inviolable, secretos, persistencia).  
    - `01_GLOBAL_CONTEXT/Reglas_Generales.md` — estándares de desarrollo y reutilización de Core.
 
-4. **Índice de agentes** (`02_AGENTS_REGISTRY/INDEX.md`)  
+5. **Índice de agentes** (`02_AGENTS_REGISTRY/INDEX.md`)  
    - Qué agente hace qué (Arquitecto, Frontend, Backend, DB, QA, Setup, UX, Security, Jardinero).
 
-5. **Manual de funcionamiento** (`DOCS/MANUAL_FUNCIONAMIENTO.md`)  
+6. **Manual de funcionamiento** (`DOCS/MANUAL_FUNCIONAMIENTO.md`)  
    - Flujo completo del sistema, día a día y buenas prácticas.
 
 ---
@@ -39,6 +42,7 @@ Guía rápida para incorporarte al proyecto que usa el IA_MANAGER_TEMPLATE y el 
 
 | Necesidad              | Dónde mirar |
 |------------------------|-------------|
+| Operación BackOffice / errores integración ERP | `01_GLOBAL_CONTEXT/Sistema_Mobentis_Sales_Contexto_IA.md` |
 | Algo no funciona       | `DOCS/TROUBLESHOOTING.md` |
 | Cómo deshacer cambios  | `DOCS/TROUBLESHOOTING.md` → "Cambios incorrectos: cómo hacer rollback" |
 | Validar el template    | `DOCS/TEMPLATE_VALIDATION.md` |

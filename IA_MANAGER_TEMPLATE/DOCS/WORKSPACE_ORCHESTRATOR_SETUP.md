@@ -70,13 +70,13 @@ Si en el futuro el `.code-workspace` incluye varias carpetas (Front, Back, otro 
 
 ### 3.1 Placeholders cuando el orquestador es único en el workspace
 
-El template usa `{{PROJECT_NAME}}`, `{{PROJECT_CODE}}`, `{{ROOT_PATH}}`. Si el orquestador es **único para todo el workspace**:
+El template usa `VentasCore_IA`, `VC`, `.`. Si el orquestador es **único para todo el workspace**:
 
 | Dato | Uso recomendado |
 |------|------------------|
-| `{{ROOT_PATH}}` | **Raíz del workspace** (donde está el `.code-workspace`). Así "Workspace Isolation" significa: solo operar sobre archivos bajo esta raíz. |
-| `{{PROJECT_NAME}}` | Nombre del workspace (ej. `test_1`) o un nombre de producto acordado. Puede hidratarse una vez en el template. |
-| `{{PROJECT_CODE}}` | Código corto del workspace (ej. `T1` o `SARIGABO`). Útil para prefijos de agentes `AG-{{PROJECT_CODE}}-01-ARCHITECT`. |
+| `.` | **Raíz del workspace** (donde está el `.code-workspace`). Así "Workspace Isolation" significa: solo operar sobre archivos bajo esta raíz. |
+| `VentasCore_IA` | Nombre del workspace (ej. `test_1`) o un nombre de producto acordado. Puede hidratarse una vez en el template. |
+| `VC` | Código corto del workspace (ej. `T1` o `SARIGABO`). Útil para prefijos de agentes `AG-VC-01-ARCHITECT`. |
 
 Recomendación: ejecutar **una vez** `setup_project.ps1` dentro de `IA_MANAGER_TEMPLATE` con el nombre y código del workspace, para hidratar esos placeholders. A partir de ahí, ese directorio es la fuente única; no hace falta volver a copiar el template.
 
@@ -136,7 +136,7 @@ Para que el workspace funcione como template en cualquier ubicación:
 1. **Rutas relativas:** Todas las referencias en el template usan rutas relativas (p. ej. `./03_PROMPT_LIBRARY/README.md`, `./Tech_Stack.md`). No se usan rutas absolutas ni `file:///`.
 2. **ROOT_PATH:** Durante el setup se sustituye por `.` (raíz del workspace), de modo que el aislamiento sea relativo.
 3. **Regla de Cursor:** La regla en `.cursor/rules/ia-manager-orchestrator.mdc` usa el placeholder `{{IA_MANAGER_TEMPLATE_PATH}}`. Al ejecutar `setup_project.ps1` desde `IA_MANAGER_TEMPLATE`, el script:
-   - Sustituye en todo el template: `{{PROJECT_NAME}}`, `{{PROJECT_CODE}}`, `{{ROOT_PATH}}` (por `.`), `{{CURRENT_DATE}}`.
+   - Sustituye en todo el template: `VentasCore_IA`, `VC`, `.` (por `.`), `2026-02-06`.
    - Escribe o actualiza `.cursor/rules/ia-manager-orchestrator.mdc` en la raíz del workspace sustituyendo `{{IA_MANAGER_TEMPLATE_PATH}}` por la ruta relativa desde la raíz del workspace hasta `IA_MANAGER_TEMPLATE`.
 
 **Tras clonar o usar este workspace como template:** ejecuta `./setup_project.ps1` desde la carpeta `IA_MANAGER_TEMPLATE` (o con parámetros `-ProjectName`, `-ProjectCode`, `-WorkspaceRoot` si lo ejecutas desde otro sitio) para dejar todas las rutas y las reglas de Cursor correctamente configuradas.

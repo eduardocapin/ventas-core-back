@@ -1,6 +1,6 @@
 # ✍️ NAMING CONVENTIONS: ESTÁNDAR SINTÁCTICO
 
-Para asegurar que **{{PROJECT_NAME}}** parezca escrito por una sola entidad, todos los agentes deben seguir estas reglas de nomenclatura sin excepción.
+Para asegurar que **VentasCore_IA** parezca escrito por una sola entidad, todos los agentes deben seguir estas reglas de nomenclatura sin excepción.
 
 ---
 

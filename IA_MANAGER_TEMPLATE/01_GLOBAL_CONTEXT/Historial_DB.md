@@ -1,6 +1,6 @@
 # 🗄️ HISTORIAL DE CAMBIOS: BASE DE DATOS
 
-Este archivo registra de forma obligatoria cualquier modificación en el esquema de la base de datos de **{{PROJECT_NAME}}**. El motor es configurable vía `DB_TYPE` (MySQL o MSSQL); la base por defecto es `db_rechazos`. El esquema se refleja en las entidades TypeORM del Back.
+Este archivo registra de forma obligatoria cualquier modificación en el esquema de la base de datos de **VentasCore_IA**. El motor es configurable vía `DB_TYPE` (MySQL o MSSQL); la base por defecto es `db_rechazos`. El esquema se refleja en las entidades TypeORM del Back.
 
 ---
 
@@ -46,8 +46,8 @@ Cualquier cambio en columnas, tablas nuevas o migraciones debe registrarse abajo
 
 | Fecha | Agente | Tipo de Cambio | Descripción |
 | :--- | :--- | :--- | :--- |
-| **2024-02-04** | AG-{{PROJECT_CODE}}-04-DB | Inicialización | Creación de la estructura base y este fichero de registro. |
-| **{{CURRENT_DATE}}** | — | Documentación | Alineación del historial con el estado real de entidades del Back. |
+| **2024-02-04** | AG-VC-04-DB | Inicialización | Creación de la estructura base y este fichero de registro. |
+| **2026-02-06** | — | Documentación | Alineación del historial con el estado real de entidades del Back. |
 
 ---
 
@@ -65,6 +65,6 @@ Cualquier cambio en columnas, tablas nuevas o migraciones debe registrarse abajo
 *   **Descripción:** Configuración inicial del proyecto.
 *   **SQL/TypeORM:** N/A (Project Template Setup).
 
-### [{{CURRENT_DATE}}] - Documentación del estado actual
+### [2026-02-06] - Documentación del estado actual
 *   **Autor:** Plan 01_GLOBAL_CONTEXT
 *   **Descripción:** Listado de entidades/tablas existentes para SSOT. Sin cambios de esquema.

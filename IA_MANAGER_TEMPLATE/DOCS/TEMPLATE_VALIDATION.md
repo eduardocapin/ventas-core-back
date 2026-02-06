@@ -7,7 +7,7 @@ Checklist para comprobar que el template está correctamente configurado y opera
 ## 1. Setup y configuración inicial
 
 - [ ] **Ejecutar el script de setup:** En la raíz del proyecto, ejecutar `./setup_project.ps1` (PowerShell).
-- [ ] **Introducir nombre y código del proyecto:** Verificar que los placeholders `{{PROJECT_NAME}}` y `{{PROJECT_CODE}}` se sustituyen en los archivos del template (buscar en README, 00_MANAGER, AGENTS_REGISTRY, definiciones de agentes).
+- [ ] **Introducir nombre y código del proyecto:** Verificar que los placeholders `VentasCore_IA` y `VC` se sustituyen en los archivos del template (buscar en README, 00_MANAGER, AGENTS_REGISTRY, definiciones de agentes).
 - [ ] **Rutas relativas:** Confirmar que las rutas en 00_MANAGER.md y en los agentes apuntan a `./01_GLOBAL_CONTEXT/`, `./00_CORE_MANAGER/`, `./02_AGENTS_REGISTRY/` según la estructura del template.
 
 ---
@@ -16,7 +16,7 @@ Checklist para comprobar que el template está correctamente configurado y opera
 
 - [ ] **Documentos críticos existen:** `01_GLOBAL_CONTEXT/Diccionario.md`, `AI_Safety_Guardrails.md`, `Reglas_Generales.md`, `00_CORE_MANAGER/AGENTS_REGISTRY.json`, `00_CORE_MANAGER/00_MANAGER.md`.
 - [ ] **Sin referencias rotas:** Los enlaces internos en README, 00_MANAGER, TROUBLESHOOTING y DOCS apuntan a archivos que existen.
-- [ ] **Placeholders sustituidos:** Tras el setup, no debe quedar `{{PROJECT_NAME}}` o `{{PROJECT_CODE}}` en archivos que ya deban estar personalizados (salvo en plantillas explícitas).
+- [ ] **Placeholders sustituidos:** Tras el setup, no debe quedar `VentasCore_IA` o `VC` en archivos que ya deban estar personalizados (salvo en plantillas explícitas).
 
 **Acción recomendada:** Pedir *"Revisar el template"* o *"Auditar IA_MANAGER_TEMPLATE"* para que el Jardinero ejecute su checklist de coherencia (ver `02_AGENTS_REGISTRY/09_GARDENER.md`).
 

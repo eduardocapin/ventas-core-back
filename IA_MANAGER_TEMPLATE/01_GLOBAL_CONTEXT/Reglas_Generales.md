@@ -1,6 +1,6 @@
 # 📜 REGLAS GENERALES DE DESARROLLO Y COMPORTAMIENTO
 
-Este documento establece los estándares técnicos y operativos para el proyecto **{{PROJECT_NAME}}**. Es de cumplimiento obligatorio para todos los agentes expertos invocados por el Manager.
+Este documento establece los estándares técnicos y operativos para el proyecto **VentasCore_IA**. Es de cumplimiento obligatorio para todos los agentes expertos invocados por el Manager.
 
 ---
 
@@ -11,7 +11,7 @@ Este documento establece los estándares técnicos y operativos para el proyecto
 3.  **Manejo de Contexto:** Los agentes deben priorizar la información del `Diccionario.md` y `Tech_Stack.md` sobre sus conocimientos generales.
 4.  **Respeto a las Rutas:** No se deben crear archivos fuera de la estructura de carpetas acordada.
 5.  **Integridad del Registro:** Cualquier alta, baja o modificación de un Agente o archivo de contexto global DEBE quedar reflejada en el `AGENTS_REGISTRY.json` del CORE_MANAGER.
-6.  **Visibilidad de delegación:** El Manager debe mostrar de forma visual y clara cuando delega una tarea a un agente, usando el formato: `🤖 [MANAGER] → Delegando a [AG-{{PROJECT_CODE}}-XX-AGENT]` seguido del nombre completo del agente y la tarea específica asignada. Esto permite al usuario saber en todo momento qué agente está trabajando y en qué tarea. Ver formato detallado en `00_CORE_MANAGER/00_MANAGER.md` (sección "Transparencia visual").
+6.  **Visibilidad de delegación:** El Manager debe mostrar de forma visual y clara cuando delega una tarea a un agente, usando el formato: `🤖 [MANAGER] → Delegando a [AG-VC-XX-AGENT]` seguido del nombre completo del agente y la tarea específica asignada. Esto permite al usuario saber en todo momento qué agente está trabajando y en qué tarea. Ver formato detallado en `00_CORE_MANAGER/00_MANAGER.md` (sección "Transparencia visual").
 
 ---
 

@@ -1,10 +1,10 @@
 {
-  "project_name": "{{PROJECT_NAME}}",
+  "project_name": "VentasCore_IA",
   "version": "1.1.0",
   "root_structure": "Antigravity Standard",
   "agents": [
     {
-      "id": "AG-{{PROJECT_CODE}}-00-FACTORY",
+      "id": "AG-VC-00-FACTORY",
       "name": "Generador de Agentes",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/00_AGENT_FACTORY.md",
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-01-ARCHITECT",
+      "id": "AG-VC-01-ARCHITECT",
       "name": "Arquitecto de Software Senior",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/01_ARQUITECTO.md",
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-02-FRONTEND",
+      "id": "AG-VC-02-FRONTEND",
       "name": "Especialista Frontend (Angular)",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/02_FRONTEND.md",
@@ -60,7 +60,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-03-BACKEND",
+      "id": "AG-VC-03-BACKEND",
       "name": "Especialista Backend (Node/API)",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/03_BACKEND.md",
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-04-DB",
+      "id": "AG-VC-04-DB",
       "name": "Experto en Base de Datos",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/04_DATABASE.md",
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-05-QA",
+      "id": "AG-VC-05-QA",
       "name": "QA & Testing Engineer",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/05_QA_TESTING.md",
@@ -126,7 +126,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-06-SETUP",
+      "id": "AG-VC-06-SETUP",
       "name": "Asistente de Configuración",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/06_SETUP_WIZARD.md",
@@ -144,7 +144,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-07-UX",
+      "id": "AG-VC-07-UX",
       "name": "Senior UX/UI Designer",
       "version": "1.0.0",
       "file_path": "./02_AGENTS_REGISTRY/07_UX_DESIGNER.md",
@@ -164,7 +164,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-08-SECURITY",
+      "id": "AG-VC-08-SECURITY",
       "name": "Cibersecurity & Audit Expert",
       "version": "1.0.0",
       "file_path": "./02_AGENTS_REGISTRY/08_SECURITY_EXPERT.md",
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "id": "AG-{{PROJECT_CODE}}-09-GARDENER",
+      "id": "AG-VC-09-GARDENER",
       "name": "El Jardinero (Higiene de Contexto)",
       "version": "1.1.0",
       "file_path": "./02_AGENTS_REGISTRY/09_GARDENER.md",

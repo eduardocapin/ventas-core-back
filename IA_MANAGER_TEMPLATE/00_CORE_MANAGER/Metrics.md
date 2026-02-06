@@ -1,6 +1,6 @@
 # 📊 Métricas y monitoreo del sistema
 
-Este documento describe las métricas calculables del sistema de agentes de **{{PROJECT_NAME}}** basadas en los logs de auditoría y deuda técnica. Es un archivo opcional que requiere mantenimiento manual periódico o scripts adicionales.
+Este documento describe las métricas calculables del sistema de agentes de **VentasCore_IA** basadas en los logs de auditoría y deuda técnica. Es un archivo opcional que requiere mantenimiento manual periódico o scripts adicionales.
 
 ---
 
@@ -12,16 +12,16 @@ Este documento describe las métricas calculables del sistema de agentes de **{{
 
 **Cómo calcular:**
 1. Abrir `00_CORE_MANAGER/Audit_Logs.md`
-2. Contar las filas donde la columna "Agente/Rol" coincide con cada agente (ej. `AG-{{PROJECT_CODE}}-02-FRONTEND`, `AG-{{PROJECT_CODE}}-03-BACKEND`)
+2. Contar las filas donde la columna "Agente/Rol" coincide con cada agente (ej. `AG-VC-02-FRONTEND`, `AG-VC-03-BACKEND`)
 3. Registrar el total por agente
 
 **Ejemplo de tabla de resultados:**
 
 | Agente | Número de intervenciones | Última actividad |
 |--------|-------------------------|------------------|
-| AG-{{PROJECT_CODE}}-02-FRONTEND | 15 | 2026-02-06 |
-| AG-{{PROJECT_CODE}}-03-BACKEND | 12 | 2026-02-05 |
-| AG-{{PROJECT_CODE}}-04-DB | 8 | 2026-02-04 |
+| AG-VC-02-FRONTEND | 15 | 2026-02-06 |
+| AG-VC-03-BACKEND | 12 | 2026-02-05 |
+| AG-VC-04-DB | 8 | 2026-02-04 |
 
 **Interpretación:** Identifica qué agentes son más utilizados y cuáles pueden necesitar más atención o mejoras.
 

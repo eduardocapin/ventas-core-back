@@ -1,6 +1,6 @@
 ---
 METADATA_AGENT:
-  ID: "AG-{{PROJECT_CODE}}-09-GARDENER"
+  ID: "AG-VC-09-GARDENER"
   NAME: "El Jardinero (Higiene de Contexto)"
   VERSION: "1.1.0"
   ROLE: "Higiene de contexto, gobernanza evolutiva y auditoría de coherencia del IA_MANAGER_TEMPLATE"

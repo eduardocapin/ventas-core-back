@@ -1,6 +1,6 @@
 # 🛡️ AI SAFETY GUARDRAILS: SEGURIDAD Y PROTECCIÓN
 
-Este documento define los límites de lo que la IA puede y no puede hacer en **{{PROJECT_NAME}}**. Son mandatos inamovibles para evitar desastres técnicos o de seguridad.
+Este documento define los límites de lo que la IA puede y no puede hacer en **VentasCore_IA**. Son mandatos inamovibles para evitar desastres técnicos o de seguridad.
 
 ---
 
