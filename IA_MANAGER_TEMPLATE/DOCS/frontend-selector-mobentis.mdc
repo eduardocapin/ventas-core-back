@@ -1,0 +1,39 @@
+---
+description: Selector de componentes Angular debe usar prefijo mobentis- obligatorio
+globs: "**/src/app/**/*.component.ts"
+alwaysApply: true
+---
+
+# Regla: Selector de componentes Angular - Prefijo mobentis-
+
+## Ámbito
+Esta regla aplica a todos los archivos de componentes Angular del Front (cualquier proyecto Front en el workspace con ruta `**/src/app/**/*.component.ts`).
+
+## Norma obligatoria
+
+**El `selector` de `@Component` debe ser siempre `'mobentis-'` + nombre del componente en kebab-case.**
+
+### Ejemplos correctos:
+- `selector: 'mobentis-total-monthly-sales'`
+- `selector: 'mobentis-sales-made'`
+- `selector: 'mobentis-popup-sales'`
+- `selector: 'mobentis-clients-general'`
+
+### Prohibido:
+- `selector: 'app-*'` (cualquier selector que empiece con `app-`)
+- Cualquier otro prefijo que no sea `mobentis-`
+
+## Comportamiento esperado
+
+1. **Al crear un componente nuevo:** Usar siempre `mobentis-` como prefijo del selector.
+2. **Al revisar o editar un componente existente:** Comprobar que no exista `selector: 'app-` y, si existe, corregir a `mobentis-`.
+3. **Al detectar un selector incorrecto:** Indicar al usuario que debe corregirse para cumplir con la norma del proyecto.
+
+## Referencias
+- Ver `IA_MANAGER_TEMPLATE/01_GLOBAL_CONTEXT/Naming_Conventions.md` (sección "Selectores de componentes Angular").
+- Ver `IA_MANAGER_TEMPLATE/01_GLOBAL_CONTEXT/Reglas_Generales.md` (sección "Estándares de Frontend").
+- Ver `IA_MANAGER_TEMPLATE/02_AGENTS_REGISTRY/02_FRONTEND.md` (regla de oro #6 y "Organización de código").
+
+## Instalación en el proyecto
+
+Para usar esta regla en un proyecto, copia este archivo a `.cursor/rules/frontend-selector-mobentis.mdc` en la raíz del workspace o del proyecto Front.

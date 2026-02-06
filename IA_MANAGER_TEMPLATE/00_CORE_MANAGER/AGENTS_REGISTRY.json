@@ -1,0 +1,227 @@
+{
+  "project_name": "{{PROJECT_NAME}}",
+  "version": "1.1.0",
+  "root_structure": "Antigravity Standard",
+  "agents": [
+    {
+      "id": "AG-{{PROJECT_CODE}}-00-FACTORY",
+      "name": "Generador de Agentes",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/00_AGENT_FACTORY.md",
+      "triggers": [
+        "crear agente",
+        "nuevo experto",
+        "añadir especialista",
+        "generar ficha"
+      ],
+      "capabilities": [
+        "Estandarización",
+        "Diseño de Roles",
+        "Automatización de Documentación"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-01-ARCHITECT",
+      "name": "Arquitecto de Software Senior",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/01_ARQUITECTO.md",
+      "triggers": [
+        "arquitectura",
+        "estructura",
+        "patrones",
+        "diseño",
+        "flujo"
+      ],
+      "capabilities": [
+        "Clean Architecture",
+        "Modularización",
+        "Escalabilidad"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-02-FRONTEND",
+      "name": "Especialista Frontend (Angular)",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/02_FRONTEND.md",
+      "triggers": [
+        "angular",
+        "componentes",
+        "signals",
+        "interfaz",
+        "ux",
+        "ts",
+        "html",
+        "css"
+      ],
+      "capabilities": [
+        "Angular 17+",
+        "UI/UX",
+        "State Management"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-03-BACKEND",
+      "name": "Especialista Backend (Node/API)",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/03_BACKEND.md",
+      "triggers": [
+        "api",
+        "endpoint",
+        "backend",
+        "servicios",
+        "integración",
+        "3cx",
+        "node"
+      ],
+      "capabilities": [
+        "Node.js",
+        "API Rest",
+        "Integración de Sistemas"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-04-DB",
+      "name": "Experto en Base de Datos",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/04_DATABASE.md",
+      "triggers": [
+        "sql",
+        "tablas",
+        "query",
+        "migración",
+        "modelo",
+        "relación",
+        "persistencia",
+        "nuevo DTO",
+        "añadir entidad",
+        "nueva entidad",
+        "registrar DTO",
+        "añadir tabla"
+      ],
+      "capabilities": [
+        "PostgreSQL",
+        "TypeORM",
+        "Optimización de Consultas",
+        "Registro de nuevas entidades/DTO en sistema de control"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-05-QA",
+      "name": "QA & Testing Engineer",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/05_QA_TESTING.md",
+      "triggers": [
+        "test",
+        "error",
+        "bug",
+        "vitest",
+        "pruebas",
+        "calidad",
+        "refactor"
+      ],
+      "capabilities": [
+        "Unit Testing",
+        "Debugging",
+        "Validación de Lógica"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-06-SETUP",
+      "name": "Asistente de Configuración",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/06_SETUP_WIZARD.md",
+      "triggers": [
+        "configurar",
+        "setup",
+        "inicio",
+        "empezar",
+        "hidratar"
+      ],
+      "capabilities": [
+        "Consultoría de Dominio",
+        "Configuración Inicial",
+        "Gestión de Diccionario"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-07-UX",
+      "name": "Senior UX/UI Designer",
+      "version": "1.0.0",
+      "file_path": "./02_AGENTS_REGISTRY/07_UX_DESIGNER.md",
+      "triggers": [
+        "diseño",
+        "estética",
+        "interfaz",
+        "wow",
+        "animación",
+        "colores",
+        "experiencia"
+      ],
+      "capabilities": [
+        "Design Systems",
+        "Tailwind Tuning",
+        "Micro-animations"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-08-SECURITY",
+      "name": "Cibersecurity & Audit Expert",
+      "version": "1.0.0",
+      "file_path": "./02_AGENTS_REGISTRY/08_SECURITY_EXPERT.md",
+      "triggers": [
+        "seguridad",
+        "cifrado",
+        "auditoría",
+        "jwt",
+        "vulnerabilidad",
+        "secretos"
+      ],
+      "capabilities": [
+        "Security Auditing",
+        "Secret Management",
+        "Threat Modeling"
+      ]
+    },
+    {
+      "id": "AG-{{PROJECT_CODE}}-09-GARDENER",
+      "name": "El Jardinero (Higiene de Contexto)",
+      "version": "1.1.0",
+      "file_path": "./02_AGENTS_REGISTRY/09_GARDENER.md",
+      "triggers": [
+        "limpieza",
+        "poda",
+        "jardinero",
+        "higiene",
+        "optimizar contexto",
+        "borrar reglas",
+        "revisar template",
+        "auditar template",
+        "actualizar documentación template",
+        "coherencia template",
+        "enlaces template"
+      ],
+      "capabilities": [
+        "Context Pruning",
+        "Rule Optimization",
+        "Documentation Hygiene",
+        "Auditoría de coherencia del IA_MANAGER_TEMPLATE"
+      ]
+    }
+  ],
+  "global_context": [
+    "./01_GLOBAL_CONTEXT/Diccionario.md",
+    "./01_GLOBAL_CONTEXT/Reglas_Generales.md",
+    "./01_GLOBAL_CONTEXT/Tech_Stack.md",
+    "./01_GLOBAL_CONTEXT/Historial_DB.md",
+    "./01_GLOBAL_CONTEXT/Tablas_Columnas_Alias.md",
+    "./01_GLOBAL_CONTEXT/Architecture_Decisions.md",
+    "./01_GLOBAL_CONTEXT/Quality_Standards.md",
+    "./00_CORE_MANAGER/Audit_Logs.md",
+    "./00_CORE_MANAGER/Technical_Debt.md",
+    "./01_GLOBAL_CONTEXT/Naming_Conventions.md",
+    "./01_GLOBAL_CONTEXT/AI_Safety_Guardrails.md",
+    "./01_GLOBAL_CONTEXT/Governance_Evolution.md",
+    "./01_GLOBAL_CONTEXT/Backend_Patterns.md",
+    "./01_GLOBAL_CONTEXT/LAST_SESSION_STATUS_TEMPLATE.md"
+  ]
+}
