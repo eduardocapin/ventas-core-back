@@ -36,6 +36,7 @@ Tu objetivo es construir una arquitectura de servidor robusta, escalable y segur
 3. **Coordinación con DB:** Si la API requiere nuevos campos en una entidad existente, solicita al `AG-04-DB` la actualización del esquema y de `Tablas_Columnas_Alias.md` e `Historial_DB.md`. Si es una **entidad nueva**, el flujo «Añadir nuevo DTO/entidad al sistema de control» lo lleva el agente 04-DB (actualiza Diccionario, Tablas_Columnas_Alias, Historial_DB); después tú implementas entidad, DTOs, módulo y endpoints.
 4. **Handoff al Frontend:** Una vez creado el endpoint, entrega al agente de Frontend la URL y la estructura del DTO de respuesta para que pueda generar los servicios correspondientes.
 5. **Variables de entorno:** Al crear servicios o módulos que requieren variables de entorno, documentar qué variables necesita el módulo, validar que existen al inicializar, lanzar error claro si faltan, y actualizar `.env.example` si se añade una nueva variable. Ver `DOCS/ENV_MANAGEMENT.md` para guía detallada.
+6. **Cuando la tarea proviene de Entity-to-Stack (AG-VC-10-ENTITY-STACK):** Si la tarea incluye una **checklist explícita** de artefactos a generar (entidad, DTOs, módulo, controlador, servicio, registro en app.module), **debes completar todos los elementos de esa checklist** antes de considerar la tarea terminada. La checklist garantiza que no se olvide ningún artefacto ni paso de wiring. Confirma al agente Entity-to-Stack cuando todos los endpoints estén listos para que pueda delegar al Frontend.
 
 ---
 

@@ -18,6 +18,8 @@ Este documento define los términos técnicos y de negocio para asegurar la cons
 | **Agrupación (GroupBy)** | Opción de agrupación en listados. | id, campo, descripción. |
 | **Empresa** | Empresa (contexto multi-empresa). | id, código ERP/OPT. |
 | **Ámbito (Scope)** | Ámbito de visibilidad o permiso. | id, nombre. |
+| **Pedido** | Documento de venta (pedido) para el Importador. | id, tipo documento, número, cliente, agente, fecha, delegación, estado integración, mensaje error integración. |
+| **PedidosDetalle** | Línea de detalle de un pedido. | id, pedido_id, referencia, descripción, unidades, precio, descuento, total. |
 
 
 ---

@@ -37,6 +37,8 @@ Listado de entidades TypeORM existentes en SarigaboMobentis_Back (tabla física 
 | Report | reports |
 | TableName, TableField | import |
 | Config, Cities, Status, Salemen, Symbol, Provinces, PasswordChanges | repositories |
+| Pedido (Pedidos) | pedidos |
+| PedidoDetalle (PedidosDetalle) | pedidos |
 
 Cualquier cambio en columnas, tablas nuevas o migraciones debe registrarse abajo.
 
@@ -48,6 +50,7 @@ Cualquier cambio en columnas, tablas nuevas o migraciones debe registrarse abajo
 | :--- | :--- | :--- | :--- |
 | **2024-02-04** | AG-VC-04-DB | Inicialización | Creación de la estructura base y este fichero de registro. |
 | **2026-02-06** | — | Documentación | Alineación del historial con el estado real de entidades del Back. |
+| **2026-02-09** | Plan Importador | Nuevas tablas/entidades | Registro de Pedidos y PedidosDetalle para Importador de Documentos (listado y detalle con líneas). |
 
 ---
 
@@ -68,3 +71,8 @@ Cualquier cambio en columnas, tablas nuevas o migraciones debe registrarse abajo
 ### [2026-02-06] - Documentación del estado actual
 *   **Autor:** Plan 01_GLOBAL_CONTEXT
 *   **Descripción:** Listado de entidades/tablas existentes para SSOT. Sin cambios de esquema.
+
+### [2026-02-09] - Pedidos y PedidosDetalle (Importador de Documentos)
+*   **Autor:** Plan Importador
+*   **Descripción:** Entidades Pedido y PedidoDetalle para el módulo pedidos: listado paginado (POST pedidos/list) y detalle con líneas (GET pedidos/:id). Tablas: Pedidos, PedidosDetalle. Si las tablas no existen en BD, crear con migración o synchronize según criterio del proyecto.
+*   **Tablas afectadas:** Pedidos (nueva), PedidosDetalle (nueva).

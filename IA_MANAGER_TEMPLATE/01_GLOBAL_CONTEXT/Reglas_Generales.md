@@ -27,6 +27,17 @@ Cuando el usuario quiera **añadir una nueva funcionalidad, componente, sistema 
 
 ---
 
+## 📂 1.2 AVISO AL USUARIO SI FALTA COMPONENTE EN CORE (FRONTEND)
+
+Antes de crear **cualquier** elemento de UI nuevo (botón, KPI, tabla, filtro, gráfica, input, diálogo, etc.), el agente de Frontend debe **comprobar** si existe un componente equivalente en la carpeta Core del Front (`ventas-core-front/src/app/core/components` o la ruta equivalente en el workspace).
+
+- **Si no existe** en Core un componente que cubra la necesidad, el agente **debe detenerse**, **informar al usuario** de qué elemento(s) faltan y que sería necesario crear componente(s) nuevo(s) fuera de Core (o valorar añadirlo a Core en el futuro), y **no realizar ningún cambio** hasta que el usuario confirme que desea continuar (creando fuera de Core o con otra estrategia).
+- **Solo tras confirmación del usuario** se permite crear nuevo HTML o componente fuera de Core.
+
+Esta regla complementa la 1.1: además de reutilizar cuando existe, se exige **aviso previo y bloqueo hasta confirmación** cuando falte un componente en Core. Ver también el protocolo en dos fases en `02_AGENTS_REGISTRY/02_FRONTEND.md` y el checkpoint de Core en `00_CORE_MANAGER/00_MANAGER.md`.
+
+---
+
 ## 🎨 2. ESTÁNDARES DE FRONTEND (SarigaboMobentis_Front)
 
 -   **Stack:** Seguir estrictamente las tecnologías definidas en `01_GLOBAL_CONTEXT/Tech_Stack.md` (Angular 16.2, Bootstrap 5, Angular Material 16, RxJS 7.8).

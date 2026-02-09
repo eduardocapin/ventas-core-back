@@ -308,6 +308,61 @@ Para cada tabla: **Nombre técnico (tabla BD)**, **Descripción**, **Alias en pa
 
 ---
 
+### 1.11 Pedido (módulo pedidos)
+
+| Concepto | Valor |
+| :--- | :--- |
+| **Tabla BD** | Pedidos |
+| **Entidad** | Pedido |
+| **Descripción** | Documento de venta (pedido) para el Importador de Documentos. Estados de integración con ERP. |
+| **Alias en pantalla** | Pedidos / Documentos |
+
+**Columnas:**
+
+| Campo (BD / DTO) | Tipo | Significado | Alias en pantalla |
+| :--- | :--- | :--- | :--- |
+| id | int | Identificador interno (PK) | ID |
+| tipoDocumento / tipo_documento | string | Tipo de documento | Tipo |
+| numero / numero | string | Número de documento | Nº |
+| cliente / cliente | string | Nombre o código de cliente | Cliente |
+| agente / agente | string | Código o nombre de agente | Agente |
+| fecha / fecha | datetime | Fecha del documento | Fecha |
+| delegacion / delegacion | string | Delegación | Delegación |
+| estadoIntegracion / estado_integracion | string | Estado de integración (blanco, verde, rojo, amarillo, azul, cian) | Est. Integración |
+| mensajeErrorIntegracion / mensaje_error_integracion | string | Mensaje de error de integración con ERP | Errores integración |
+| observaciones / observaciones | string | Observaciones del pedido | Observaciones |
+| FechaInsert / insert_date | datetime | Fecha de alta | Fecha alta |
+| FechaUpdate / update_date | datetime | Fecha de actualización | Fecha actualización |
+| BajaEnERP / deleted | boolean | Borrado lógico | Baja |
+
+---
+
+### 1.12 PedidosDetalle (módulo pedidos)
+
+| Concepto | Valor |
+| :--- | :--- |
+| **Tabla BD** | PedidosDetalle |
+| **Entidad** | PedidoDetalle |
+| **Descripción** | Línea de detalle de un pedido (referencia, descripción, unidades, precio). |
+| **Alias en pantalla** | Líneas de pedido |
+
+**Columnas:**
+
+| Campo (BD / DTO) | Tipo | Significado | Alias en pantalla |
+| :--- | :--- | :--- | :--- |
+| id | int | Identificador interno (PK) | ID |
+| pedidoId / pedido_id | int | ID del pedido (FK) | Id. pedido |
+| referencia / referencia | string | Referencia del artículo | Referencia |
+| descripcion / descripcion | string | Descripción de la línea | Descripción |
+| unidades / unidades | decimal | Cantidad | Unidades |
+| precio / precio | decimal | Precio unitario | Precio |
+| descuento / descuento | decimal | Descuento aplicado | Descuento |
+| total / total | decimal | Total línea | Total |
+| FechaInsert / insert_date | datetime | Fecha de alta | Fecha alta |
+| BajaEnERP / deleted | boolean | Borrado lógico | Baja |
+
+---
+
 ## 2. Vistas
 
 Si el proyecto utiliza **vistas** de base de datos (o entidades TypeORM mapeadas a vistas), documentarlas aquí con la misma estructura: nombre técnico, descripción, alias en pantalla y columnas (Campo | Tipo | Significado | Alias en pantalla). Si la función o descripción no está clara, **solicitar al usuario** que la indique.

@@ -69,6 +69,7 @@ Para incorporar esta plantilla a un nuevo proyecto, sigue estos pasos:
     - Abre el chat con Antigravity.
     - Escribe `/ia-init` (o simplemente di "Hola, configura el proyecto").
     - El **Setup Wizard** te ayudará a rellenar el `Diccionario.md` basándose en tu idea de negocio.
+4.  **Script de introspección de BD (si aplica):** Si el backend está en el mismo repo que este template, asegúrate de que exista el fichero `scripts/sync-schema-to-docs.ts` en la raíz del backend. Si no existe o se ha perdido, ejecuta desde la raíz del backend: `npm run template:init-sync-script`. Eso copia la copia canónica desde `IA_MANAGER_TEMPLATE/scripts/sync-schema-to-docs.ts` para que el comando `npm run db:sync-docs` esté disponible. El script no contiene datos de conexión; todo se lee del `.env` del backend.
 
 ---
 

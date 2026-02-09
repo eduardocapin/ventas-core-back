@@ -17,7 +17,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db:sync-docs": "ts-node -r tsconfig-paths/register scripts/sync-schema-to-docs.ts",
+    "db:sync-docs:dry": "ts-node -r tsconfig-paths/register scripts/sync-schema-to-docs.ts -- --dry-run",
+    "template:init-sync-script": "node -e \"const fs=require('fs');const p=require('path');const src=p.join(process.cwd(),'IA_MANAGER_TEMPLATE','scripts','sync-schema-to-docs.ts');const dest=p.join(process.cwd(),'scripts','sync-schema-to-docs.ts');if(!fs.existsSync(src)){console.error('Template script not found:',src);process.exit(1);}fs.mkdirSync(p.dirname(dest),{recursive:true});fs.copyFileSync(src,dest);console.log('Copied sync-schema-to-docs.ts from template to scripts/');\""
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
