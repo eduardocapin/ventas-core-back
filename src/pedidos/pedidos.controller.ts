@@ -42,6 +42,23 @@ export class PedidosController {
     }
   }
 
+  @Get('kpis')
+  @ApiOperation({ summary: 'KPIs de pedidos por estado de integración' })
+  @ApiResponse({ status: 200, description: 'Conteos por estado (clave = estado, valor = cantidad).' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getKpis() {
+    try {
+      return await this.pedidosService.getKpisByEstado();
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Error en GET pedidos/kpis: ${error}`);
+      throw new HttpException(
+        'Error en el servidor. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Detalle de un pedido con líneas y observaciones' })
   @ApiParam({ name: 'id', description: 'ID del pedido' })

@@ -15,7 +15,9 @@ Este documento actúa como la **Fuente Única de Verdad (SSOT)** para las versio
 
 ---
 
-## 🎨 FRONTEND STACK (SarigaboMobentis_Front)
+## 🎨 FRONTEND STACK
+
+*Ruta del proyecto: `paths.config.json` → `frontend_path`*
 
 | Herramienta | Versión | Propósito |
 | :--- | :--- | :--- |
@@ -29,7 +31,9 @@ Este documento actúa como la **Fuente Única de Verdad (SSOT)** para las versio
 
 ---
 
-## ⚙️ BACKEND & DATA STACK (SarigaboMobentis_Back)
+## ⚙️ BACKEND & DATA STACK
+
+*Ruta del proyecto: `paths.config.json` → `backend_path`*
 
 | Herramienta | Versión | Propósito |
 | :--- | :--- | :--- |
@@ -57,4 +61,4 @@ Este documento actúa como la **Fuente Única de Verdad (SSOT)** para las versio
 
 ## 🕒 CONTROL DE CAMBIOS DEL STACK
 
-*   **2026-02-06:** Alineación del Tech Stack con SarigaboMobentis_Back y SarigaboMobentis_Front (versiones reales de package.json).
+*   **2026-02-06:** Alineación del Tech Stack con los proyectos del workspace (rutas en `paths.config.json`).

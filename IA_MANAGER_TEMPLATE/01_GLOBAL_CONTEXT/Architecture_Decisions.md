@@ -30,9 +30,9 @@ Este documento registra las decisiones técnicas clave tomadas durante el ciclo 
 *   **Contexto:** Se había documentado Angular 17+ y Node 20 como base; el proyecto real usa Angular 16 y NestJS 10.
 *   **Decisión:** Queda como referencia; el stack vigente es el documentado en ADR-003 y en `Tech_Stack.md`.
 
-### [ADR-003] Stack real del workspace (SarigaboMobentis)
+### [ADR-003] Stack real del workspace (VentasCore)
 *   **Status:** Aceptado
-*   **Contexto:** Alineación del IA_MANAGER_TEMPLATE con los proyectos SarigaboMobentis_Back y SarigaboMobentis_Front.
+*   **Contexto:** Alineación del IA_MANAGER_TEMPLATE con los proyectos del workspace (rutas en `paths.config.json`).
 *   **Decisión:** 
     *   **Frontend:** Angular 16.2, Bootstrap 5, Angular Material 16, RxJS 7.8. No se exige Angular 17 ni Signals; el estado se gestiona con servicios y RxJS.
     *   **Backend:** NestJS 10, TypeORM 0.3.20, TypeScript 5.1. Base de datos configurable (MySQL o MSSQL vía `DB_TYPE`); base por defecto `db_rechazos`.

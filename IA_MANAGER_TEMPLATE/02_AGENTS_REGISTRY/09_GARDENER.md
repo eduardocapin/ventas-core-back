@@ -41,6 +41,10 @@ Cuando realices una **revisión del template** (a petición del usuario o tras c
 5. **Referencias cruzadas:** Que los documentos que citan otros (ej. Reglas_Generales, Backend_Patterns, Quality_Standards, AI_Safety_Guardrails) usen nombres de fichero y rutas correctos.
 6. **INDEX.md de agentes:** Que la tabla de `02_AGENTS_REGISTRY/INDEX.md` refleje los mismos agentes que `AGENTS_REGISTRY.json` y descripciones coherentes con las fichas.
 7. **DOCS y README:** Que `README.md` del template y `DOCS/MANUAL_FUNCIONAMIENTO.md` (u otros en DOCS) no contengan rutas o nombres de fichero obsoletos.
+8. **Referencias obsoletas a proyectos:** Que no queden nombres de proyectos antiguos (ej. SarigaboMobentis_Back, SarigaboMobentis_Front) en documentación activa; deben coincidir con los nombres de carpetas del workspace (ej. ventas-core-back, ventas-core-front) o con los valores de `00_CORE_MANAGER/paths.config.json` si existe.
+9. **Reglas .mdc (globs):** Que los patrones `globs` en reglas desplegadas en `.cursor/rules/` (ej. core-inviolable.mdc) coincidan con las rutas reales del workspace (respetar mayúsculas/minúsculas de carpetas como `core`).
+10. **Campos del registro:** Que la documentación (TEMPLATE_VALIDATION.md, checklist de agentes) referencie el campo real `file_path` en las entradas de `AGENTS_REGISTRY.json`, no `rulesFile`.
+11. **Rutas sin hardcodear:** Que ninguna documentación (Reglas_Generales, agentes, DOCS, etc.) contenga rutas hardcodeadas de proyectos (ventas-core-back, ventas-core-front, etc.). Todas deben referenciar `paths.config.json` (claves `template_path`, `backend_path`, `frontend_path`, `core_back`, `core_front`).
 
 Si detectas enlaces rotos, rutas inexistentes o información desactualizada, **reporta al usuario** y propón los cambios concretos (o aplícalos si el usuario ha pedido explícitamente "actualizar todo").
 

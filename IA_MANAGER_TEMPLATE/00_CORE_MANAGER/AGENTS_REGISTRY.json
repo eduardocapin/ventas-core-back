@@ -54,7 +54,7 @@
         "css"
       ],
       "capabilities": [
-        "Angular 17+",
+        "Angular 16.2",
         "UI/UX",
         "State Management"
       ]

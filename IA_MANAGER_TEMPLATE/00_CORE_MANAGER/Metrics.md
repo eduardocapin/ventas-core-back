@@ -15,14 +15,6 @@ Este documento describe las métricas calculables del sistema de agentes de **Ve
 2. Contar las filas donde la columna "Agente/Rol" coincide con cada agente (ej. `AG-VC-02-FRONTEND`, `AG-VC-03-BACKEND`)
 3. Registrar el total por agente
 
-**Ejemplo de tabla de resultados:**
-
-| Agente | Número de intervenciones | Última actividad |
-|--------|-------------------------|------------------|
-| AG-VC-02-FRONTEND | 15 | 2026-02-06 |
-| AG-VC-03-BACKEND | 12 | 2026-02-05 |
-| AG-VC-04-DB | 8 | 2026-02-04 |
-
 **Interpretación:** Identifica qué agentes son más utilizados y cuáles pueden necesitar más atención o mejoras.
 
 ### Tasa de éxito aproximada
@@ -174,6 +166,39 @@ Crea una sección "Métricas actuales" en este mismo archivo con tablas que pued
 - Total deudas técnicas: Y
 - Tasa de éxito aproximada: Z%
 ```
+
+---
+
+## Métricas actuales (última actualización: 2026-02-09)
+
+### Uso de agentes
+
+| Agente | Nombre | Intervenciones | Última actividad |
+|--------|--------|----------------|------------------|
+| AG-VC-00-FACTORY | Generador de Agentes | 0 | — |
+| AG-VC-01-ARCHITECT | Arquitecto de Software Senior | 0 | — |
+| AG-VC-02-FRONTEND | Especialista Frontend (Angular) | 0 | — |
+| AG-VC-03-BACKEND | Especialista Backend (Node/API) | 0 | — |
+| AG-VC-04-DB | Experto en Base de Datos | 1 | 2024-02-04 |
+| AG-VC-05-QA | QA & Testing Engineer | 0 | — |
+| AG-VC-06-SETUP | Asistente de Configuración | 0 | — |
+| AG-VC-07-UX | Senior UX/UI Designer | 0 | — |
+| AG-VC-08-SECURITY | Cibersecurity & Audit Expert | 0 | — |
+| AG-VC-09-GARDENER | El Jardinero (Higiene de Contexto) | 0 | — |
+| AG-VC-10-ENTITY-STACK | Generador Entidad-FullStack | 0 | — |
+| AG-VC-MANAGER | Orquestador (Manager) | 1 | 2024-02-04 |
+
+### Deuda técnica
+
+| Total deudas | CRÍTICO | MEDIO | BAJO | Promedio días |
+|--------------|---------|-------|------|----------------|
+| 1 | 0 | 0 | 1 | — |
+
+### Tasa de éxito (aproximada)
+
+- Total tareas completadas (Audit_Logs): 2
+- Total deudas técnicas (Technical_Debt): 1
+- Tasa de éxito aproximada: 50%
 
 ---
 

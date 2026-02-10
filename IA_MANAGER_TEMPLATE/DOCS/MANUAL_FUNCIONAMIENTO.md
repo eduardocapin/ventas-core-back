@@ -366,6 +366,7 @@ Si el workspace tiene varios proyectos (Front, Back, etc.):
 | Cómo orquestar (Manager) | `00_CORE_MANAGER/00_MANAGER.md` |
 | Prompts para CRUD, API, UX, Security | `03_PROMPT_LIBRARY/README.md` |
 | Configurar orquestador en el workspace | `DOCS/WORKSPACE_ORCHESTRATOR_SETUP.md` |
+| Fuente de verdad de orquestación | `.cursor/rules/ia-manager-orchestrator.mdc`. El `.cursorrules` dentro del template es refuerzo local; en conflicto, prevalece la regla en `.cursor/rules/`. |
 
 ---
 

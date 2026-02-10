@@ -48,8 +48,9 @@ Para cada tabla: **Nombre técnico (tabla BD)**, **Descripción**, **Alias en pa
 | **Entidad** | Client |
 | **Descripción** | Cliente de negocio. Sincronizable con ERP; identificadores ERP y OPT. |
 | **Alias en pantalla** | Clientes |
+| **Implementación** | Backend: `src/clients/entities/client.entity.ts`, `src/clients/dto/cliente.dto.ts`. Schema DTO alineado con el SELECT completo de [dbo].[Clientes] (id, IdEmpresa, IdClienteFabricante, IdCategoria, Nombre, NombreFiscal, Cif, Telefono, Fax, Mail, Direccion, Provincia, Poblacion, … y el resto de columnas de la tabla). |
 
-**Columnas:**
+**Columnas (resumen; lista completa en entidad y DTO):**
 
 | Campo (BD / DTO) | Tipo | Significado | Alias en pantalla |
 | :--- | :--- | :--- | :--- |
@@ -314,7 +315,7 @@ Para cada tabla: **Nombre técnico (tabla BD)**, **Descripción**, **Alias en pa
 | :--- | :--- |
 | **Tabla BD** | Pedidos |
 | **Entidad** | Pedido |
-| **Descripción** | Documento de venta (pedido) para el Importador de Documentos. Estados de integración con ERP. |
+| **Descripción** | Documento de venta (pedido) para el Importador de Documentos. Estados de integración con ERP. Relación con Clientes: Pedidos.Cod_Agente_Fabricante = Clientes.Id (FK). Relación con PedidosTotal: Pedidos.Id_Pedido = PedidosTotal.IdPedidoOPT (OneToOne). |
 | **Alias en pantalla** | Pedidos / Documentos |
 
 **Columnas:**
@@ -324,9 +325,17 @@ Para cada tabla: **Nombre técnico (tabla BD)**, **Descripción**, **Alias en pa
 | id | int | Identificador interno (PK) | ID |
 | tipoDocumento / tipo_documento | string | Tipo de documento | Tipo |
 | numero / numero | string | Número de documento | Nº |
-| cliente / cliente | string | Nombre o código de cliente | Cliente |
-| agente / agente | string | Código o nombre de agente | Agente |
-| fecha / fecha | datetime | Fecha del documento | Fecha |
+| codigoPedido / codigo_pedido | string | Código del pedido (Referencia_Pedido, mismo que numero) | Código pedido |
+| cliente / cliente | string | Nombre comercial del cliente (Cliente_N_Comercial) | Cliente |
+| codigoCliente / codigo_cliente | string | Código del cliente (Cod_Cliente_Fabricante) | Código cliente |
+| codAgenteFabricante / Cod_Agente_Fabricante | int | FK a Clientes.Id. Relación: Pedidos.Cod_Agente_Fabricante = Clientes.Id | Id. cliente |
+| agente / agente | string | Código o nombre de agente (Agente_Nombre) | Agente |
+| fecha / fecha | datetime | Fecha del documento (Fecha_Pedido) | Fecha |
+| fechaEntrega / fecha_entrega | datetime | Fecha de entrega del pedido (Entrega) | Fecha entrega |
+| fechaHoraFin / fecha_hora_fin | datetime | Fecha/hora fin (FechaHoraFin); en listado se expone la parte hora como horaConsolidacion (HH:mm) | Fecha/hora fin |
+| horaConsolidacion | string | Hora de consolidación (extraída de FechaHoraFin en listado) | Hora consolidación |
+| total / total | decimal | Total del pedido (desde PedidosTotal.Total, en listado) | Total |
+| codigoPda / codigo_pda | int | Código PDA del pedido (desde PedidosTotal.IdPedidoPDA, en listado) | Código PDA |
 | delegacion / delegacion | string | Delegación | Delegación |
 | estadoIntegracion / estado_integracion | string | Estado de integración (blanco, verde, rojo, amarillo, azul, cian) | Est. Integración |
 | mensajeErrorIntegracion / mensaje_error_integracion | string | Mensaje de error de integración con ERP | Errores integración |
@@ -346,20 +355,75 @@ Para cada tabla: **Nombre técnico (tabla BD)**, **Descripción**, **Alias en pa
 | **Descripción** | Línea de detalle de un pedido (referencia, descripción, unidades, precio). |
 | **Alias en pantalla** | Líneas de pedido |
 
-**Columnas:**
+**Columnas (orden en tabla Importador):**
 
 | Campo (BD / DTO) | Tipo | Significado | Alias en pantalla |
 | :--- | :--- | :--- | :--- |
 | id | int | Identificador interno (PK) | ID |
 | pedidoId / pedido_id | int | ID del pedido (FK) | Id. pedido |
-| referencia / referencia | string | Referencia del artículo | Referencia |
-| descripcion / descripcion | string | Descripción de la línea | Descripción |
-| unidades / unidades | decimal | Cantidad | Unidades |
-| precio / precio | decimal | Precio unitario | Precio |
-| descuento / descuento | decimal | Descuento aplicado | Descuento |
+| comboIntegracion / estado_integracion | string | Combo de integración (EstadoImportacion) | Combo de integración |
+| codigoArticulo / referencia | string | Código del artículo (Referencia_Articulo) | Código del artículo |
+| descripcionArticulo / descripcion | string | Descripción del artículo | Descripción del artículo |
+| codigoPromocion | string | Código de la promoción | Código de la promoción |
+| unidadesVendidas / unidades | decimal | Unidades vendidas (Cantidad) | Unidades vendidas |
+| descripcionUnidadVendida | string | Descripción de la unidad vendida | Descripción unidad vendida |
+| importe / precio | decimal | Importe (Importe en BD) | Importe |
+| descuento1 / descuento | decimal | Descuento 1 | Descuento 1 |
+| descuento2, descuento3, descuento4, descuento5 | decimal | Descuentos 2 a 5 | Descuento 2–5 |
 | total / total | decimal | Total línea | Total |
+| motivoDevolucion | string | Motivo devolución | Motivo devolución |
+| comboAdjunto | string | Combo de adjunto | Combo de adjunto |
+| notaLinea | string | Nota de línea | Nota de línea |
+| errorIntegracion / mensaje_error | string | Error de integración | Error de integración |
 | FechaInsert / insert_date | datetime | Fecha de alta | Fecha alta |
 | BajaEnERP / deleted | boolean | Borrado lógico | Baja |
+
+---
+
+### 1.13 PedidosTotal (módulo pedidos)
+
+| Concepto | Valor |
+| :--- | :--- |
+| **Tabla BD** | PedidosTotal |
+| **Entidad** | PedidosTotal |
+| **Descripción** | Totales e impuestos del pedido (subtotal, IVA, RE, total). Relación: PedidosTotal.IdPedidoOPT = Pedidos.Id_Pedido (OneToOne). |
+| **Alias en pantalla** | Totales del pedido |
+
+**Columnas:**
+
+| Campo (BD / DTO) | Tipo | Significado | Alias en pantalla |
+| :--- | :--- | :--- | :--- |
+| idPedidosTotalOPT / IdPedidosTotalOPT | int | Identificador interno (PK) | ID |
+| idPedidosTotalERP / IdPedidosTotalERP | string | ID del total en ERP | Id. total ERP |
+| idPedidoOPT / IdPedidoOPT | int | FK a Pedidos.Id_Pedido. Relación: PedidosTotal.IdPedidoOPT = Pedidos.Id_Pedido | Id. pedido |
+| idPedidoPDA / IdPedidoPDA | int | ID del pedido PDA | Id. pedido PDA |
+| idPedidoERP / IdPedidoERP | string | ID del pedido en ERP | Id. pedido ERP |
+| idIvaOPT / IdIvaOPT | int | ID del IVA (OPT) | Id. IVA OPT |
+| idIvaPDA / IdIvaPDA | int | ID del IVA PDA | Id. IVA PDA |
+| idIvaERP / IdIvaERP | string | ID del IVA en ERP | Id. IVA ERP |
+| subtotal / Subtotal | decimal | Subtotal | Subtotal |
+| dtos / Dtos | decimal | Descuentos | Descuentos |
+| baseImp / BaseImp | decimal | Base imponible | Base imponible |
+| ivaPor / IvaPor | decimal | Porcentaje de IVA | % IVA |
+| ivaCuota / IvaCuota | decimal | Cuota de IVA | Cuota IVA |
+| rePor / REPor | decimal | Porcentaje de recargo de equivalencia | % RE |
+| reCuota / RECuota | decimal | Cuota de recargo de equivalencia | Cuota RE |
+| impuestosTotal / ImpuestosTotal | decimal | Total impuestos | Total impuestos |
+| total / Total | decimal | Total | Total |
+| fechaInsert / FechaInsert | datetime | Fecha de alta | Fecha alta |
+| fechaUpdate / FechaUpdate | datetime | Fecha de actualización | Fecha actualización |
+| idAgentePropietario / IdAgentePropietario | int | ID del agente propietario | Id. agente propietario |
+| idRegistroPDA / IdRegistroPDA | int | ID del registro PDA | Id. registro PDA |
+| idAgenteUpdate / IdAgenteUpdate | int | ID del agente que actualizó | Id. agente actualización |
+| tipoDocumento / TipoDocumento | string | Tipo de documento | Tipo |
+| estadoImportacion / EstadoImportacion | string | Estado de importación | Est. Integración |
+| bajaEnERP / BajaEnERP | boolean | Borrado lógico | Baja |
+| guiderp / GUIDERP | string | GUID en ERP | GUID ERP |
+| idTareaIntegracion / IDTAREAINTEGRACION | string | ID de tarea de integración | Id. tarea integración |
+| idUnicoTablet / IdUnicoTablet | string | ID único tablet | Id. único tablet |
+| idUnicoVentaTablet / IdUnicoVentaTablet | string | ID único venta tablet | Id. único venta tablet |
+| idTareaDispositivo / IdTareaDispositivo | string | ID de tarea del dispositivo | Id. tarea dispositivo |
+| erroresIntegracion / ErroresIntegracion | string | Errores de integración | Errores integración |
 
 ---
 

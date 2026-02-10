@@ -43,7 +43,7 @@ Antes de implementar **cualquier** nueva pantalla o apartado que use elementos d
 **Fase 1 – Verificación de Core (obligatoria antes de escribir código):**
 
 1. Listar los **elementos de UI** que la tarea requiere (ej.: botón exportar, 3 KPIs, tabla paginada, filtro por fecha, gráfica de barras, inputs de formulario, diálogo de confirmación).
-2. Para cada elemento, **comprobar** si en `ventas-core-front/src/app/core/components` existe un componente reutilizable (revisando carpetas y selectores `mobentis-*`). Puedes usar como referencia `DOCS/Core_Components_Catalog.md` si existe en el template.
+2. Para cada elemento, **comprobar** si en la carpeta Core del Front (ruta en `00_CORE_MANAGER/paths.config.json`, clave `core_front`, + `/components`) existe un componente reutilizable (revisando carpetas y selectores `mobentis-*`). Puedes usar como referencia `DOCS/Core_Components_Catalog.md` si existe en el template.
 3. Elaborar un **informe breve**: por cada elemento, indicar "Elemento X → componente Core: `mobentis-xxx`" o "Elemento X → **No existe en Core**".
 
 **Fase 2 – Decisión y ejecución:**
@@ -57,7 +57,7 @@ Antes de implementar **cualquier** nueva pantalla o apartado que use elementos d
 
 ---
 
-1. **Consultar Core antes de crear:** Antes de implementar una nueva funcionalidad, componente, validación o comprobación, **revisar las carpetas Core** de los proyectos del workspace (por ejemplo `ventas-core-front/src/app/core`, y Back si aplica) para comprobar si ya existe un componente, servicio, guard, pipe o utilidad reutilizable. Si existe, **reutilizarlo o extenderlo fuera de Core** (composición o herencia). Ver regla **1.1 Reutilización de elementos en Core** en `01_GLOBAL_CONTEXT/Reglas_Generales.md`. Si la tarea implica nuevos elementos de UI, aplicar además el **protocolo en dos fases** descrito arriba.
+1. **Consultar Core antes de crear:** Antes de implementar una nueva funcionalidad, componente, validación o comprobación, **revisar las carpetas Core** de los proyectos del workspace. Consultar `00_CORE_MANAGER/paths.config.json` para `core_back` y `core_front`. para comprobar si ya existe un componente, servicio, guard, pipe o utilidad reutilizable. Si existe, **reutilizarlo o extenderlo fuera de Core** (composición o herencia). Ver regla **1.1 Reutilización de elementos en Core** en `01_GLOBAL_CONTEXT/Reglas_Generales.md`. Si la tarea implica nuevos elementos de UI, aplicar además el **protocolo en dos fases** descrito arriba.
 2. **Vistas de listado (obligatorio uso de Core):** Para cualquier pantalla de **listado** (vista tipo xxx-general, grid, tabla paginada de entidades):
    - **No** implementar tabla con `<table>` HTML manual ni inputs de búsqueda o filtros propios (botón "Filtros" sin `mobentis-filter-container`).
    - **Sí** usar componentes Core: **mobentis-entity-table-manager** con `IEntityTableConfig` y un servicio que implemente `IEntityDataService<T>` y en `getData()` llame al API (POST `.../list`); o, si el módulo que exporta entity-table-manager no está disponible, usar al menos **mobentis-table** + **mobentis-filter-container** + **mobentis-search-input** + **mobentis-pagination** con un servicio que devuelva `{ items, totalItems }`.

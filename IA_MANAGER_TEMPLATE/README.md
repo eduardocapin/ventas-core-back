@@ -21,7 +21,7 @@ El sistema se basa en una arquitectura de **Orquestación Basada en Agentes**. E
 
 -   **/00_CORE_MANAGER**: El "Cerebro". Contiene el orquestador, el registro central, los **Audit Logs** y las reglas de orquestación del Manager.
 -   **/01_GLOBAL_CONTEXT**: La "Constitución". Diccionario, Tech Stack, ADRs, Quality Standards, Naming, **Safety Guardrails**, **Backend_Patterns** (patrones y normas Back) y el checkpoint de sesión (`LAST_SESSION_STATUS.md`).
--   **/02_AGENTS_REGISTRY**: Los "Ejecutores". 10 agentes (Factory, Architect, Frontend, Backend, DB, QA, Setup, UX, Security, Gardener). Consulta el índice en `02_AGENTS_REGISTRY/INDEX.md`.
+-   **/02_AGENTS_REGISTRY**: Los "Ejecutores". 11 agentes (Factory, Architect, Frontend, Backend, DB, QA, Setup, UX, Security, Gardener, Generador Entidad-FullStack). Consulta el índice en `02_AGENTS_REGISTRY/INDEX.md`.
 -   **/03_PROMPT_LIBRARY**: La "Armería". Prompts maestros optimizados para tareas recurrentes (CRUDs, APIs, UX, Seguridad).
 -   **/DOCS**: La "Bitácora". Incluye el **Manual de funcionamiento** (`DOCS/MANUAL_FUNCIONAMIENTO.md`), el **UI Storybook** y la configuración del orquestador.
 -   **.agent/**: Configuración nativa para Antigravity con **aislamiento de workspace**.

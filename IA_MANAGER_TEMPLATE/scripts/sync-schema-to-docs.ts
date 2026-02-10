@@ -1,10 +1,10 @@
 /**
  * Sync DB schema to SSOT docs (Tablas_Columnas_Alias.md, Diccionario.md, Historial_DB.md).
- * Uses .env DB_* from backend root. Run from ventas-core-back: npm run db:sync-docs
+ * Uses .env DB_* from backend root. Run from backend root (paths.config.json → backend_path): npm run db:sync-docs
  * Options: --dry-run (print only), --source=db (default) | entities (entities not implemented yet).
  *
  * CANONICAL COPY: This file lives in IA_MANAGER_TEMPLATE/scripts/. When initializing the template
- * or restoring the script, copy it to the backend root: ventas-core-back/scripts/sync-schema-to-docs.ts
+ * or restoring the script, copy it to the backend root (paths.config.json → backend_path)/scripts/sync-schema-to-docs.ts
  * (e.g. run from backend: npm run template:init-sync-script).
  * The script never contains connection data; all DB_* must come from .env.
  */

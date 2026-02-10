@@ -5,7 +5,10 @@
 param(
     [string]$ProjectName = "",
     [string]$ProjectCode = "",
-    [string]$WorkspaceRoot = ""
+    [string]$WorkspaceRoot = "",
+    [string]$ProjectObjective = "",
+    [string]$ManualFuncionamiento = "",
+    [string]$FotosReferencia = ""
 )
 
 # Pide nombre y código si no se pasaron por parámetro
@@ -16,6 +19,21 @@ if (-not $ProjectName -or -not $ProjectCode) {
     Write-Host "Error: Debes introducir un nombre y un código." -ForegroundColor Red
     exit 1
 }
+
+# Información relativa al objetivo del proyecto (se guarda en 01_GLOBAL_CONTEXT/Contexto_IA.md)
+Write-Host "`n--- Objetivo del proyecto (se guardará en Contexto_IA.md) ---" -ForegroundColor Cyan
+if (-not $ProjectObjective) {
+    $ProjectObjective = Read-Host "Introduce el fin objetivo del proyecto (qué se pretende lograr; una línea; para más detalle edita después 01_GLOBAL_CONTEXT/Contexto_IA.md)"
+}
+if (-not $ManualFuncionamiento) {
+    $ManualFuncionamiento = Read-Host "¿Dispone de manual de funcionamiento? (ruta al fichero, URL o descripción; Enter si no)"
+}
+if (-not $FotosReferencia) {
+    $FotosReferencia = Read-Host "¿Dispone de fotos o imágenes de referencia? (ruta a carpeta/ficheros o descripción; Enter si no)"
+}
+if ([string]::IsNullOrWhiteSpace($ProjectObjective)) { $ProjectObjective = "(pendiente de definir)" }
+if ([string]::IsNullOrWhiteSpace($ManualFuncionamiento)) { $ManualFuncionamiento = "No indicado." }
+if ([string]::IsNullOrWhiteSpace($FotosReferencia)) { $FotosReferencia = "No indicado." }
 
 $templateDir = Get-Location
 
@@ -31,13 +49,24 @@ if ($WorkspaceRoot) {
 $iaManagerTemplatePath = $templateDir.Path.Replace($workspaceRoot, "").TrimStart("\", "/").Replace("\", "/")
 if (-not $iaManagerTemplatePath) { $iaManagerTemplatePath = "IA_MANAGER_TEMPLATE" }
 
+# Rutas de Back y Front (relativas a la raíz del workspace): pedir durante el setup
+$backendPathDefault = Split-Path $iaManagerTemplatePath -Parent
+if (-not $backendPathDefault) { $backendPathDefault = "ventas-core-back" }
+$frontendPathDefault = "ventas-core-front"
+$backendPath = Read-Host "Ruta del proyecto Backend respecto a la raíz del workspace (Enter = $backendPathDefault)"
+if ([string]::IsNullOrWhiteSpace($backendPath)) { $backendPath = $backendPathDefault }
+$backendPath = $backendPath.Trim().Replace("\", "/")
+$frontendPath = Read-Host "Ruta del proyecto Frontend respecto a la raíz del workspace (Enter = $frontendPathDefault)"
+if ([string]::IsNullOrWhiteSpace($frontendPath)) { $frontendPath = $frontendPathDefault }
+$frontendPath = $frontendPath.Trim().Replace("\", "/")
+
 # ROOT_PATH = raíz del workspace en formato relativo (.) para Workspace Isolation
 $rootPathRelative = "."
 
 $currentDate = Get-Date -Format "yyyy-MM-dd"
 
 # Archivos a excluir del procesamiento de placeholders (se tratan aparte o se copian a .cursor/rules)
-$excludeNames = @("setup_project.ps1", "cursor_rule_orchestrator.mdc.template", "core-inviolable.mdc")
+$excludeNames = @("setup_project.ps1", "cursor_rule_orchestrator.mdc.template", "core-inviolable.mdc", "paths.config.json")
 $files = Get-ChildItem -Path $templateDir -Recurse -File -Force | Where-Object { $excludeNames -notcontains $_.Name }
 
 Write-Host "Hidratando plantilla para el proyecto: $ProjectName ($ProjectCode)..." -ForegroundColor Cyan
@@ -53,6 +82,10 @@ foreach ($file in $files) {
     $newContent = $newContent -replace "\{\{PROJECT_CODE\}\}", $ProjectCode
     $newContent = $newContent -replace "\{\{ROOT_PATH\}\}", $rootPathRelative
     $newContent = $newContent -replace "\{\{CURRENT_DATE\}\}", $currentDate
+    # Objetivo del proyecto (Contexto_IA.md); uso Replace para evitar interpretación de $ en el valor
+    $newContent = $newContent.Replace("{{PROJECT_OBJECTIVE}}", $ProjectObjective)
+    $newContent = $newContent.Replace("{{MANUAL_DE_FUNCIONAMIENTO}}", $ManualFuncionamiento)
+    $newContent = $newContent.Replace("{{FOTOS_REFERENCIA}}", $FotosReferencia)
 
     Set-Content -Path $file.FullName -Value $newContent -NoNewline
     $displayPath = $file.FullName.Replace($templateDir.Path, "").TrimStart("\", "/")
@@ -93,5 +126,24 @@ if (Test-Path $coreInviolableSrc) {
     Write-Host "  Aviso: No se encontró DOCS/core-inviolable.mdc; la regla Core inviolable no se ha generado." -ForegroundColor Yellow
 }
 
+# paths.config.json y ia-manager-orchestrator.mdc usan la misma template_path; mantienen coherencia
+# Escribir 00_CORE_MANAGER/paths.config.json con las rutas del workspace (relativas a la raíz)
+$pathsConfigPath = Join-Path $templateDir "00_CORE_MANAGER\paths.config.json"
+$coreBack = "$backendPath/src/core"
+$coreFront = "$frontendPath/src/app/core"
+$pathsJson = @"
+{
+  "_comment": "Rutas relativas a la raíz del workspace. Actualizar con setup_project.ps1 o durante la configuración inicial (Setup Wizard).",
+  "template_path": "$($iaManagerTemplatePath -replace '\\', '/')",
+  "backend_path": "$($backendPath -replace '\\', '/')",
+  "frontend_path": "$($frontendPath -replace '\\', '/')",
+  "core_back": "$($coreBack -replace '\\', '/')",
+  "core_front": "$($coreFront -replace '\\', '/')"
+}
+"@
+Set-Content -Path $pathsConfigPath -Value $pathsJson -NoNewline -Encoding UTF8
+Write-Host "  Configuración de rutas escrita: 00_CORE_MANAGER/paths.config.json" -ForegroundColor Green
+
 Write-Host "`n¡Listo! Estructura de agentes y rutas relativas configuradas para $ProjectName." -ForegroundColor Magenta
-Write-Host "El orquestador usa únicamente rutas relativas al workspace." -ForegroundColor Gray
+Write-Host "El orquestador usa únicamente rutas relativas al workspace. Rutas clave en 00_CORE_MANAGER/paths.config.json" -ForegroundColor Gray
+Write-Host "Objetivo del proyecto guardado en 01_GLOBAL_CONTEXT/Contexto_IA.md (puedes editarlo para ampliar)." -ForegroundColor Gray

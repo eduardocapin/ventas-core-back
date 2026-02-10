@@ -11,7 +11,19 @@ Este documento establece los estándares técnicos y operativos para el proyecto
 3.  **Manejo de Contexto:** Los agentes deben priorizar la información del `Diccionario.md` y `Tech_Stack.md` sobre sus conocimientos generales.
 4.  **Respeto a las Rutas:** No se deben crear archivos fuera de la estructura de carpetas acordada.
 5.  **Integridad del Registro:** Cualquier alta, baja o modificación de un Agente o archivo de contexto global DEBE quedar reflejada en el `AGENTS_REGISTRY.json` del CORE_MANAGER.
-6.  **Visibilidad de delegación:** El Manager debe mostrar de forma visual y clara cuando delega una tarea a un agente, usando el formato: `🤖 [MANAGER] → Delegando a [AG-VC-XX-AGENT]` seguido del nombre completo del agente y la tarea específica asignada. Esto permite al usuario saber en todo momento qué agente está trabajando y en qué tarea. Ver formato detallado en `00_CORE_MANAGER/00_MANAGER.md` (sección "Transparencia visual").
+6.  **Visibilidad de delegación (OBLIGATORIO):** El Manager DEBE mostrar de forma visual y clara cuando delega una tarea a un agente, usando el formato exacto que se muestra a continuación. Esta transparencia es OBLIGATORIA y debe aparecer ANTES de cualquier ejecución o cambio de código. El formato requerido es:
+    ```
+    🤖 [MANAGER] → Delegando a [AG-VC-XX-AGENT]
+    👤 Agente: [Nombre completo del agente según AGENTS_REGISTRY.json]
+    📋 Tarea: [Descripción breve y específica de la tarea delegada]
+    ```
+    **Ejemplo completo:**
+    ```
+    🤖 [MANAGER] → Delegando a [AG-VC-02-FRONTEND]
+    👤 Agente: Especialista Frontend (Angular)
+    📋 Tarea: Crear componente de listado de clientes con paginación y filtros
+    ```
+    Esto permite al usuario saber en todo momento qué agente está trabajando y en qué tarea específica. **No se permite delegar sin mostrar este formato visual.** Ver formato detallado en `00_CORE_MANAGER/00_MANAGER.md` (sección "REGLAS DE ORO DEL MANAGER").
 
 ---
 
@@ -19,7 +31,7 @@ Este documento establece los estándares técnicos y operativos para el proyecto
 
 Cuando el usuario quiera **añadir una nueva funcionalidad, componente, sistema de funcionamiento, validación o comprobación**, los agentes de Backend y Frontend deben **revisar primero las carpetas Core** de los proyectos existentes en el workspace para comprobar si ya existe allí un elemento equivalente (componente, servicio, guard, pipe, directiva, utilidad, etc.). Si existe, deben **reutilizarlo o extenderlo** (fuera de Core, por composición o herencia) en lugar de inventar elementos nuevos.
 
-- **Ámbito:** Aplica a cualquier proyecto del workspace que contenga una carpeta cuyo nombre sea `Core` (por ejemplo `SarigaboMobentis_Back/src/core`, `SarigaboMobentis_Front/src/app/core` o equivalentes).
+- **Ámbito:** Aplica a cualquier proyecto del workspace que contenga una carpeta cuyo nombre sea `Core`. Las rutas concretas están en `00_CORE_MANAGER/paths.config.json` (claves `core_back`, `core_front`).
 - **Proceso:** Antes de implementar la nueva funcionalidad, componente, validación o comprobación, el agente debe **explorar o listar el contenido** de las carpetas Core de los proyectos involucrados (Back y/o Front según la tarea) para identificar componentes, servicios, guards, pipes, utilidades o patrones reutilizables.
 - **Reutilización:** Si se encuentra un elemento que cubra total o parcialmente el requisito, el agente debe **usarlo** (importándolo y componiéndolo) o **extenderlo fuera de Core** (herencia o composición en un módulo de dominio o en `shared`). No se deben duplicar responsabilidades ni crear elementos nuevos que repitan lo ya existente en Core.
 - **Restricción:** Las carpetas Core **no pueden ser modificadas** (norma inviolable; ver `AI_Safety_Guardrails.md`). Solo pueden ser **consultadas y reutilizadas**; la extensión o el nuevo código que las use debe residir fuera de Core.
@@ -29,7 +41,7 @@ Cuando el usuario quiera **añadir una nueva funcionalidad, componente, sistema 
 
 ## 📂 1.2 AVISO AL USUARIO SI FALTA COMPONENTE EN CORE (FRONTEND)
 
-Antes de crear **cualquier** elemento de UI nuevo (botón, KPI, tabla, filtro, gráfica, input, diálogo, etc.), el agente de Frontend debe **comprobar** si existe un componente equivalente en la carpeta Core del Front (`ventas-core-front/src/app/core/components` o la ruta equivalente en el workspace).
+Antes de crear **cualquier** elemento de UI nuevo (botón, KPI, tabla, filtro, gráfica, input, diálogo, etc.), el agente de Frontend debe **comprobar** si existe un componente equivalente en la carpeta Core del Front. Consultar `00_CORE_MANAGER/paths.config.json` (clave `core_front`) y añadir `/components` para la carpeta de componentes.
 
 - **Si no existe** en Core un componente que cubra la necesidad, el agente **debe detenerse**, **informar al usuario** de qué elemento(s) faltan y que sería necesario crear componente(s) nuevo(s) fuera de Core (o valorar añadirlo a Core en el futuro), y **no realizar ningún cambio** hasta que el usuario confirme que desea continuar (creando fuera de Core o con otra estrategia).
 - **Solo tras confirmación del usuario** se permite crear nuevo HTML o componente fuera de Core.
@@ -38,7 +50,7 @@ Esta regla complementa la 1.1: además de reutilizar cuando existe, se exige **a
 
 ---
 
-## 🎨 2. ESTÁNDARES DE FRONTEND (SarigaboMobentis_Front)
+## 🎨 2. ESTÁNDARES DE FRONTEND (Frontend del workspace)
 
 -   **Stack:** Seguir estrictamente las tecnologías definidas en `01_GLOBAL_CONTEXT/Tech_Stack.md` (Angular 16.2, Bootstrap 5, Angular Material 16, RxJS 7.8).
 -   **Arquitectura:** Módulos por feature (agents, clients, configuration, teams, etc.); componentes reutilizables en `components/` y `core/`. Servicios compartidos en `services/` y `core/services/`. Antes de crear un componente, validación o servicio nuevo, revisar la carpeta Core del Front (y del Back si aplica) según la regla **1.1 Reutilización de elementos en Core**.
@@ -53,7 +65,7 @@ Esta regla complementa la 1.1: además de reutilizar cuando existe, se exige **a
 
 ---
 
-## ⚙️ 3. ESTÁNDARES DE BACKEND (SarigaboMobentis_Back)
+## ⚙️ 3. ESTÁNDARES DE BACKEND (Backend del workspace)
 
 -   **Patrones detallados:** Consultar obligatoriamente `01_GLOBAL_CONTEXT/Backend_Patterns.md` para paginación, filtros dinámicos, Query Builder, formateo de datos, módulos, nombres de métodos, soft delete, fechas, casos de uso y errores a evitar.
 -   **Arquitectura:** Por módulo de dominio: `entities/`, `dto/`, `repositories/`, `*.controller.ts`, `*.service.ts`, `*.module.ts`. No modificar la carpeta `Core` (norma inviolable; ver `AI_Safety_Guardrails.md`). Antes de crear un guard, pipe, validación, servicio o módulo nuevo, revisar la carpeta Core del Back (y del Front si aplica) según la regla **1.1 Reutilización de elementos en Core**. Estructura de carpetas y configuración global (prefijo `/api`, Swagger en `/api/docs`, ValidationPipe, logging) en `Backend_Patterns.md`.

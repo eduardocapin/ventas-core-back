@@ -9,6 +9,7 @@ Checklist para comprobar que el template está correctamente configurado y opera
 - [ ] **Ejecutar el script de setup:** En la raíz del proyecto, ejecutar `./setup_project.ps1` (PowerShell).
 - [ ] **Introducir nombre y código del proyecto:** Verificar que los placeholders `VentasCore_IA` y `VC` se sustituyen en los archivos del template (buscar en README, 00_MANAGER, AGENTS_REGISTRY, definiciones de agentes).
 - [ ] **Rutas relativas:** Confirmar que las rutas en 00_MANAGER.md y en los agentes apuntan a `./01_GLOBAL_CONTEXT/`, `./00_CORE_MANAGER/`, `./02_AGENTS_REGISTRY/` según la estructura del template.
+- [ ] **paths.config.json:** Existe `00_CORE_MANAGER/paths.config.json` con `template_path`, `backend_path`, `frontend_path` (y opcionalmente `core_back`, `core_front`) relativos a la raíz del workspace; coinciden con las carpetas reales del workspace.
 
 ---
 
@@ -32,7 +33,7 @@ Checklist para comprobar que el template está correctamente configurado y opera
 
 ## 4. Agentes y registro
 
-- [ ] **AGENTS_REGISTRY.json:** El JSON es válido y cada entrada tiene `id`, `name`, `rulesFile` (o equivalente) y el archivo existe en `02_AGENTS_REGISTRY/`.
+- [ ] **AGENTS_REGISTRY.json:** El JSON es válido y cada entrada tiene `id`, `name`, `file_path` (o equivalente) y el archivo existe en `02_AGENTS_REGISTRY/`.
 - [ ] **Definiciones cargables:** Cada agente listado en el registro tiene su archivo .md en `02_AGENTS_REGISTRY/` (01_ARQUITECTO, 02_FRONTEND, …, 09_GARDENER, 00_AGENT_FACTORY).
 - [ ] **Índice de agentes:** `02_AGENTS_REGISTRY/INDEX.md` refleja la lista actual de agentes y enlaces a sus definiciones.
 

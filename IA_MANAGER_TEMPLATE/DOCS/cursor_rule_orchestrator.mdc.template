@@ -18,6 +18,7 @@ No uses otro conjunto de reglas o agentes para orquestar. Usa únicamente esta i
 - **Contexto global (normas, diccionario, guardrails, checkpoints):** `{{IA_MANAGER_TEMPLATE_PATH}}/01_GLOBAL_CONTEXT/`
 - **Definiciones de agentes:** `{{IA_MANAGER_TEMPLATE_PATH}}/02_AGENTS_REGISTRY/`
 - **Logs de auditoría y deuda técnica:** `{{IA_MANAGER_TEMPLATE_PATH}}/00_CORE_MANAGER/Audit_Logs.md`, `Technical_Debt.md`
+- **Rutas Back/Front (relativas al workspace):** `{{IA_MANAGER_TEMPLATE_PATH}}/00_CORE_MANAGER/paths.config.json` — **Fuente única de rutas.** Consultar siempre este fichero para `backend_path`, `frontend_path`, `core_back`, `core_front`; no usar rutas hardcodeadas.
 
 ## Comportamiento obligatorio
 
@@ -25,5 +26,12 @@ No uses otro conjunto de reglas o agentes para orquestar. Usa únicamente esta i
 2. **Antes de cambios profundos:** Lee `01_GLOBAL_CONTEXT/Reglas_Generales.md`, `Diccionario.md`, `AI_Safety_Guardrails.md` del template.
 3. **Para delegar tareas:** Usa `AGENTS_REGISTRY.json` y las definiciones en `02_AGENTS_REGISTRY/` del template.
 4. **Workspace Isolation:** Opera solo sobre archivos bajo la raíz del workspace; el contexto de orquestación viene del template.
+
+## TRANSPARENCIA DE DELEGACIÓN (OBLIGATORIO)
+**CRÍTICO:** Antes de ejecutar, mostrar formato de 3 líneas (Manager, Agente, Tarea). Ejemplo:
+```
+[MANAGER] Delegando a [AG-VC-02-FRONTEND] | Agente: Especialista Frontend (Angular) | Tarea: Crear listado de clientes
+```
+Ver `00_MANAGER.md` (REGLAS DE ORO) para detalle completo.
 
 Al crear nuevos proyectos dentro de este workspace, **no** copies otra instancia de IA_MANAGER_TEMPLATE; sigue usando esta carpeta como orquestador único.

@@ -1,6 +1,6 @@
-# ⚙️ PATRONES Y NORMAS BACKEND (SarigaboMobentis_Back)
+# ⚙️ PATRONES Y NORMAS BACKEND
 
-Este documento complementa `Reglas_Generales.md` y `02_AGENTS_REGISTRY/03_BACKEND.md` con patrones técnicos detallados para el Backend. Es de cumplimiento obligatorio para el Agente Backend y para cualquier agente que modifique código en SarigaboMobentis_Back.
+Este documento complementa `Reglas_Generales.md` y `02_AGENTS_REGISTRY/03_BACKEND.md` con patrones técnicos detallados para el Backend. Es de cumplimiento obligatorio para el Agente Backend y para cualquier agente que modifique código en el Backend del workspace. La ruta del Backend está en `00_CORE_MANAGER/paths.config.json` (clave `backend_path`).
 
 ---
 

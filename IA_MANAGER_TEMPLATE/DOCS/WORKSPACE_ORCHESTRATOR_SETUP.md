@@ -2,6 +2,8 @@
 
 Este documento describe la estructura del **IA_MANAGER_TEMPLATE**, el controlador de agentes del workspace, y los cambios de **estructura**, **datos** y **normas** necesarios para que **siempre** que se use este workspace, el orquestador de agentes, skills y normas sea el que existe en esta carpeta, para todos los proyectos del workspace.
 
+**Importante:** Todas las rutas de Back, Front y Template deben definirse en `00_CORE_MANAGER/paths.config.json`. El script `setup_project.ps1` pide esas rutas y escribe el fichero. Los ejemplos siguientes usan nombres ilustrativos; las rutas reales deben coincidir con `paths.config.json`.
+
 ---
 
 ## 1. Estructura actual del IA_MANAGER_TEMPLATE
@@ -27,7 +29,7 @@ IA_MANAGER_TEMPLATE/
 └── setup_project.ps1          # Hidrata placeholders en una copia del template
 ```
 
-**Problema:** El template está dentro de `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE`. Cursor solo aplica reglas desde:
+**Problema:** El template está dentro de una carpeta del workspace (ej. `{backend_path}/IA_MANAGER_TEMPLATE`; ver `paths.config.json` → `template_path`). Cursor solo aplica reglas desde:
 - La **raíz del workspace** (`.cursor/rules/` o `.cursorrules` en la raíz), o
 - La raíz de cada carpeta del workspace.
 
@@ -44,20 +46,20 @@ Para que **todos los proyectos del workspace** usen el mismo orquestador:
 | Cambio | Descripción |
 |--------|-------------|
 | Crear `.cursor/rules/` en la **raíz del workspace** | Cursor aplica las reglas de esta carpeta a todo el workspace. |
-| Añadir una regla **alwaysApply: true** | Que indique: "El orquestador de agentes, skills y normas es el de `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE`. Usa siempre ese directorio como fuente de contexto (Manager, AGENTS_REGISTRY, GLOBAL_CONTEXT, AGENTS_REGISTRY)." |
-| No duplicar el template por proyecto | En lugar de copiar `IA_MANAGER_TEMPLATE` a cada proyecto y ejecutar `setup_project.ps1`, se mantiene **una sola instancia** en `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE` y las reglas del workspace apuntan ahí. |
+| Añadir una regla **alwaysApply: true** | Que indique: "El orquestador está en la ruta de `paths.config.json` → `template_path`. Usa siempre ese directorio como fuente de contexto (Manager, AGENTS_REGISTRY, GLOBAL_CONTEXT, AGENTS_REGISTRY)." |
+| No duplicar el template por proyecto | En lugar de copiar `IA_MANAGER_TEMPLATE` a cada proyecto y ejecutar `setup_project.ps1`, se mantiene **una sola instancia**; la ruta se define en `paths.config.json` y las reglas del workspace apuntan ahí. |
 
 Estructura objetivo en la raíz del workspace:
 
 ```
-test_1/                          # Raíz del workspace
+{Ventas}/                        # Raíz del workspace
 ├── .cursor/
 │   └── rules/
 │       └── ia-manager-orchestrator.mdc   # Regla que apunta al template
-├── SarigaboMobentis_Back/
-│   └── IA_MANAGER_TEMPLATE/      # Fuente única del orquestador
-├── SarigaboMobentis_Front/
-└── test_1.code-workspace
+├── {backend_path}/              # paths.config.json → backend_path
+│   └── IA_MANAGER_TEMPLATE/     # Fuente única del orquestador (paths.config.json → template_path)
+├── {frontend_path}/             # paths.config.json → frontend_path
+└── *.code-workspace
 ```
 
 ### 2.2 Workspace multi-carpeta (opcional)
@@ -82,14 +84,14 @@ Recomendación: ejecutar **una vez** `setup_project.ps1` dentro de `IA_MANAGER_T
 
 ### 3.2 Ruta relativa al template en las reglas
 
-En la regla de `.cursor/rules/` se debe usar la ruta **relativa al workspace root**, por ejemplo:
+En la regla de `.cursor/rules/` se debe usar la ruta **relativa al workspace root**. La ruta base del template es `paths.config.json` → `template_path`. Las rutas concretas serían:
 
-- `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE/00_CORE_MANAGER/00_MANAGER.md`
-- `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE/00_CORE_MANAGER/AGENTS_REGISTRY.json`
-- `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE/01_GLOBAL_CONTEXT/`
-- `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE/02_AGENTS_REGISTRY/`
+- `{template_path}/00_CORE_MANAGER/00_MANAGER.md`
+- `{template_path}/00_CORE_MANAGER/AGENTS_REGISTRY.json`
+- `{template_path}/01_GLOBAL_CONTEXT/`
+- `{template_path}/02_AGENTS_REGISTRY/`
 
-Así la IA siempre sabe dónde están el Manager, el registro de agentes y el contexto global, con independencia del archivo o carpeta en el que esté trabajando.
+El script `setup_project.ps1` sustituye `{{IA_MANAGER_TEMPLATE_PATH}}` por el valor de `template_path` al generar la regla. Así la IA siempre sabe dónde están el Manager, el registro de agentes y el contexto global.
 
 ---
 
@@ -97,7 +99,7 @@ Así la IA siempre sabe dónde están el Manager, el registro de agentes y el co
 
 ### 4.1 Norma de workspace: orquestador único
 
-- **Regla:** En este workspace, el orquestador de agentes, skills y normas es **siempre** el definido en `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE`. No uses otro conjunto de reglas o agentes para orquestar.
+- **Regla:** En este workspace, el orquestador de agentes, skills y normas es **siempre** el definido en la ruta indicada en `paths.config.json` → `template_path`. No uses otro conjunto de reglas o agentes para orquestar.
 - **Al crear un nuevo proyecto dentro del mismo workspace:** No copies una nueva instancia de `IA_MANAGER_TEMPLATE` para ese proyecto. Sigue usando la instancia central; las reglas del workspace ya apuntan a ella.
 - **Si se añade una nueva carpeta al workspace:** No es necesario configurar un nuevo orquestador; la regla en `.cursor/rules/` aplica a toda la raíz.
 
@@ -121,7 +123,7 @@ En `IA_MANAGER_TEMPLATE/README.md` conviene añadir una sección tipo:
 
 ## 5. Resumen de acciones
 
-1. **Estructura:** Crear `.cursor/rules/` en la raíz del workspace y añadir la regla `ia-manager-orchestrator.mdc` que referencia `SarigaboMobentis_Back/IA_MANAGER_TEMPLATE`.
+1. **Estructura:** Crear `.cursor/rules/` en la raíz del workspace y añadir la regla `ia-manager-orchestrator.mdc`. La ruta del template se toma de `paths.config.json` → `template_path` (el script `setup_project.ps1` genera la regla con esa ruta).
 2. **Datos:** (Opcional) Hidratar una vez el template con `setup_project.ps1` usando el nombre y código del workspace; fijar `ROOT_PATH` a la raíz del workspace.
 3. **Normas:** Documentar que el orquestador es único y que no se debe duplicar el template por proyecto; actualizar el README del template según lo anterior.
 

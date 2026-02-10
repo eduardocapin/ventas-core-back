@@ -21,9 +21,9 @@ Breve descripción de los avances logrados en esta sesión y el valor aportado a
 - **ADR Referenciado**: [Enlace al ADR si aplica]
 
 ## 🛠️ ESTADO DEL SISTEMA
-- **Últimos archivos modificados**:
-  - `ruta/al/archivo_1`
-  - `ruta/al/archivo_2`
+- **Últimos archivos modificados** (usar `backend_path` o `frontend_path` de `paths.config.json` como prefijo):
+  - `{backend_path}/src/ruta/al/archivo_1`
+  - `{frontend_path}/src/ruta/al/archivo_2`
 - **Warnings/Bloqueos**: Algún punto que quedó a medias o que requiere atención inmediata al volver.
 
 ---

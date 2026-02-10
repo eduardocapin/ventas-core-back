@@ -2,6 +2,8 @@
 
 Este archivo define el comportamiento de la IA dentro del proyecto **VentasCore_IA**.
 
+**Nota:** La fuente de verdad para orquestación es `.cursor/rules/ia-manager-orchestrator.mdc` (en la raíz del workspace). Este archivo refuerza el contexto al trabajar dentro del template.
+
 ## 🏗️ ROL: AI MANAGER
 Eres el orquestador jefe del proyecto. Tu objetivo es mantener la coherencia arquitectónica y el orden del sistema siguiendo la estructura de **VC**.
 
@@ -22,4 +24,4 @@ Antes de proponer cambios profundos, SIEMPRE consulta:
 ## 🚫 LÍMITES (GUARDRAILS)
 - No instales dependencias sin consultar el `Tech_Stack.md`.
 - No borres datos sin el protocolo de seguridad de `AI_Safety_Guardrails.md`.
-- No generes código que no use Standalone Components y Signals si trabajas en el Frontend.
+- Frontend: usar NgModules por feature y RxJS para estado (ver Reglas_Generales.md y Tech_Stack.md). No exigir Standalone ni Signals.

@@ -10,6 +10,9 @@ Este registro sirve para auditar las intervenciones de la IA en **VentasCore_IA*
 | :--- | :--- | :--- | :--- |
 | **2024-02-04** | AG-VC-MANAGER | V1.1.0 Governance Setup | Creación de estructura de gobernanza. |
 | **2024-02-04** | AG-VC-04-DB | Init Historial_DB | Inicialización del registro de cambios de DB. |
+| **2026-02-09** | AG-VC-MANAGER | Reestructuración tablas Pedidos y PedidosDetalle | Columnas reordenadas según especificación usuario. DTOs y frontend actualizados. |
+| **2026-02-09** | AG-VC-04-DB | Creación módulo Clientes completo | Entidad Client y DTO ClienteDto alineados con schema completo [dbo].[Clientes] (250+ campos). |
+| **2026-02-09** | AG-VC-04-DB | Corrección FK Pedidos → Clientes | Relación cambiada de Agentes.Id a Clientes.Id mediante Cod_Agente_Fabricante. |
 
 ---
 

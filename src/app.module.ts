@@ -21,6 +21,7 @@ import { CorsMiddleware } from './core/middleware/cors/cors.middleware';
 import { CompressionMiddleware } from './core/middleware/compression/compression.middleware';
 import { UsersModule } from './core/users/users.module';
 import { PedidosModule } from './pedidos/pedidos.module';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -48,7 +49,7 @@ import { PedidosModule } from './pedidos/pedidos.module';
       };
     }
   }),
-     FiltersModule, MenusModule, NavListsModule, UsersModule, PedidosModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
+     FiltersModule, MenusModule, NavListsModule, UsersModule, PedidosModule, ClientsModule, RepositoriesModule, SharedModule, ConfigurationModule, EmpresasModule, AuthorizationModule,
   ],
   controllers: [AppController],
   providers: [

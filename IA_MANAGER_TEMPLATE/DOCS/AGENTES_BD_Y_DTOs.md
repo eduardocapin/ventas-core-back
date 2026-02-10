@@ -52,8 +52,8 @@ Para que los agentes puedan "generar ellos los DTOs y todas las cosas que se nec
 
 3. **Opción C – Implementado: script de introspección de BD**  
    Existe una herramienta (fuera del agente) que consulta el esquema real de la base de datos y actualiza el sistema de control:
-   - **Script:** `scripts/sync-schema-to-docs.ts` (en la raíz del backend, carpeta `ventas-core-back`).
-   - **Comando:** Desde `ventas-core-back`, ejecutar `npm run db:sync-docs`. Opción `npm run db:sync-docs:dry` para ver qué se generaría sin escribir (dry-run).
+   - **Script:** `scripts/sync-schema-to-docs.ts` (en la raíz del backend).
+   - **Comando:** Desde la raíz del backend (ruta en `paths.config.json` → `backend_path`), ejecutar `npm run db:sync-docs`. Opción `npm run db:sync-docs:dry` para ver qué se generaría sin escribir (dry-run).
    - **Requisitos:** Variables de entorno del backend (`.env` con `DB_TYPE`, `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`). Soporta MySQL y MSSQL.
    - **Comportamiento:** El script conecta a la BD, consulta `information_schema` (tablas y columnas), y **solo añade** tablas o columnas que aún no estén en Tablas_Columnas_Alias.md; no sobrescribe el texto manual (Significado, Alias en pantalla). Para tablas/columnas nuevas usa placeholders "(revisar)". Actualiza también Diccionario.md (nueva fila en «1. ENTIDADES PRINCIPALES» por cada tabla nueva) e Historial_DB.md (registro de la ejecución).
    - **Flujo recomendado:** El usuario ejecuta `npm run db:sync-docs` cuando tenga la BD accesible; revisa o edita los "(revisar)" si lo desea. A partir de entonces puede pedir "generar todo para la entidad X" y el agente Entity-to-Stack encontrará la entidad en el sistema de control sin tener que pedir el esquema al usuario.

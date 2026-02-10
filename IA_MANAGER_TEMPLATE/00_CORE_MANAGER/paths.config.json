@@ -1,0 +1,8 @@
+{
+  "_comment": "Rutas relativas a la raíz del workspace. Consultar este fichero para resolver rutas de Back, Front y Template. Actualizar con setup_project.ps1 o durante la configuración inicial (Setup Wizard).",
+  "template_path": "ventas-core-back/IA_MANAGER_TEMPLATE",
+  "backend_path": "ventas-core-back",
+  "frontend_path": "ventas-core-front",
+  "core_back": "ventas-core-back/src/core",
+  "core_front": "ventas-core-front/src/app/core"
+}

@@ -1,8 +1,8 @@
 # Catálogo de componentes Core (Frontend)
 
-Este documento es una **referencia** de los componentes disponibles en la carpeta Core del Frontend del proyecto (`ventas-core-front/src/app/core/components`). Sirve de ayuda al agente Frontend y al Manager para la **Fase 1** del protocolo "Core primero": identificar qué elementos de UI (botones, KPIs, tablas, filtros, gráficas, etc.) tienen ya un componente reutilizable.
+Este documento es una **referencia** de los componentes disponibles en la carpeta Core del Frontend del proyecto. La ruta concreta está en `00_CORE_MANAGER/paths.config.json` (clave `core_front` + `/components`). Sirve de ayuda al agente Frontend y al Manager para la **Fase 1** del protocolo "Core primero": identificar qué elementos de UI (botones, KPIs, tablas, filtros, gráficas, etc.) tienen ya un componente reutilizable.
 
-**Fuente de verdad:** La carpeta del proyecto en el workspace. Este catálogo puede desactualizarse; en caso de duda, listar o explorar `ventas-core-front/src/app/core/components` directamente. Se recomienda actualizar este documento en auditorías del template (p. ej. con el agente Jardinero).
+**Fuente de verdad:** La carpeta del proyecto en el workspace. Este catálogo puede desactualizarse; en caso de duda, listar o explorar la ruta indicada en `paths.config.json` (`core_front` + `/components`) directamente. Se recomienda actualizar este documento en auditorías del template (p. ej. con el agente Jardinero).
 
 ---
 
@@ -20,9 +20,10 @@ Este documento es una **referencia** de los componentes disponibles en la carpet
 
 ## KPIs
 
-| Selector | Ruta relativa (desde core/components) |
-|----------|----------------------------------------|
-| mobentis-kpi | kpi |
+| Selector | Ruta relativa (desde core/components) | Uso |
+|----------|----------------------------------------|-----|
+| mobentis-kpi | kpi | Dashboard de KPIs con layout fijo (Rechazos / A Convertir / Convertido). No acepta datos dinámicos. |
+| mobentis-etiqueta-valor-vertical | etiqueta-valor-vertical | KPIs dinámicos (conteos, métricas simples). Ver sección "Etiquetas y valores". |
 
 ## Tablas
 
@@ -83,6 +84,8 @@ Este documento es una **referencia** de los componentes disponibles en la carpet
 | mobentis-etiqueta-valor | etiqueta-valor |
 | mobentis-etiqueta-valor-vertical | etiqueta-valor-vertical |
 
+Para **KPIs dinámicos** (label + valor numérico variable, p. ej. conteos por estado), usar `mobentis-etiqueta-valor-vertical` (inputs: `etiqueta`, `valor`, `colorEtiqueta`).
+
 ## Otros
 
 | Selector | Ruta relativa (desde core/components) |
@@ -107,4 +110,4 @@ Este documento es una **referencia** de los componentes disponibles en la carpet
 
 ---
 
-**Uso:** En la Fase 1 del protocolo (ver `02_AGENTS_REGISTRY/02_FRONTEND.md`), el agente puede consultar este catálogo para mapear "necesito un botón exportar" → `mobentis-btn-export`, "necesito KPIs" → `mobentis-kpi`, etc. Si un elemento no aparece o no encaja con ningún componente listado, debe indicar "No existe en Core" y detenerse hasta confirmación del usuario (regla 1.2 en `Reglas_Generales.md`).
+**Uso:** En la Fase 1 del protocolo (ver `02_AGENTS_REGISTRY/02_FRONTEND.md`), el agente puede consultar este catálogo para mapear "necesito un botón exportar" → `mobentis-btn-export`, "necesito KPIs dinámicos (label+valor)" → `mobentis-etiqueta-valor-vertical`, "necesito el dashboard de KPIs fijo" → `mobentis-kpi`, etc. Si un elemento no aparece o no encaja con ningún componente listado, debe indicar "No existe en Core" y detenerse hasta confirmación del usuario (regla 1.2 en `Reglas_Generales.md`).

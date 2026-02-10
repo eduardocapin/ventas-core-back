@@ -13,7 +13,7 @@ Guía rápida para incorporarte al proyecto que usa el IA_MANAGER_TEMPLATE y el 
 2. **Diccionario de negocio** (`01_GLOBAL_CONTEXT/Diccionario.md`)  
    - Términos del dominio, entidades principales y vocabulario del proyecto.
 
-3. **Contexto operativo Mobentis Sales** (`01_GLOBAL_CONTEXT/Sistema_Mobentis_Sales_Contexto_IA.md`)  
+3. **Contexto operativo Mobentis Sales** (`01_GLOBAL_CONTEXT/Contexto_IA.md`)  
    - Rol de asistencia en BackOffice, multiempresa, Importador de Documentos, estados de integración (leyenda de colores) y protocolo de resolución de errores ERP. Formato optimizado para IA.
 
 4. **Reglas de oro**  
@@ -42,7 +42,7 @@ Guía rápida para incorporarte al proyecto que usa el IA_MANAGER_TEMPLATE y el 
 
 | Necesidad              | Dónde mirar |
 |------------------------|-------------|
-| Operación BackOffice / errores integración ERP | `01_GLOBAL_CONTEXT/Sistema_Mobentis_Sales_Contexto_IA.md` |
+| Operación BackOffice / errores integración ERP | `01_GLOBAL_CONTEXT/Contexto_IA.md` |
 | Algo no funciona       | `DOCS/TROUBLESHOOTING.md` |
 | Cómo deshacer cambios  | `DOCS/TROUBLESHOOTING.md` → "Cambios incorrectos: cómo hacer rollback" |
 | Validar el template    | `DOCS/TEMPLATE_VALIDATION.md` |

@@ -6,7 +6,7 @@ Este archivo registra de forma obligatoria cualquier modificación en el esquema
 
 ## 📂 ESTADO ACTUAL DEL ESQUEMA (Tablas/Entidades)
 
-Listado de entidades TypeORM existentes en SarigaboMobentis_Back (tabla física en español cuando aplica):
+Listado de entidades TypeORM existentes en el Backend del workspace (ruta en `paths.config.json` → `backend_path`; tabla física en español cuando aplica):
 
 | Entidad / Tabla | Módulo / Ubicación |
 | :--- | :--- |
