@@ -22,6 +22,7 @@ const PEDIDOS_COLUMNS: Record<string, string> = {
   estadoIntegracion: 'EstadoImportacion',
   estadoImportacion: 'EstadoImportacion',
   deleted: 'BajaEnERP',
+  codEmpresa: 'Cod_Empresa',
 };
 
 /** Mapeo sortColumn (DTO/UI) → propiedad de entidad para orderBy */
@@ -45,6 +46,7 @@ export interface FindPaginatedOptions {
   selectedFilters?: any[];
   sortColumn?: string;
   sortDirection?: string;
+  empresasIds?: number[];
 }
 
 @Injectable()
@@ -62,21 +64,32 @@ export class PedidoRepository {
       searchTerm = '',
       sortColumn = 'id',
       sortDirection = 'ASC',
+      empresasIds,
     } = options;
 
     const whereParams: Record<string, unknown> = { falseVal: false };
     if (searchTerm && searchTerm.trim()) {
       whereParams.term = `%${searchTerm.trim()}%`;
     }
+    if (empresasIds && empresasIds.length > 0) {
+      whereParams.empresasIds = empresasIds;
+    }
 
     const countQb = this.repo
       .createQueryBuilder('p')
       .where(`(p.${PEDIDOS_COLUMNS.deleted} = :falseVal OR p.${PEDIDOS_COLUMNS.deleted} IS NULL)`)
       .setParameters(whereParams);
+    
     if (searchTerm && searchTerm.trim()) {
       countQb.andWhere(
         `(p.${PEDIDOS_COLUMNS.tipoDocumento} LIKE :term OR p.${PEDIDOS_COLUMNS.numero} LIKE :term OR p.${PEDIDOS_COLUMNS.cliente} LIKE :term OR p.${PEDIDOS_COLUMNS.agente} LIKE :term OR p.${PEDIDOS_COLUMNS.delegacion} LIKE :term)`,
       );
+    }
+    
+    // Filtrar por empresas si se proporciona
+    // Relación directa: Pedidos.Cod_Empresa = Empresas.Id
+    if (empresasIds && empresasIds.length > 0) {
+      countQb.andWhere(`p.${PEDIDOS_COLUMNS.codEmpresa} IN (:...empresasIds)`);
     }
 
     // Evitar bug TypeORM #8213 (databaseName undefined): paginación sin joins, luego cargar entidades con relaciones
@@ -93,10 +106,17 @@ export class PedidoRepository {
       .orderBy(`p.${orderByProp}`, order as 'ASC' | 'DESC')
       .take(itemsPerPage)
       .skip(skip);
+    
     if (searchTerm && searchTerm.trim()) {
       idsQb.andWhere(
         `(p.${PEDIDOS_COLUMNS.tipoDocumento} LIKE :term OR p.${PEDIDOS_COLUMNS.numero} LIKE :term OR p.${PEDIDOS_COLUMNS.cliente} LIKE :term OR p.${PEDIDOS_COLUMNS.agente} LIKE :term OR p.${PEDIDOS_COLUMNS.delegacion} LIKE :term)`,
       );
+    }
+    
+    // Filtrar por empresas si se proporciona
+    // Relación directa: Pedidos.Cod_Empresa = Empresas.Id
+    if (empresasIds && empresasIds.length > 0) {
+      idsQb.andWhere(`p.${PEDIDOS_COLUMNS.codEmpresa} IN (:...empresasIds)`);
     }
 
     const [idRows, totalItems] = await Promise.all([idsQb.getRawMany<{ pedidoId: number }>(), countQb.getCount()]);

@@ -20,6 +20,9 @@ export class Pedido {
   @Column({ name: 'Referencia_Pedido', type: 'nvarchar', length: 50, nullable: true })
   numero: string | null;
 
+  @Column({ name: 'IdDocumentoPDA', type: 'nvarchar', length: 50, nullable: true })
+  idDocumentoPDA: string | null;
+
   @Column({ name: 'Cliente_N_Comercial', type: 'nvarchar', length: 256, nullable: true })
   cliente: string | null;
 
@@ -58,7 +61,7 @@ export class Pedido {
 
   /** Cliente comprador. Pedidos.Cod_Cliente_Fabricante = Clientes.IdClienteFabricante */
   @ManyToOne(() => Client, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'Cod_Cliente_Fabricante', referencedColumnName: 'IdClienteFabricante' })
+  @JoinColumn({ name: 'Cod_Cliente_Fabricante', referencedColumnName: 'idClienteFabricante' })
   customerRelation: Client | null;
 
   @Column({ name: 'Fecha_Pedido', type: 'smalldatetime', nullable: true })
@@ -83,6 +86,12 @@ export class Pedido {
   @Column({ name: 'Observa', type: 'nvarchar', length: 500, nullable: true })
   observaciones: string | null;
 
+  @Column({ name: 'ObservacionesComerciales', type: 'nvarchar', length: 4000, nullable: true })
+  observacionesComerciales: string | null;
+
+  @Column({ name: 'ObservacionesReparto', type: 'nvarchar', length: 4000, nullable: true })
+  observacionesReparto: string | null;
+
   @Column({ name: 'FechaInsert', type: 'datetime', nullable: true })
   insert_date: Date | null;
 
@@ -91,6 +100,10 @@ export class Pedido {
 
   @Column({ name: 'BajaEnERP', type: 'bit', nullable: true })
   deleted: boolean;
+
+  /** Relación con Empresa: Pedidos.Cod_Empresa = Empresas.Id */
+  @Column({ name: 'Cod_Empresa', type: 'int', nullable: true })
+  codEmpresa: number | null;
 
   /** Líneas del pedido. Relación: PedidosDetalle.Codigo_PedidoAuto → Pedidos.Id_Pedido */
   @OneToMany(() => PedidoDetalle, (detalle) => detalle.pedido)

@@ -32,4 +32,11 @@ export class PaginatedPedidosDto {
   @IsOptional()
   @IsString()
   sortDirection?: string;
+
+  @ApiPropertyOptional({ description: 'IDs de empresas para filtrar', type: [Number] })
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  empresasIds?: number[];
 }

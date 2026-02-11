@@ -27,8 +27,9 @@ Cuando el usuario solicite **"generar todo para la entidad X"** o **"entidad X a
 
 **Si la entidad NO está en el sistema de control:**
 - **Delegar primero en AG-VC-04-DB** (Experto en Base de Datos) con la tarea: "Añadir la entidad [nombre] al sistema de control". El agente DB debe:
-  - **Ofrecer al usuario dos opciones:** (1) que el usuario pegue o indique el esquema (tabla, columnas, tipos y si aplica significado/alias), o (2) que el usuario ejecute el script de introspección (`npm run db:sync-docs` desde la raíz del backend, con .env configurado) y confirme cuando haya terminado. El script actualiza los documentos desde la BD sin contener datos de conexión (todo desde .env).
-  - Con el esquema disponible (por pegado o por ejecución del script), actualizar Diccionario.md, Tablas_Columnas_Alias.md e Historial_DB.md según las normas del agente DB.
+  - **Solicitar al usuario el esquema** (vía principal): tabla, columnas con tipo y, si puede, significado y nombre de visualización de cada campo. El usuario puede pegar un CREATE TABLE, un listado de columnas o exportar desde su herramienta de BD.
+  - **Alternativa:** Si la BD está configurada y accesible, el usuario puede ejecutar el script `npm run db:sync-docs` (desde la raíz del backend, con .env configurado) y confirmar cuando termine. El script actualiza los documentos desde la BD.
+  - Con el esquema disponible, actualizar Diccionario.md, Tablas_Columnas_Alias.md e Historial_DB.md según las normas del agente DB.
   - Confirmar cuando la entidad esté registrada.
 - **Esperar confirmación** del agente DB antes de continuar.
 

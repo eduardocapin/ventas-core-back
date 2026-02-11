@@ -37,7 +37,10 @@ export class PedidoListDto {
   @ApiPropertyOptional({ description: 'Nombre del cliente' })
   nombreCliente?: string;
 
-  @ApiPropertyOptional({ description: 'Código PDA del pedido (desde PedidosTotal.IdPedidoPDA)' })
+  @ApiPropertyOptional({ description: 'Código del documento (desde Pedidos.IdDocumentoPDA)' })
+  idDocumentoPDA?: string;
+
+  @ApiPropertyOptional({ description: 'Código PDA (legacy, numérico desde PedidosTotal.IdPedidoPDA)' })
   codigoPda?: number;
 
   @ApiPropertyOptional({ description: 'Nombre del agente' })

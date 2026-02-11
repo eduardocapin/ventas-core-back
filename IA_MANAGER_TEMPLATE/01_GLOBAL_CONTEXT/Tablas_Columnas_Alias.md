@@ -2,9 +2,11 @@
 
 Este documento es la **única fuente de verdad** para el detalle de cada tabla y vista de las **entidades principales** del sistema: descripción, significado de columnas, **tipo de dato** y **alias para pantalla**. Se usa en Backend (DTOs, Swagger), Frontend (cabeceras, formularios, mensajes) y en documentación.
 
+**Fuente de nombres de visualización:** La columna **«Alias en pantalla»** de cada tabla de columnas es la **fuente de verdad** para el texto que debe mostrarse al usuario. Los títulos que el Frontend usa en cabeceras, formularios y labels deben coincidir o derivar de estos alias. El documento `DTOs_Titulos_Web.md` proporciona el mapeo DTO.propiedad → clave i18n y título; los valores base deben alinearse con los alias definidos aquí.
+
 **Entidades principales:** Las definidas en [Diccionario.md](./Diccionario.md), sección «1. ENTIDADES PRINCIPALES»: **Cliente**, **Equipo**, **Usuario**, **Agente**, **Menú**, **Lista navegable**, **Filtro**, **Agrupación**, **Empresa**, **Ámbito**.
 
-**Relación con otros documentos:** Las entidades de alto nivel y reglas de negocio están en [Diccionario.md](./Diccionario.md). Los cambios de esquema se registran en [Historial_DB.md](./Historial_DB.md).
+**Relación con otros documentos:** Las entidades de alto nivel y reglas de negocio están en [Diccionario.md](./Diccionario.md). Los cambios de esquema se registran en [Historial_DB.md](./Historial_DB.md). Para el mapeo DTO.propiedad → clave i18n y título en pantalla, ver [DTOs_Titulos_Web.md](./DTOs_Titulos_Web.md). Para el catálogo completo de DTOs y sus propiedades, ver [DTOs_Estructura.md](./DTOs_Estructura.md).
 
 ---
 

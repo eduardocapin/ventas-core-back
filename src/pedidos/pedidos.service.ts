@@ -108,6 +108,7 @@ export class PedidosService {
         selectedFilters: dto.selectedFilters,
         sortColumn: dto.sortColumn,
         sortDirection: dto.sortDirection,
+        empresasIds: dto.empresasIds,
       });
 
       const items: PedidoListDto[] = pedidos.map((p) => {
@@ -118,7 +119,7 @@ export class PedidosService {
         return {
           id: p.id,
           estadoImportacion: p.estadoIntegracion ?? undefined,
-          idDocumentoPDA: p.totales?.idPedidoPDA ?? undefined,
+          idDocumentoPDA: p.idDocumentoPDA ?? undefined,
           tipoDocumento: p.tipoDocumento ?? undefined,
           fechaDocumento: p.fecha ?? undefined,
           horaConsolidacion: formatTimeFromDate(p.fechaHoraFin) ?? undefined,
@@ -220,6 +221,8 @@ export class PedidosService {
       estadoIntegracion: pedido.estadoIntegracion ?? undefined,
       mensajeErrorIntegracion: pedido.mensajeErrorIntegracion ?? undefined,
       observaciones: pedido.observaciones ?? undefined,
+      observacionesComerciales: pedido.observacionesComerciales ?? undefined,
+      observacionesReparto: pedido.observacionesReparto ?? undefined,
       totales: mapTotalesToDto(pedido.totales),
       lineas,
     };

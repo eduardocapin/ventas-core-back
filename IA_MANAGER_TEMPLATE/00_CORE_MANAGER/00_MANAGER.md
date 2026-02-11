@@ -36,14 +36,7 @@ Ante cualquier mensaje del usuario, sigue estrictamente este flujo orquestado:
    - Carga las reglas del agente desde `./02_AGENTS_REGISTRY/`.
    - **OBLIGATORIO:** Antes de delegar, muestra el formato de transparencia visual (ver "REGLAS DE ORO DEL MANAGER" más arriba). No ejecutes ninguna acción sin mostrar primero al usuario qué agente está trabajando y en qué tarea.
    - Si la tarea es compleja, diseña un plan secuencial (DB -> Backend -> Frontend/UX).
-   - Si la tarea implica **nueva funcionalidad, componente, validación o comprobación** en Back o Front, recuerda al agente que debe **revisar primero las carpetas Core** de los proyectos del workspace para reutilizar lo existente (regla 1.1 en `Reglas_Generales.md`).
-   - **Checkpoint general de Core (cualquier tarea con nuevos elementos de UI):** Cuando la tarea implique crear o modificar **interfaz de usuario** en el Front (nueva pantalla, nuevo apartado, botones, KPIs, tablas, filtros, gráficas, formularios, etc.), el Manager **debe** indicar en la delegación que se consulte **obligatoriamente** `DOCS/Core_Components_Catalog.md` para mapear cada elemento de UI necesario (botón, KPI, tabla, filtro, gráfica, input, diálogo, etc.) al selector Core indicado en el catálogo (por ejemplo: botón exportar → `mobentis-btn-export`, listado → `mobentis-entity-table-manager` o `mobentis-table` + filtros/paginación). No se debe generar HTML propio (`<table>`, `<button>`, `<input>` para búsqueda/filtros, etc.) para elementos que tengan componente en el catálogo. Si algún elemento necesario no existe en Core, no crear ningún componente ni HTML nuevo hasta haber informado al usuario y recibir su confirmación para continuar.
-   - **Validación a la entrega (elementos de UI):** Antes de dar por cerrada la tarea, el Manager debe verificar que en las plantillas HTML del entregable **no** aparezcan elementos genéricos que tengan equivalente en `DOCS/Core_Components_Catalog.md` (por ejemplo: `<table>` para listados de datos cuando el catálogo ofrece `mobentis-entity-table-manager` o `mobentis-table`; `<button>` para acciones que tienen `mobentis-btn-*`; `<input>` para búsqueda o filtros cuando existen `mobentis-search-input`, `mobentis-filter-container`, etc.). Si aparecen, la entrega se considera **incompleta**, se debe registrar en `Technical_Debt.md` (por ejemplo: "Pantalla [nombre]: uso de HTML propio en lugar de componentes Core; pendiente refactor según Core_Components_Catalog.md") y solicitar refactor o informar al usuario de la desalineación con Reglas_Generales (reglas 1.1 y 1.2). Si la tarea era "nueva pantalla" o "nuevos elementos gráficos" y el agente ha creado HTML o componentes nuevos sin haber comprobado Core o sin haber avisado al usuario cuando faltaba un componente, el Manager debe considerar la tarea incompleta o registrar en `Technical_Debt.md` y solicitar alineación con Reglas_Generales (reglas 1.1 y 1.2).
-   - **Vistas de listado / pantallas con rejilla:** Si la tarea es una nueva pantalla de listado, grid, tabla de datos o "xxx-general", aplica el **checkpoint de Core para listados** (ver sección "Control de Core en vistas de listado" más abajo): incluye en la delegación al Frontend la instrucción explícita de usar componentes Core (mobentis-entity-table-manager, mobentis-table, mobentis-filter-container, mobentis-search-input, mobentis-pagination) y **no** entregar tablas HTML manuales ni inputs de búsqueda/filtros ad hoc ni datos solo mock sin servicio al API.
-   - **Bloque de mandato Core (incluir en toda delegación Frontend con UI):** Cada vez que delegues en el agente Frontend una tarea que implique crear o modificar interfaz de usuario, incluye en la delegación (literal o en esencia) el siguiente mandato:
-     - Consultar **obligatoriamente** `DOCS/Core_Components_Catalog.md` y la carpeta Core del Front indicada en `00_CORE_MANAGER/paths.config.json` (clave `core_front` + `/components`) antes de escribir código.
-     - Listar los elementos de UI necesarios y, para cada uno, indicar el **selector Core** del catálogo (ej. "botón exportar → mobentis-btn-export"; "tabla de listado → mobentis-entity-table-manager"; "filtros → mobentis-filter-container"). Si algún elemento no tiene equivalente en el catálogo, indicar "No existe en Core" y no crear markup hasta avisar al usuario y recibir confirmación.
-     - **Prohibido** generar `<table>`, `<button>`, `<input>` de búsqueda/filtros u otro HTML propio para funcionalidad cubierta por un componente del catálogo.
+   - **Aplicar validación de Core:** Para cualquier tarea que implique crear o modificar código en Back o Front, aplicar las reglas de Core según la sección "CONTROL Y VALIDACIÓN DE CORE" más abajo.
 3. **LOG DE AUDITORÍA:** 
    - **Obligatorio:** Registra la intención de la tarea y el agente responsable en `./00_CORE_MANAGER/Audit_Logs.md`.
 4. **FILTRO DE CALIDAD FINAL:** 
@@ -84,24 +77,69 @@ El Manager debe usar flujos predecibles para las tareas más frecuentes:
   - Jardinero (`AG-VC-09-GARDENER`): limpia reglas obsoletas y mantiene la documentación alineada.
 
 - **Nueva vista de listado o pantalla con rejilla (Frontend)**
-  - Al delegar en **Frontend** (`AG-VC-02-FRONTEND`) una tarea de tipo "pantalla de listado", "vista general", "grid de datos", "tabla de documentos/entidades" o similar, el Manager debe **incluir en la delegación** el mandato de uso de Core para listados (ver sección "Control de Core en vistas de listado"). No aceptar como entregable una solución basada en tabla HTML manual, input de búsqueda propio ni botón de filtros sin `mobentis-filter-container`; si el agente entrega eso, registrar en `Technical_Debt.md` y solicitar refactor para usar `IEntityTableConfig`, servicio con `getData()` y componentes Core.
+  - Al delegar en **Frontend** (`AG-VC-02-FRONTEND`) una tarea de tipo "pantalla de listado", "vista general", "grid de datos", "tabla de documentos/entidades" o similar, aplicar las reglas específicas de Core para listados (ver sección "CONTROL Y VALIDACIÓN DE CORE" → "Vistas de Listado" más abajo).
 
 - **Cambios en el IA_MANAGER_TEMPLATE**
   - Tras modificaciones en archivos del template (01_GLOBAL_CONTEXT, 02_AGENTS_REGISTRY, DOCS, etc.), ofrecer al usuario: *"Se han realizado cambios en el template. ¿Quieres que el Jardinero revise y actualice enlaces, referencias y documentación?"* Si acepta, delegar en **Jardinero** (`AG-VC-09-GARDENER`) para ejecutar la auditoría de coherencia del template (checklist en `02_AGENTS_REGISTRY/09_GARDENER.md`).
   - El usuario también puede solicitar en cualquier momento *"Revisar el template"*, *"Auditar IA_MANAGER_TEMPLATE"* o *"Comprobar enlaces del template"* para que el Jardinero valide la coherencia y proponga o aplique actualizaciones.
   - **Auditoría periódica:** El Manager puede sugerir auditoría periódica del template cada N sesiones (por defecto cada 5 sesiones) o cuando detecte que han pasado varios días sin revisión. El usuario puede aceptar, posponer o desactivar esta sugerencia.
 
-## 📐 CONTROL DE CORE EN VISTAS DE LISTADO
+## 🚫 CONTROL Y VALIDACIÓN DE CORE
 
-Para evitar que se generen pantallas con **tablas HTML manuales, búsqueda ad hoc o filtros propios** en lugar de los componentes Core del Front:
+Esta sección consolida todas las reglas relacionadas con las carpetas Core inviolables. **Las carpetas Core NO pueden ser modificadas bajo ningún concepto.** Ver `01_GLOBAL_CONTEXT/AI_Safety_Guardrails.md` y `01_GLOBAL_CONTEXT/Core_Inviolable_Frontend.md` para documentación completa.
 
-1. **Cuándo aplicar:** Siempre que la tarea delegada al Frontend sea crear o modificar una **vista de listado** (pantalla tipo xxx-general, grid, tabla de datos paginada).
-2. **Mandato en la delegación:** Incluir explícitamente en la descripción de la tarea al agente Frontend:
-   - Los componentes a usar para listados (mobentis-entity-table-manager, mobentis-table, mobentis-filter-container, mobentis-search-input, mobentis-pagination) son los definidos para tablas, filtros, búsqueda y paginación en `DOCS/Core_Components_Catalog.md`; consultar ese catálogo como fuente de verdad.
-   - "Revisar la carpeta Core del Front y usar para el listado **mobentis-entity-table-manager** (con `IEntityTableConfig` e `IEntityDataService`) o, si no está disponible el módulo que lo exporta, al menos **mobentis-table** + **mobentis-filter-container** + **mobentis-search-input** + **mobentis-pagination**."
-   - "No implementar tabla HTML manual ni input de búsqueda ni botón de filtros propios; el servicio de datos debe implementar `getData()` y llamar al API (POST .../list con `{ items, totalItems }`)."
-3. **Validación a la entrega:** Si el agente entrega una pantalla con `<table>` HTML manual para el listado principal y sin uso de los componentes Core anteriores, el Manager debe considerar la tarea incompleta, registrar en `Technical_Debt.md` ("Listado [nombre] implementado sin componentes Core; pendiente refactor") y solicitar refactor o indicar al usuario que falta alinear con Reglas_Generales.md (regla 1.1 y estándares de listados).
-4. **Referencia:** Regla 1.1 en `01_GLOBAL_CONTEXT/Reglas_Generales.md`; estándares de listados (POST .../list, IEntityDataService, IEntityTableConfig) en el mismo archivo y en `Diccionario.md`.
+### Principios Fundamentales
+
+1. **Core es inviolable:** Las rutas definidas en `paths.config.json` como `core_back` y `core_front` están ABSOLUTAMENTE PROHIBIDAS para cualquier modificación (editar, crear, modificar, refactorizar, mover, renombrar, eliminar).
+2. **Core es consultable:** Los agentes DEBEN consultar Core antes de crear nuevos elementos para reutilizar lo existente.
+3. **Extensión fuera de Core:** Si se necesita funcionalidad adicional, debe extenderse fuera de Core mediante composición o herencia.
+
+### Validación de Core en Delegaciones
+
+#### Para Backend y Frontend (funcionalidad general)
+
+Cuando la tarea implica **nueva funcionalidad, componente, validación o comprobación**:
+- Recordar al agente que debe **revisar primero las carpetas Core** (rutas en `paths.config.json`: `core_back` para Backend, `core_front` para Frontend) para reutilizar lo existente.
+- Si existe elemento equivalente en Core, el agente debe usarlo o extenderlo fuera de Core.
+- Referencia: Regla 1.1 en `01_GLOBAL_CONTEXT/Reglas_Generales.md`.
+
+#### Para Frontend (elementos de UI)
+
+Cuando la tarea implique crear o modificar **interfaz de usuario** (pantallas, botones, KPIs, tablas, filtros, gráficas, formularios, diálogos, inputs, etc.):
+
+**Mandato obligatorio en la delegación:**
+1. Consultar **obligatoriamente** `DOCS/Core_Components_Catalog.md` y la carpeta Core del Front (`paths.config.json` → `core_front` + `/components`) antes de escribir código.
+2. Listar los elementos de UI necesarios y, para cada uno, indicar el **selector Core** del catálogo (ej. "botón exportar → mobentis-btn-export"; "tabla de listado → mobentis-entity-table-manager"; "filtros → mobentis-filter-container").
+3. Si algún elemento no tiene equivalente en el catálogo, indicar "No existe en Core" y **no crear markup hasta avisar al usuario y recibir confirmación**.
+4. **Prohibido** generar `<table>`, `<button>`, `<input>` de búsqueda/filtros u otro HTML propio para funcionalidad cubierta por un componente del catálogo.
+
+**Validación a la entrega:**
+- Verificar que en las plantillas HTML del entregable **no** aparezcan elementos genéricos que tengan equivalente en `DOCS/Core_Components_Catalog.md`.
+- Si aparecen elementos HTML propios cuando existe componente Core equivalente, la entrega se considera **incompleta**:
+  - Registrar en `Technical_Debt.md` (ej: "Pantalla [nombre]: uso de HTML propio en lugar de componentes Core; pendiente refactor según Core_Components_Catalog.md").
+  - Solicitar refactor o informar al usuario de la desalineación con Reglas_Generales (reglas 1.1 y 1.2).
+
+### Vistas de Listado (caso especial)
+
+Para tareas de tipo "pantalla de listado", "vista general", "grid de datos", "tabla de documentos/entidades":
+
+**Componentes Core obligatorios para listados:**
+- `mobentis-entity-table-manager` (con `IEntityTableConfig` e `IEntityDataService`) - preferido
+- O alternativamente: `mobentis-table` + `mobentis-filter-container` + `mobentis-search-input` + `mobentis-pagination`
+
+**Mandato en delegación:**
+- "Revisar la carpeta Core del Front y usar para el listado **mobentis-entity-table-manager** (con `IEntityTableConfig` e `IEntityDataService`) o, si no está disponible el módulo que lo exporta, al menos **mobentis-table** + **mobentis-filter-container** + **mobentis-search-input** + **mobentis-pagination**."
+- "No implementar tabla HTML manual ni input de búsqueda ni botón de filtros propios; el servicio de datos debe implementar `getData()` y llamar al API (POST .../list con `{ items, totalItems }`)."
+
+**Validación a la entrega:**
+- Si el agente entrega una pantalla con `<table>` HTML manual para el listado principal y sin uso de los componentes Core anteriores, considerar la tarea **incompleta**.
+- Registrar en `Technical_Debt.md` ("Listado [nombre] implementado sin componentes Core; pendiente refactor").
+- Solicitar refactor para usar `IEntityTableConfig`, servicio con `getData()` y componentes Core.
+
+**Referencias:**
+- Regla 1.1 en `01_GLOBAL_CONTEXT/Reglas_Generales.md`
+- Estándares de listados (POST .../list, IEntityDataService, IEntityTableConfig) en `Reglas_Generales.md` y `Diccionario.md`
+- `DOCS/Core_Components_Catalog.md` como fuente de verdad de componentes disponibles
 
 ## 🧾 USO DE LOGS DE AUDITORÍA Y DEUDA TÉCNICA
 

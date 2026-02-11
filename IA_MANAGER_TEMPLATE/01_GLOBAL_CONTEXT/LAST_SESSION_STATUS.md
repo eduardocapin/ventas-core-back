@@ -1,15 +1,17 @@
 # 🏁 ÚLTIMO ESTADO DE SESIÓN (CHECKPOINT)
 
-**Fecha y Hora:** 2026-02-10
-**Última Tarea:** Optimización IA Manager Template (plan completado); revisión generación archivos .cursor; checkpoint guardado para continuar mañana
+**Fecha y Hora:** 2026-02-11
+**Última Tarea:** Corrección columna Código Documento (IdDocumentoPDA desde Pedidos); checkpoint guardado para continuar mañana
 
 ---
 
 ## 🚀 RESUMEN EJECUTIVO
 
-**Sesión 2026-02-10:** Plan de optimización IA Manager implementado (corrección .cursorrules Frontend, condensación bloque TRANSPARENCIA, comentario setup_project.ps1, ítem fuente de verdad en MANUAL_FUNCIONAMIENTO). Revisión confirmada: todos los archivos en `.cursor/rules/` se generan correctamente durante `setup_project.ps1`.
+**Plan para mañana:** Terminar de mostrar correctamente toda la información del pedido desde el botón de guardar.
 
-**Contexto previo (2026-02-09):** Reestructuración completa de tablas Pedidos y PedidosDetalle, módulo Clientes creado, corrección relación FK Pedidos → Clientes.
+**Sesión 2026-02-11:** Corregida columna "Código Documento" que mostraba 0. El dato correcto (ej. "P11-00078") está en `Pedidos.IdDocumentoPDA`, no en PedidosTotal.IdPedidoPDA. Se añadió la columna a la entidad Pedido, se actualizó el mapeo en PedidosService y el tipo en frontend (string, text).
+
+**Contexto previo:** Reestructuración tablas Pedidos/PedidosDetalle, módulo Clientes, corrección FK Pedidos → Clientes.
 
 ---
 
@@ -81,6 +83,13 @@
 - [x] **ClientsModule** creado y registrado en AppModule
 - [x] **Documentación** actualizada en Tablas_Columnas_Alias.md
 
+### Columna Código Documento (IdDocumentoPDA)
+- [x] **Problema:** La columna mostraba 0; el dato real está en Pedidos.IdDocumentoPDA (ej. "P11-00078"), no en PedidosTotal.IdPedidoPDA
+- [x] **Pedido entity:** Añadida columna `idDocumentoPDA` (nvarchar)
+- [x] **PedidosService:** Mapeo desde `p.idDocumentoPDA` en lugar de `p.totales?.idPedidoPDA`
+- [x] **PedidoListDto:** idDocumentoPDA como string; etiqueta "Código Documento"
+- [x] **Frontend:** Tipo de columna 'text'; pedido.model.ts idDocumentoPDA como string
+
 ### Corrección de Relación FK
 - [x] **Pedidos → Clientes:** Corregida relación FK
   - Antes: `Pedidos.Cod_Agente_Fabricante → Agentes.Id`
@@ -98,6 +107,9 @@
 **Campos sin datos en BD (se muestran vacíos hasta que existan en tablas):**
 - Pedidos: horaConsolidacion, fechaEntrega, codigoCliente, importeDescuento2, importeDescuentoDToPP, tieneFirma
 - PedidosDetalle: codigoPromocion, descripcionUnidadVendida, descuento2-5, motivoDevolucion, comboAdjunto, notaLinea
+
+**Plan principal para continuar:**
+- [ ] **Terminar de mostrar correctamente toda la información del pedido desde el botón de guardar**
 
 **Próximos pasos sugeridos:**
 - [ ] Verificar que la relación FK Pedidos → Clientes funciona correctamente en BD
@@ -120,7 +132,8 @@
 ## 🛠️ ESTADO DEL SISTEMA
 
 **Últimos archivos relevantes modificados:**
-- `ventas-core-back/src/pedidos/dto/pedido-list.dto.ts` (reestructurado)
+- `ventas-core-back/src/pedidos/entities/pedido.entity.ts` (añadido idDocumentoPDA)
+- `ventas-core-back/src/pedidos/dto/pedido-list.dto.ts` (idDocumentoPDA como string)
 - `ventas-core-back/src/pedidos/dto/pedido-detalle-linea.dto.ts` (reestructurado)
 - `ventas-core-back/src/pedidos/pedidos.service.ts` (mapeo actualizado)
 - `ventas-core-back/src/pedidos/repositories/pedido.repository.ts` (joins actualizados)

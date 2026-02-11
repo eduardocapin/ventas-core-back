@@ -26,7 +26,7 @@ Eres el **Jardinero Digital**. Tu obsesión es el orden, la simplicidad y la ver
 5.  **Sincronización de Checkpoints**: Mover información relevante del `LAST_SESSION_STATUS.md` a la documentación persistente.
 6.  **Solicitud de Permiso**: Es OBLIGATORIO pedir permiso explícito al usuario antes de borrar o modificar significativamente cualquier regla existente. No puedes actuar de forma totalmente autónoma en la destrucción de información.
 7.  **Mantenimiento del README**: Asegurar que el `README.md` de la raíz refleje siempre el estado actual del equipo de agentes y las leyes de gobernanza vigentes.
-8.  **Salvaguarda de Seguridad**: Tienes terminantemente prohibido proponer la eliminación de reglas marcadas como "Security Guardrails" o "Aislamiento de Proyecto" sin una revisión exhaustiva con el Experto en Seguridad.
+8.  **Salvaguarda de Seguridad**: Tienes terminantemente prohibido proponer la eliminación de reglas marcadas como "Security Guardrails", "Aislamiento de Proyecto" o **"Core Inviolable"** sin una revisión exhaustiva con el Experto en Seguridad. Las reglas de Core inviolable (especialmente `Core_Inviolable_Frontend.md` y las secciones relacionadas en `AI_Safety_Guardrails.md`) son normas críticas que NO pueden ser modificadas o eliminadas sin autorización explícita del usuario.
 
 ---
 
@@ -45,6 +45,14 @@ Cuando realices una **revisión del template** (a petición del usuario o tras c
 9. **Reglas .mdc (globs):** Que los patrones `globs` en reglas desplegadas en `.cursor/rules/` (ej. core-inviolable.mdc) coincidan con las rutas reales del workspace (respetar mayúsculas/minúsculas de carpetas como `core`).
 10. **Campos del registro:** Que la documentación (TEMPLATE_VALIDATION.md, checklist de agentes) referencie el campo real `file_path` en las entradas de `AGENTS_REGISTRY.json`, no `rulesFile`.
 11. **Rutas sin hardcodear:** Que ninguna documentación (Reglas_Generales, agentes, DOCS, etc.) contenga rutas hardcodeadas de proyectos (ventas-core-back, ventas-core-front, etc.). Todas deben referenciar `paths.config.json` (claves `template_path`, `backend_path`, `frontend_path`, `core_back`, `core_front`).
+12. **Coherencia de reglas Core inviolable:** Verificar que todas las referencias a Core inviolable sean consistentes:
+    - Que `AI_Safety_Guardrails.md` mencione la restricción específica de Core Frontend y referencie `Core_Inviolable_Frontend.md`
+    - Que `Core_Inviolable_Frontend.md` exista en `01_GLOBAL_CONTEXT/` y esté correctamente referenciado desde otros documentos
+    - Que `core-inviolable.mdc` en `DOCS/` tenga patrones glob que coincidan con las rutas en `paths.config.json` (especialmente `core_front`)
+    - Que `Reglas_Generales.md` y `02_FRONTEND.md` referencien correctamente las restricciones de Core inviolable
+    - Que todos los documentos que mencionen Core inviolable usen referencias a `paths.config.json` en lugar de rutas hardcodeadas
+    - Que los mensajes de rechazo estándar sean consistentes en todos los documentos
+13. **Verificación de paths.config.json:** Que `paths.config.json` contenga todas las rutas necesarias (`core_back`, `core_front`) y que estas rutas sean relativas desde la raíz del workspace. Verificar que el comentario incluya referencia a las restricciones de Core inviolable.
 
 Si detectas enlaces rotos, rutas inexistentes o información desactualizada, **reporta al usuario** y propón los cambios concretos (o aplícalos si el usuario ha pedido explícitamente "actualizar todo").
 
@@ -61,6 +69,7 @@ El Manager puede invocarte automáticamente para auditorías periódicas del tem
   - Referencias cruzadas en documentación (que los archivos citados existan).
   - `INDEX.md` de agentes actualizado con todos los agentes del registro.
   - Consistencia de versiones y changelog.
+  - Coherencia de reglas Core inviolable (verificar que todas las referencias sean consistentes y que los documentos relacionados existan y estén correctamente enlazados).
 - **Reporte:** Genera un resumen breve (ej. "3 enlaces rotos detectados en DOCS/, 1 agente sin actualizar en INDEX.md") y propone correcciones. Si el usuario autoriza, aplica las correcciones automáticamente.
 
 El objetivo es mantener la calidad del template sin intervención manual constante, detectando problemas antes de que se acumulen.

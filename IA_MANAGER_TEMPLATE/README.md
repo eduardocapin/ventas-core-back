@@ -20,10 +20,11 @@ El sistema se basa en una arquitectura de **Orquestación Basada en Agentes**. E
 ## 📂 Estructura del Ecosistema
 
 -   **/00_CORE_MANAGER**: El "Cerebro". Contiene el orquestador, el registro central, los **Audit Logs** y las reglas de orquestación del Manager.
--   **/01_GLOBAL_CONTEXT**: La "Constitución". Diccionario, Tech Stack, ADRs, Quality Standards, Naming, **Safety Guardrails**, **Backend_Patterns** (patrones y normas Back) y el checkpoint de sesión (`LAST_SESSION_STATUS.md`).
--   **/02_AGENTS_REGISTRY**: Los "Ejecutores". 11 agentes (Factory, Architect, Frontend, Backend, DB, QA, Setup, UX, Security, Gardener, Generador Entidad-FullStack). Consulta el índice en `02_AGENTS_REGISTRY/INDEX.md`.
+-   **/01_GLOBAL_CONTEXT**: La "Constitución". Diccionario, Tech Stack, ADRs, Quality Standards, Naming, **Safety Guardrails**, **Core Inviolable Frontend**, **Backend_Patterns** (patrones y normas Back) y el checkpoint de sesión (`LAST_SESSION_STATUS.md`).
+-   **/02_AGENTS_REGISTRY**: Los "Ejecutores". 11 agentes (Factory, Architect, Frontend, Backend, DB, QA, Setup, UX, Security, Gardener, Generador Entidad-FullStack). Consulta el índice en `02_AGENTS_REGISTRY/INDEX.md` (generado automáticamente desde el registro).
 -   **/03_PROMPT_LIBRARY**: La "Armería". Prompts maestros optimizados para tareas recurrentes (CRUDs, APIs, UX, Seguridad).
--   **/DOCS**: La "Bitácora". Incluye el **Manual de funcionamiento** (`DOCS/MANUAL_FUNCIONAMIENTO.md`), el **UI Storybook** y la configuración del orquestador.
+-   **/DOCS**: La "Bitácora". Incluye el **Manual de funcionamiento** (`DOCS/MANUAL_FUNCIONAMIENTO.md`), **índice de navegación** (`DOCS/NAVIGATION_INDEX.md`), **flujos maestros** (`DOCS/WORKFLOWS_MASTER.md`), **FAQ** (`DOCS/FAQ.md`), **Troubleshooting** (`DOCS/TROUBLESHOOTING.md`), el **UI Storybook** y la configuración del orquestador.
+-   **/scripts**: Scripts de automatización para validación, métricas y generación de índices.
 -   **.agent/**: Configuración nativa para Antigravity con **aislamiento de workspace**.
 
 ---
@@ -81,6 +82,13 @@ Para incorporar esta plantilla a un nuevo proyecto, sigue estos pasos:
 -   **Calidad:** Al terminar una tarea, pide una "Auditoría de Calidad" y el agente **QA** o **Security** revisará el código contra los estándares definidos.
 -   **Atajos de uso:** Usa `02_AGENTS_REGISTRY/INDEX.md` para ver qué sabe hacer cada agente y la `03_PROMPT_LIBRARY` para copiar prompts maestros como `CRUD Master`, `API Endpoint`, `UX Polishing` o `Security Audit`.
 -   **Coherencia del template:** Tras modificar archivos del template (reglas, agentes, contexto global), el Manager puede ofrecerte que el **Jardinero** revise y actualice enlaces, referencias y documentación. También puedes pedir en cualquier momento *"Revisar el template"* o *"Auditar IA_MANAGER_TEMPLATE"* para validar que todo esté correctamente enlazado y actualizado.
+-   **Herramientas de validación:** El template incluye scripts de automatización:
+    - `scripts/validate-template.ps1` - Valida automáticamente la coherencia del template
+    - `scripts/calculate-metrics.ps1` - Calcula métricas desde logs automáticamente
+    - `scripts/generate-index.ps1` - Genera INDEX.md desde AGENTS_REGISTRY.json
+-   **Navegación mejorada:** Consulta `DOCS/NAVIGATION_INDEX.md` para encontrar rápidamente cualquier documentación del sistema.
+-   **Flujos consolidados:** Ver `DOCS/WORKFLOWS_MASTER.md` para la fuente única de verdad sobre todos los flujos de trabajo.
+-   **FAQ y troubleshooting:** Consulta `DOCS/FAQ.md` para preguntas frecuentes y `DOCS/TROUBLESHOOTING.md` para resolución de problemas.
 -   **Multia-proyecto:** Si tienes varios proyectos abiertos, Antigravity detectará en cuál estás trabajando por la pestaña activa y usará el Manager correspondiente.
 
 ---
@@ -90,7 +98,44 @@ Para incorporar esta plantilla a un nuevo proyecto, sigue estos pasos:
 
 ---
 > [!TIP]
-> Consulta la [PROMPT_LIBRARY](./03_PROMPT_LIBRARY/README.md) para acelerar tu desarrollo al máximo. Para una guía completa del sistema: [Manual de funcionamiento](./DOCS/MANUAL_FUNCIONAMIENTO.md).
+> Consulta la [PROMPT_LIBRARY](./03_PROMPT_LIBRARY/README.md) para acelerar tu desarrollo al máximo. Para una guía completa del sistema: [Manual de funcionamiento](./DOCS/MANUAL_FUNCIONAMIENTO.md). Para navegación rápida: [Índice de navegación](./DOCS/NAVIGATION_INDEX.md). Para preguntas comunes: [FAQ](./DOCS/FAQ.md).
+
+---
+
+## 🛠️ Herramientas de Automatización
+
+El template incluye scripts PowerShell para automatizar tareas comunes:
+
+### Validación del Template
+```powershell
+.\scripts\validate-template.ps1
+```
+Ejecuta el checklist del Gardener automáticamente y valida la coherencia del template.
+
+### Cálculo de Métricas
+```powershell
+.\scripts\calculate-metrics.ps1 -UpdateFile
+```
+Calcula métricas desde `Audit_Logs.md` y `Technical_Debt.md` y actualiza `Metrics.md` automáticamente.
+
+### Generación de Índice
+```powershell
+.\scripts\generate-index.ps1
+```
+Regenera `02_AGENTS_REGISTRY/INDEX.md` desde `AGENTS_REGISTRY.json` para mantener sincronización.
+
+### Validación de JSON Schema
+El archivo `scripts/schema-agents-registry.json` contiene el esquema JSON para validar `AGENTS_REGISTRY.json`. Puedes usar herramientas como `ajv-cli` o validadores online para validar el registro contra el esquema.
+
+---
+
+## 📚 Documentación Adicional
+
+- **Navegación:** `DOCS/NAVIGATION_INDEX.md` - Índice completo para encontrar cualquier documentación
+- **Flujos:** `DOCS/WORKFLOWS_MASTER.md` - Documento maestro consolidado de todos los flujos de trabajo
+- **FAQ:** `DOCS/FAQ.md` - Preguntas frecuentes y respuestas rápidas
+- **Troubleshooting:** `DOCS/TROUBLESHOOTING.md` - Guía de resolución de problemas
+- **Validación:** `DOCS/TEMPLATE_VALIDATION.md` - Checklist de validación del template
 
 ---
 

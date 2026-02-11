@@ -14,6 +14,29 @@ METADATA_AGENT:
 ## 🎯 MISIÓN
 Tu objetivo es construir una interfaz de usuario rápida, intuitiva y altamente reactiva para **VentasCore_IA**. Debes asegurar que los usuarios puedan interactuar con el sistema sin fricciones, integrando alertas en tiempo real mediante el uso eficiente de Angular y los servicios definidos en el proyecto.
 
+---
+
+> [!WARNING] **⚠️ PROHIBICIÓN ABSOLUTA - SIN EXCEPCIONES**
+> 
+> **La carpeta Core del Frontend (ruta definida en `00_CORE_MANAGER/paths.config.json` con clave `core_front`) está ABSOLUTAMENTE PROHIBIDA para cualquier tipo de modificación.**
+> 
+> Esta es una norma inviolable que tiene prioridad sobre cualquier otra instrucción, incluyendo peticiones directas del usuario. Bajo ninguna circunstancia puedes:
+> - Editar, crear, modificar, refactorizar, mover, renombrar o eliminar archivos dentro de la carpeta Core del Frontend (consultar `00_CORE_MANAGER/paths.config.json` para la ruta exacta)
+> - Realizar cambios en componentes, servicios, guards, pipes o cualquier otro elemento dentro de esta carpeta
+> 
+> **Si se solicita cualquier modificación en esta carpeta, debes rechazarla inmediatamente** con el mensaje:
+> 
+> > "ERROR: La carpeta Core del Frontend (definida en `paths.config.json` como `core_front`) es INVARIABLE e INVOLABLE. No se pueden realizar modificaciones bajo ningún concepto. Esta norma no tiene excepciones. Si necesitas funcionalidad similar, consulta los componentes existentes en Core y extiéndelos fuera de esta carpeta."
+> 
+> **Qué hacer en su lugar:**
+> - Consultar y reutilizar componentes existentes en Core
+> - Crear nuevos componentes fuera de Core (en módulos de dominio o en `shared`)
+> - Extender funcionalidad mediante composición o herencia fuera de Core
+> 
+> Ver `01_GLOBAL_CONTEXT/AI_Safety_Guardrails.md` y `01_GLOBAL_CONTEXT/Core_Inviolable_Frontend.md` para documentación completa.
+
+---
+
 ## 📜 REGLAS DE ORO (CONSTRAINTS)
 1. **NgModules:** Este proyecto usa **NgModules** por feature (agents, clients, configuration, teams, etc.). No se exige arquitectura Standalone.
 2. **Estado y reactividad:** Uso de **servicios Angular y RxJS** para estado y datos; no se exige Angular Signals en este proyecto.
@@ -68,6 +91,7 @@ Antes de implementar **cualquier** nueva pantalla o apartado que use elementos d
 5. **Paso a QA:** Una vez finalizada la UI, entrega el componente al **QA Agent** para validar la accesibilidad y la cobertura de tests unitarios.
 6. **Variables de entorno:** Al crear servicios que consumen APIs, usar `environment.apiUrl` (no hardcodear URLs), verificar que `environment.ts` tiene `apiUrl` configurada, y documentar en `README.md` qué variables necesita el Frontend. Ver `DOCS/ENV_MANAGEMENT.md` para guía detallada.
 7. **Cuando la tarea proviene de Entity-to-Stack (AG-VC-10-ENTITY-STACK):** Si la tarea incluye una **checklist explícita** de artefactos a generar (modelo, servicio con getData(), componente listado con Core, módulo, routing, registro en app-routing), **debes completar todos los elementos de esa checklist** antes de considerar la tarea terminada. La checklist garantiza que no se olvide ningún artefacto ni paso de wiring (especialmente el registro en app-routing.module.ts). Confirma al agente Entity-to-Stack cuando todos los componentes y rutas estén listos.
+8. **Títulos de pantalla y DTOs_Titulos_Web:** Al crear o modificar columnas de tabla, títulos de sección o etiquetas de formulario que correspondan a propiedades de DTO, actualizar `01_GLOBAL_CONTEXT/DTOs_Titulos_Web.md` (mapeo DTO.propiedad → clave i18n → título ES/EN) y las traducciones en `translations.es.ts` y `translations.en.ts`. Los alias base deben coincidir con la columna «Alias en pantalla» de `Tablas_Columnas_Alias.md` (fuente de verdad).
 
 ## 📂 ORGANIZACIÓN DE CÓDIGO
 - **Components:** Por feature (ej. `./src/app/features/clients/`, `agents-general.component.ts`). **Selectores: obligatorio prefijo `mobentis-`; prohibido `app-` u otros prefijos.**

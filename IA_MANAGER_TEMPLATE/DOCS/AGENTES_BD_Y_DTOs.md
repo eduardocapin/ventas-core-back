@@ -45,13 +45,11 @@ Para que los agentes puedan "generar ellos los DTOs y todas las cosas que se nec
 2. **Opción B – Entidad nueva o no documentada**  
    Si la entidad **no** está en el sistema de control:
    - El **Manager** debe delegar primero en **AG-VC-04-DB** (Experto en Base de Datos).
-   - El agente DB debe **recopilar la información** (nombre de tabla, columnas, tipos, relaciones). Como no puede consultar la BD, debe:
-     - **Solicitar al usuario** que indique esquema o que exporte la definición (CREATE TABLE, listado de columnas, etc.), o
-     - Usar un **esquema ya existente** en otro documento o en el código (por ejemplo entidades TypeORM ya presentes en el proyecto) si está disponible en el workspace.
-   - Tras actualizar Diccionario.md, Tablas_Columnas_Alias.md e Historial_DB.md, el agente DB indica que se puede proceder con la implementación; el **Backend** genera entonces entidad, DTOs y API a partir de esos documentos.
+   - El agente DB debe **solicitar al usuario el esquema** (vía principal): nombre de tabla, columnas con tipo y, si puede, significado y nombre de visualización de cada campo. El usuario puede pegar un CREATE TABLE, un listado de columnas o exportar desde su herramienta de BD. Alternativamente, si la BD está accesible, el usuario puede ejecutar el script de introspección (ver opción C).
+   - Tras actualizar Diccionario.md, Tablas_Columnas_Alias.md e Historial_DB.md, el agente DB indica que se puede proceder con la implementación; el **Backend** genera entonces entidad, DTOs y API a partir de esos documentos. El documento Tablas_Columnas_Alias es la fuente de esquema y de nombres de visualización (columna "Alias en pantalla").
 
-3. **Opción C – Implementado: script de introspección de BD**  
-   Existe una herramienta (fuera del agente) que consulta el esquema real de la base de datos y actualiza el sistema de control:
+3. **Opción C – Alternativa: script de introspección de BD**  
+   Si la BD está configurada y accesible, existe una herramienta (fuera del agente) que consulta el esquema real y actualiza el sistema de control:
    - **Script:** `scripts/sync-schema-to-docs.ts` (en la raíz del backend).
    - **Comando:** Desde la raíz del backend (ruta en `paths.config.json` → `backend_path`), ejecutar `npm run db:sync-docs`. Opción `npm run db:sync-docs:dry` para ver qué se generaría sin escribir (dry-run).
    - **Requisitos:** Variables de entorno del backend (`.env` con `DB_TYPE`, `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`). Soporta MySQL y MSSQL.

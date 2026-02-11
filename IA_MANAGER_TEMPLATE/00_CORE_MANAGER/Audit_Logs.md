@@ -13,6 +13,7 @@ Este registro sirve para auditar las intervenciones de la IA en **VentasCore_IA*
 | **2026-02-09** | AG-VC-MANAGER | Reestructuración tablas Pedidos y PedidosDetalle | Columnas reordenadas según especificación usuario. DTOs y frontend actualizados. |
 | **2026-02-09** | AG-VC-04-DB | Creación módulo Clientes completo | Entidad Client y DTO ClienteDto alineados con schema completo [dbo].[Clientes] (250+ campos). |
 | **2026-02-09** | AG-VC-04-DB | Corrección FK Pedidos → Clientes | Relación cambiada de Agentes.Id a Clientes.Id mediante Cod_Agente_Fabricante. |
+| **2026-02-10** | AG-VC-MANAGER | Opción A: optimización flujo BD y DTOs | Priorizada solicitud de schema al usuario; Tablas_Columnas_Alias como fuente de nombres; DTOs_Titulos_Web aclarado; 04_DATABASE, AGENTES_BD_Y_DTOs, 10_ENTITY_FULLSTACK, 02_FRONTEND actualizados. |
 
 ---
 

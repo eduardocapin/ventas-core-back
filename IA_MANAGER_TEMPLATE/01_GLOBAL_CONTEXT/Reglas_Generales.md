@@ -35,6 +35,10 @@ Cuando el usuario quiera **añadir una nueva funcionalidad, componente, sistema 
 - **Proceso:** Antes de implementar la nueva funcionalidad, componente, validación o comprobación, el agente debe **explorar o listar el contenido** de las carpetas Core de los proyectos involucrados (Back y/o Front según la tarea) para identificar componentes, servicios, guards, pipes, utilidades o patrones reutilizables.
 - **Reutilización:** Si se encuentra un elemento que cubra total o parcialmente el requisito, el agente debe **usarlo** (importándolo y componiéndolo) o **extenderlo fuera de Core** (herencia o composición en un módulo de dominio o en `shared`). No se deben duplicar responsabilidades ni crear elementos nuevos que repitan lo ya existente en Core.
 - **Restricción:** Las carpetas Core **no pueden ser modificadas** (norma inviolable; ver `AI_Safety_Guardrails.md`). Solo pueden ser **consultadas y reutilizadas**; la extensión o el nuevo código que las use debe residir fuera de Core.
+  
+  **⚠️ RESTRICCIÓN ESPECÍFICA CRÍTICA PARA FRONTEND:**
+  
+  La carpeta Core del Frontend (ruta definida en `00_CORE_MANAGER/paths.config.json` con clave `core_front`) está **ABSOLUTAMENTE PROHIBIDA** para cualquier modificación. Esta es una norma sin excepciones. Cualquier componente, servicio, guard, pipe o utilidad que necesite ser creado o modificado debe hacerse fuera de esta carpeta, aunque implique duplicar funcionalidad. Consultar `00_CORE_MANAGER/paths.config.json` para la ruta exacta. Ver `01_GLOBAL_CONTEXT/Core_Inviolable_Frontend.md` para documentación detallada.
 - **Documentación:** Si el agente no encuentra en Core un elemento equivalente y crea uno nuevo fuera de Core, debe indicarlo brevemente en su respuesta (por ejemplo: "No existe en Core un X equivalente; se ha creado en el módulo Y").
 
 ---
@@ -81,6 +85,7 @@ Esta regla complementa la 1.1: además de reutilizar cuando existe, se exige **a
 
 ## 🗄️ 4. BASE DE DATOS Y PERSISTENCIA
 
+-   **Sistema de control documental:** Además de Diccionario, Tablas_Columnas_Alias e Historial_DB, el proyecto mantiene [DTOs_Estructura.md](./DTOs_Estructura.md) (catálogo de DTOs y propiedades) y [DTOs_Titulos_Web.md](./DTOs_Titulos_Web.md) (mapeo DTO.propiedad → título en pantalla). El agente DB actualiza DTOs_Estructura al añadir entidades; el agente Frontend actualiza DTOs_Titulos_Web al modificar columnas o títulos de UI.
 -   **Gestión:** Uso obligatorio del ORM/ODM especificado en `Tech_Stack.md`.
 -   **Nomenclatura:** Seguir las convenciones definidas en `Naming_Conventions.md`.
 -   **Integridad:** Garantizar la integridad de los datos mediante las herramientas nativas del motor de DB seleccionado.

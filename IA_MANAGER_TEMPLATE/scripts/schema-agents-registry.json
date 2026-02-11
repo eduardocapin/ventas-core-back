@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AGENTS_REGISTRY Schema",
+  "description": "Esquema JSON para validar AGENTS_REGISTRY.json del IA_MANAGER_TEMPLATE",
+  "type": "object",
+  "required": ["project_name", "version", "root_structure", "agents", "global_context"],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "description": "Nombre del proyecto"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Versión del template en formato semver (ej: 1.1.0)"
+    },
+    "root_structure": {
+      "type": "string",
+      "description": "Estructura raíz del proyecto"
+    },
+    "agents": {
+      "type": "array",
+      "description": "Array de agentes registrados",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "version", "file_path", "triggers", "capabilities"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^AG-[A-Z]{2}-\\d{2}-[A-Z-]+$",
+            "description": "ID único del agente en formato AG-XX-YY-NAME"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Nombre descriptivo del agente"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Versión del agente en formato semver"
+          },
+          "file_path": {
+            "type": "string",
+            "pattern": "^\\./02_AGENTS_REGISTRY/.*\\.md$",
+            "description": "Ruta relativa al archivo de definición del agente"
+          },
+          "triggers": {
+            "type": "array",
+            "description": "Array de palabras clave que activan este agente",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "description": "Array de capacidades del agente",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "global_context": {
+      "type": "array",
+      "description": "Array de rutas a archivos de contexto global",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^\\./.*\\.md$",
+        "description": "Ruta relativa a un archivo de contexto global"
+      },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}

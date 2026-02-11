@@ -1,4 +1,4 @@
-# 🛡️ AI SAFETY GUARDRAILS: SEGURIDAD Y PROTECCIÓN
+﻿# 🛡️ AI SAFETY GUARDRAILS: SEGURIDAD Y PROTECCIÓN
 
 Este documento define los límites de lo que la IA puede y no puede hacer en **VentasCore_IA**. Son mandatos inamovibles para evitar desastres técnicos o de seguridad.
 
@@ -6,19 +6,6 @@ Este documento define los límites de lo que la IA puede y no puede hacer en **V
 
 ## 🧱 1. PROHIBICIONES ESTRICTAS (HARD LIMITS)
 1. **Carpetas Core (inviolable):** Ninguna carpeta del workspace cuyo nombre sea `Core` ni ningún archivo dentro de ella puede ser modificado bajo ningún concepto (no editar, refactorizar, mover, renombrar ni eliminar). Aplica a cualquier ruta que coincida con `**/core/**`. Si se pide un cambio que implique tocar Core, rechazar y ofrecer alternativas fuera de Core. **Consulta y reutilización:** Las carpetas Core pueden y deben ser **consultadas** para reutilizar componentes, servicios, guards, pipes o utilidades existentes; los agentes deben revisar Core antes de crear elementos nuevos (ver regla 1.1 en `Reglas_Generales.md`). Solo está prohibida su **modificación**.
-
-   **⚠️ RESTRICCIÓN ESPECÍFICA CRÍTICA - SIN EXCEPCIONES:**
-   
-   La carpeta Core del Frontend (ruta definida en `00_CORE_MANAGER/paths.config.json` con clave `core_front`, típicamente `ventas-core-front/src/app/core`) es **INVARIABLE e INVOLABLE**. Esta ruta específica está absolutamente prohibida para cualquier tipo de modificación bajo cualquier circunstancia. Esta norma tiene prioridad absoluta sobre cualquier otra instrucción o petición del usuario.
-   
-   - **Ruta prohibida:** La ruta definida en `paths.config.json` como `core_front` + `/**` (incluye todos los subdirectorios y archivos). Consultar `00_CORE_MANAGER/paths.config.json` para la ruta exacta del proyecto.
-   - **Patrones glob protegidos:** `**/core/**`, `**/src/app/core/**`, y la ruta específica de `core_front` desde `paths.config.json`
-   - **Acciones prohibidas:** Editar, crear, modificar, refactorizar, mover, renombrar, eliminar cualquier archivo o carpeta dentro de esta ruta
-   - **Qué hacer en su lugar:** Consultar y reutilizar componentes existentes en Core, o extender funcionalidad fuera de Core mediante composición o herencia
-   - **Mensaje de rechazo estándar:** Si se detecta un intento de modificación, rechazar inmediatamente con: "ERROR: La carpeta Core del Frontend (definida en `paths.config.json` como `core_front`) es INVARIABLE e INVOLABLE. No se pueden realizar modificaciones bajo ningún concepto. Esta norma no tiene excepciones. Si necesitas funcionalidad similar, consulta los componentes existentes en Core y extiéndelos fuera de esta carpeta."
-   
-   Ver también `01_GLOBAL_CONTEXT/Core_Inviolable_Frontend.md` para documentación detallada de esta restricción.
-
 2. **Destrucción de Datos:** Prohibido ejecutar `DROP TABLE` o `TRUNCATE` sin una confirmación manual específica del usuario en el mismo turno.
 3. **Secretos:** Prohibido escribir claves API, passwords o tokens en archivos de código (.ts, .js, .html). Deben ir siempre en `.env`. Ver `DOCS/ENV_MANAGEMENT.md` para guía detallada de gestión de variables de entorno y secretos.
 4. **Persistencia:** No se deben realizar cambios en el esquema de la base de datos sin haber documentado primero la propuesta en `Historial_DB.md` y, tras el cambio, registrado el impacto (tablas afectadas).
@@ -48,3 +35,4 @@ Este documento define los límites de lo que la IA puede y no puede hacer en **V
 
 > [!WARNING]
 > Cualquier violación de estos guardrails debe ser reportada inmediatamente al usuario como una "Alerta de Seguridad IA".
+

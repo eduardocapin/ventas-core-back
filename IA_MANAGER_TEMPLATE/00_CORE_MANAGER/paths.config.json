@@ -1,5 +1,5 @@
 {
-  "_comment": "Rutas relativas a la raíz del workspace. Consultar este fichero para resolver rutas de Back, Front y Template. Actualizar con setup_project.ps1 o durante la configuración inicial (Setup Wizard).",
+  "_comment": "Rutas relativas a la raíz del workspace. Consultar este fichero para resolver rutas de Back, Front y Template. Actualizar con setup_project.ps1 o durante la configuración inicial (Setup Wizard). IMPORTANTE: Las rutas core_back y core_front son INVARIABLES e INVOLABLES - ver AI_Safety_Guardrails.md y Core_Inviolable_Frontend.md para restricciones.",
   "template_path": "ventas-core-back/IA_MANAGER_TEMPLATE",
   "backend_path": "ventas-core-back",
   "frontend_path": "ventas-core-front",

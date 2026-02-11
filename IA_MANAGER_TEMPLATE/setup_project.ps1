@@ -147,3 +147,142 @@ Write-Host "  Configuración de rutas escrita: 00_CORE_MANAGER/paths.config.json
 Write-Host "`n¡Listo! Estructura de agentes y rutas relativas configuradas para $ProjectName." -ForegroundColor Magenta
 Write-Host "El orquestador usa únicamente rutas relativas al workspace. Rutas clave en 00_CORE_MANAGER/paths.config.json" -ForegroundColor Gray
 Write-Host "Objetivo del proyecto guardado en 01_GLOBAL_CONTEXT/Contexto_IA.md (puedes editarlo para ampliar)." -ForegroundColor Gray
+
+# Validación post-setup
+Write-Host "`n--- Validación post-setup ---" -ForegroundColor Cyan
+$validationErrors = @()
+$validationWarnings = @()
+
+# Verificar archivos críticos
+$criticalFiles = @(
+    "00_CORE_MANAGER/00_MANAGER.md",
+    "00_CORE_MANAGER/AGENTS_REGISTRY.json",
+    "01_GLOBAL_CONTEXT/AI_Safety_Guardrails.md",
+    "01_GLOBAL_CONTEXT/Reglas_Generales.md",
+    "README.md"
+)
+foreach ($file in $criticalFiles) {
+    $filePath = Join-Path $templateDir $file
+    if (-not (Test-Path $filePath)) {
+        $validationErrors += "Archivo crítico faltante: $file"
+    } elseif ((Get-Item $filePath).Length -eq 0) {
+        $validationWarnings += "Archivo vacío: $file"
+    }
+}
+
+# Verificar paths.config.json
+if (Test-Path $pathsConfigPath) {
+    try {
+        $pathsConfig = Get-Content $pathsConfigPath -Raw | ConvertFrom-Json
+        $requiredPaths = @("template_path", "backend_path", "frontend_path", "core_back", "core_front")
+        foreach ($pathKey in $requiredPaths) {
+            if (-not $pathsConfig.$pathKey) {
+                $validationErrors += "paths.config.json falta clave: $pathKey"
+            }
+        }
+    } catch {
+        $validationErrors += "paths.config.json no es JSON válido: $_"
+    }
+} else {
+    $validationErrors += "paths.config.json no existe"
+}
+
+# Verificar AGENTS_REGISTRY.json
+$registryPath = Join-Path $templateDir "00_CORE_MANAGER/AGENTS_REGISTRY.json"
+if (Test-Path $registryPath) {
+    try {
+        $registry = Get-Content $registryPath -Raw | ConvertFrom-Json
+        if (-not $registry.agents) {
+            $validationErrors += "AGENTS_REGISTRY.json no tiene campo 'agents'"
+        } else {
+            foreach ($agent in $registry.agents) {
+                if (-not $agent.file_path) {
+                    $validationWarnings += "Agente $($agent.id) no tiene file_path"
+                } else {
+                    $agentPath = Join-Path $templateDir $agent.file_path
+                    if (-not (Test-Path $agentPath)) {
+                        $validationErrors += "Archivo del agente no existe: $($agent.file_path) para $($agent.id)"
+                    }
+                }
+            }
+        }
+    } catch {
+        $validationErrors += "AGENTS_REGISTRY.json no es JSON válido: $_"
+    }
+} else {
+    $validationErrors += "AGENTS_REGISTRY.json no existe"
+}
+
+# Verificar que las rutas en paths.config.json existen (si el workspace está disponible)
+if (Test-Path $workspaceRoot) {
+    if ($pathsConfig) {
+        $templateFullPath = Join-Path $workspaceRoot $pathsConfig.template_path
+        if (-not (Test-Path $templateFullPath)) {
+            $validationWarnings += "La ruta template_path en paths.config.json no existe: $($pathsConfig.template_path)"
+        }
+    }
+}
+
+# Mostrar resultados de validación
+if ($validationErrors.Count -eq 0 -and $validationWarnings.Count -eq 0) {
+    Write-Host "✓ Validación post-setup: Todo correcto" -ForegroundColor Green
+} else {
+    if ($validationErrors.Count -gt 0) {
+        Write-Host "`nERRORES encontrados:" -ForegroundColor Red
+        foreach ($error in $validationErrors) {
+            Write-Host "  - $error" -ForegroundColor Red
+        }
+    }
+    if ($validationWarnings.Count -gt 0) {
+        Write-Host "`nADVERTENCIAS:" -ForegroundColor Yellow
+        foreach ($warning in $validationWarnings) {
+            Write-Host "  - $warning" -ForegroundColor Yellow
+        }
+    }
+    Write-Host "`nRecomendación: Ejecuta 'scripts/validate-template.ps1' para validación completa" -ForegroundColor Yellow
+}
+
+# Generar reporte de setup
+$setupReport = @"
+# Reporte de Setup - $ProjectName
+
+**Fecha:** $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+**Proyecto:** $ProjectName ($ProjectCode)
+**Workspace Root:** $workspaceRoot
+**Template Path:** $iaManagerTemplatePath
+
+## Configuración aplicada
+
+- **Backend Path:** $backendPath
+- **Frontend Path:** $frontendPath
+- **Core Back:** $coreBack
+- **Core Front:** $coreFront
+
+## Estado de validación
+
+- **Errores:** $($validationErrors.Count)
+- **Advertencias:** $($validationWarnings.Count)
+
+$(if ($validationErrors.Count -gt 0) {
+    "### Errores:`n" + ($validationErrors -join "`n- ")
+} else {
+    "✓ Sin errores críticos"
+})
+
+$(if ($validationWarnings.Count -gt 0) {
+    "### Advertencias:`n" + ($validationWarnings -join "`n- ")
+} else {
+    "✓ Sin advertencias"
+})
+
+## Próximos pasos
+
+1. Verificar que las rutas en `paths.config.json` son correctas
+2. Ejecutar `scripts/validate-template.ps1` para validación completa
+3. Ejecutar `scripts/generate-index.ps1` para sincronizar INDEX.md
+4. Revisar `DOCS/ONBOARDING.md` para guía de inicio
+"@
+
+$reportPath = Join-Path $templateDir "SETUP_REPORT.md"
+$setupReport | Out-File -FilePath $reportPath -Encoding UTF8 -NoNewline
+Write-Host "`nReporte de setup guardado en: SETUP_REPORT.md" -ForegroundColor Gray

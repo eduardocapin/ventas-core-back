@@ -19,14 +19,13 @@ Tu misión es garantizar la integridad, seguridad y rendimiento de los datos en 
 
 Cuando el usuario pida o solicite **añadir un nuevo DTO o estructura de base de datos** al proyecto, debes llevar a cabo el flujo completo de registro en el sistema de control antes (o en coordinación con) la implementación en código.
 
-### Opción de obtención del esquema
+### Obtención del esquema (prioridad: solicitar al usuario)
 
-**Ofrece siempre al usuario dos opciones** (con las normas del proyecto aplicables en ambos casos):
+**Vía principal (recomendada):** Solicitar al usuario que proporcione el esquema de la entidad. Indica qué necesitas: nombre de tabla, columnas con tipo de dato y, si puede, significado y **nombre de visualización** de cada campo (cómo debe mostrarse en pantalla). El usuario puede pegar un CREATE TABLE, un listado de columnas o exportar desde su herramienta de BD. Tú actualizas los documentos con esa información; si falta descripción o alias, la solicitas o dejas "(revisar)".
 
-1. **Pegar el esquema:** El usuario pega o escribe la definición de la entidad (nombre de tabla, columnas con tipo y, si puede, significado y alias en pantalla). Tú actualizas Diccionario.md, Tablas_Columnas_Alias.md e Historial_DB.md con esa información y, si falta descripción o alias, la solicitas o dejas "(revisar)".
-2. **Ejecutar el script de introspección:** El usuario ejecuta desde la raíz del backend (ruta en `paths.config.json` → `backend_path`) el comando `npm run db:sync-docs`, con su `.env` configurado (DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME). El script actualiza Tablas_Columnas_Alias.md (y si aplica Diccionario.md e Historial_DB.md) a partir del esquema real de la BD, sin incluir datos de conexión (todo viene del .env). Tras ejecutarlo, el usuario te confirma y tú verificas los documentos; si hay tablas/columnas nuevas con "(revisar)", puedes proponer mejoras o pedir que el usuario complete significado y alias.
+**Vía alternativa (cuando la BD esté accesible):** Si el usuario tiene la BD configurada y prefiere la introspección automática, puede ejecutar `npm run db:sync-docs` desde la raíz del backend (ruta en `paths.config.json` → `backend_path`), con `.env` configurado (DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME). El script actualiza Tablas_Columnas_Alias.md, Diccionario.md e Historial_DB.md; para tablas/columnas nuevas usa "(revisar)". Tras ejecutarlo, el usuario confirma y tú verificas o completas los "(revisar)".
 
-Indica al usuario que elija una de las dos vías antes de continuar. Las normas siguientes se aplican igual en ambos casos.
+Indica al usuario la vía que prefiera. Las normas siguientes se aplican igual en ambos casos.
 
 ### Pasos de registro (tras tener el esquema)
 
@@ -34,9 +33,10 @@ Indica al usuario que elija una de las dos vías antes de continuar. Las normas 
 2. **Actualizar Diccionario.md:** Añadir la nueva entidad en la sección «1. ENTIDADES PRINCIPALES (DATA MODELS)» con: Término, Definición, Atributos clave (según convención del proyecto).
 3. **Actualizar Tablas_Columnas_Alias.md:** Añadir una nueva subsección en «1. Tablas» con: tabla BD, entidad, descripción, alias en pantalla y tabla de columnas (Campo BD/DTO | Tipo | Significado | Alias en pantalla). Usar los tipos de dato de referencia del mismo fichero.
 4. **Actualizar Historial_DB.md:** Registrar el cambio en «REGISTRO DE MIGRACIONES Y CAMBIOS» y, si hay nueva tabla o columnas, en «DETALLE DE CAMBIOS»; incluir tablas afectadas.
-5. **Handoff al Backend:** Una vez actualizados los tres documentos, indicar al usuario (o al agente Backend) que puede proceder con la implementación: entidad TypeORM, DTOs (PaginatedXxxDto, CreateXxxDto, UpdateXxxDto), módulo, repositorio, controlador y servicio según `Backend_Patterns.md` y `Naming_Conventions.md`.
+5. **DTOs_Estructura.md:** Para entidades nuevas, el Backend actualizará este documento al crear los DTOs. Si añades solo un campo a una entidad existente, actualiza la propiedad correspondiente en la sección del DTO afectado.
+6. **Handoff al Backend:** Una vez actualizados Diccionario, Tablas_Columnas_Alias e Historial_DB, indicar al usuario (o al agente Backend) que puede proceder con la implementación: entidad TypeORM, DTOs (PaginatedXxxDto, CreateXxxDto, UpdateXxxDto), módulo, repositorio, controlador y servicio según `Backend_Patterns.md` y `Naming_Conventions.md`. Recordar que Tablas_Columnas_Alias es la fuente de esquema y de nombres de visualización (columna "Alias en pantalla").
 
-Si solo se añade un **campo nuevo** a una entidad ya existente en el Diccionario, actualizar únicamente `Tablas_Columnas_Alias.md` (columna nueva en la entidad correspondiente) e `Historial_DB.md` (registro del cambio).
+Si solo se añade un **campo nuevo** a una entidad ya existente, actualizar `Tablas_Columnas_Alias.md` (columna nueva), `Historial_DB.md` (registro del cambio) y `DTOs_Estructura.md` (nueva propiedad en el DTO afectado).
 
 ## 🗄️ PERSISTENCIA Y ESQUEMA
 1. **SSOT de Datos:** El `01_GLOBAL_CONTEXT/Diccionario.md` es la única fuente para entidades y términos de negocio. Para detalle de tablas/vistas, columnas, tipos de dato y alias de pantalla, usar `01_GLOBAL_CONTEXT/Tablas_Columnas_Alias.md`.
