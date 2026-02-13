@@ -76,6 +76,9 @@ export class PedidoListDto {
   @ApiPropertyOptional({ description: 'Error de integración' })
   errorIntegracion?: string;
 
+  @ApiPropertyOptional({ description: 'Nombre de la empresa a la que pertenece el pedido' })
+  nombreEmpresa?: string;
+
   /** Datos del cliente vinculado (Cod_Agente_Fabricante → Clientes.Id) para códigos y nombre */
   @ApiPropertyOptional()
   agenteDatos?: PedidoAgenteDto;
