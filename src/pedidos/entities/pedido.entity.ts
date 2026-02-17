@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne,
 import { PedidoDetalle } from './pedido-detalle.entity';
 import { PedidosTotal } from './pedidos-total.entity';
 import { Client } from '../../clients/entities/client.entity';
+import { Empresa } from '../../core/empresas/entities/empresa.entity';
 
 /**
  * Entidad alineada con la tabla [dbo].[Pedidos].
@@ -104,6 +105,10 @@ export class Pedido {
   /** Relación con Empresa: Pedidos.Cod_Empresa = Empresas.Id */
   @Column({ name: 'Cod_Empresa', type: 'int', nullable: true })
   codEmpresa: number | null;
+
+  @ManyToOne(() => Empresa, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'Cod_Empresa', referencedColumnName: 'idEmpresa' })
+  empresaRelation: Empresa | null;
 
   /** Líneas del pedido. Relación: PedidosDetalle.Codigo_PedidoAuto → Pedidos.Id_Pedido */
   @OneToMany(() => PedidoDetalle, (detalle) => detalle.pedido)

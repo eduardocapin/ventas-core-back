@@ -101,6 +101,19 @@ export class PedidosService {
    */
   async findAllPaginated(dto: PaginatedPedidosDto): Promise<{ items: PedidoListDto[]; totalItems: number }> {
     try {
+      // Extraer filtro de estado de selectedFilters si existe
+      let estadoImportacion: string[] | undefined;
+      if (dto.selectedFilters && Array.isArray(dto.selectedFilters)) {
+        const estadoFilter = dto.selectedFilters.find((f: any) => f.id === 'estadoImportacion');
+        if (estadoFilter && Array.isArray(estadoFilter.valor)) {
+          estadoImportacion = estadoFilter.valor;
+        }
+      }
+      // También verificar si viene directamente en el body
+      if ((dto as any).estadoImportacion && Array.isArray((dto as any).estadoImportacion)) {
+        estadoImportacion = (dto as any).estadoImportacion;
+      }
+
       const [pedidos, totalItems] = await this.pedidoRepository.findPaginated({
         currentPage: dto.currentPage,
         itemsPerPage: dto.itemsPerPage,
@@ -109,6 +122,7 @@ export class PedidosService {
         sortColumn: dto.sortColumn,
         sortDirection: dto.sortDirection,
         empresasIds: dto.empresasIds,
+        estadoImportacion,
       });
 
       const items: PedidoListDto[] = pedidos.map((p) => {
@@ -116,6 +130,7 @@ export class PedidosService {
         const agenteDto = mapClienteToAgenteDto(cliente);
         const nombreAgente = p.agente ?? cliente?.nombre ?? undefined;
         const codigoAgente = agenteDto?.codigoAgenteFabricante ?? agenteDto?.codigoAgenteERP ?? undefined;
+        const nombreEmpresa = p.empresaRelation?.Nombre ?? undefined;
         return {
           id: p.id,
           estadoImportacion: p.estadoIntegracion ?? undefined,
@@ -128,6 +143,7 @@ export class PedidosService {
           clienteNFiscal: cliente?.nombreFiscal ?? p.cliente ?? undefined,
           nombreAgente: nombreAgente ?? undefined,
           codigoAgente: codigoAgente ?? undefined,
+          nombreEmpresa: nombreEmpresa ?? undefined,
           dto1: p.totales?.dtos ?? undefined,
           dto2: undefined,
           dtoPP: undefined,
@@ -223,6 +239,7 @@ export class PedidosService {
       observaciones: pedido.observaciones ?? undefined,
       observacionesComerciales: pedido.observacionesComerciales ?? undefined,
       observacionesReparto: pedido.observacionesReparto ?? undefined,
+      nombreEmpresa: pedido.empresaRelation?.Nombre ?? undefined,
       totales: mapTotalesToDto(pedido.totales),
       lineas,
     };
@@ -231,15 +248,24 @@ export class PedidosService {
   /**
    * KPIs por estado de integración para el Importador de Documentos.
    * Devuelve un objeto { [estado: string]: number }.
+   * @param empresasIds Opcional: IDs de empresas para filtrar los KPIs
    */
-  async getKpisByEstado(): Promise<PedidosKpisByEstado> {
+  async getKpisByEstado(empresasIds?: number[]): Promise<PedidosKpisByEstado> {
     try {
-      const rows = await this.pedidoRepo
+      const qb = this.pedidoRepo
         .createQueryBuilder('p')
         .select('p.EstadoImportacion', 'estado')
         .addSelect('COUNT(*)', 'count')
         .where('(p.BajaEnERP = :falseVal OR p.BajaEnERP IS NULL)')
-        .setParameter('falseVal', false)
+        .setParameter('falseVal', false);
+
+      // Aplicar filtro de empresas si se proporciona
+      if (empresasIds && empresasIds.length > 0) {
+        qb.andWhere('p.Cod_Empresa IN (:...empresasIds)');
+        qb.setParameter('empresasIds', empresasIds);
+      }
+
+      const rows = await qb
         .groupBy('p.EstadoImportacion')
         .getRawMany<{ estado: string | null; count: string }>();
 

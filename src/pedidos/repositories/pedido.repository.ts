@@ -47,6 +47,7 @@ export interface FindPaginatedOptions {
   sortColumn?: string;
   sortDirection?: string;
   empresasIds?: number[];
+  estadoImportacion?: string[]; // Array de códigos de estado (ej: ['I1', 'I2'])
 }
 
 @Injectable()
@@ -65,6 +66,7 @@ export class PedidoRepository {
       sortColumn = 'id',
       sortDirection = 'ASC',
       empresasIds,
+      estadoImportacion,
     } = options;
 
     const whereParams: Record<string, unknown> = { falseVal: false };
@@ -73,6 +75,9 @@ export class PedidoRepository {
     }
     if (empresasIds && empresasIds.length > 0) {
       whereParams.empresasIds = empresasIds;
+    }
+    if (estadoImportacion && estadoImportacion.length > 0) {
+      whereParams.estadoImportacion = estadoImportacion;
     }
 
     const countQb = this.repo
@@ -90,6 +95,11 @@ export class PedidoRepository {
     // Relación directa: Pedidos.Cod_Empresa = Empresas.Id
     if (empresasIds && empresasIds.length > 0) {
       countQb.andWhere(`p.${PEDIDOS_COLUMNS.codEmpresa} IN (:...empresasIds)`);
+    }
+    
+    // Filtrar por estado de importación si se proporciona
+    if (estadoImportacion && estadoImportacion.length > 0) {
+      countQb.andWhere(`p.${PEDIDOS_COLUMNS.estadoImportacion} IN (:...estadoImportacion)`);
     }
 
     // Evitar bug TypeORM #8213 (databaseName undefined): paginación sin joins, luego cargar entidades con relaciones
@@ -118,6 +128,11 @@ export class PedidoRepository {
     if (empresasIds && empresasIds.length > 0) {
       idsQb.andWhere(`p.${PEDIDOS_COLUMNS.codEmpresa} IN (:...empresasIds)`);
     }
+    
+    // Filtrar por estado de importación si se proporciona
+    if (estadoImportacion && estadoImportacion.length > 0) {
+      idsQb.andWhere(`p.${PEDIDOS_COLUMNS.estadoImportacion} IN (:...estadoImportacion)`);
+    }
 
     const [idRows, totalItems] = await Promise.all([idsQb.getRawMany<{ pedidoId: number }>(), countQb.getCount()]);
     const ids = idRows.map((r) => r.pedidoId);
@@ -129,6 +144,7 @@ export class PedidoRepository {
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.clienteRelation', 'cliente')
       .leftJoinAndSelect('p.totales', 'totales')
+      .leftJoinAndSelect('p.empresaRelation', 'empresa')
       .where('p.id IN (:...ids)', { ids })
       .getMany();
 
@@ -145,6 +161,7 @@ export class PedidoRepository {
       .leftJoinAndSelect('p.totales', 'totales')
       .leftJoinAndSelect('p.clienteRelation', 'cliente')
       .leftJoinAndSelect('p.customerRelation', 'customer')
+      .leftJoinAndSelect('p.empresaRelation', 'empresa')
       .where('p.Id_Pedido = :id', { id })
       .getOne();
   }

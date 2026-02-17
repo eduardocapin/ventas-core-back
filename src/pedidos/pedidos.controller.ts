@@ -14,6 +14,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 import { JwtAuthGuard } from 'src/core/guards/jwt-auth/jwt-auth.guard';
 import { PedidosService } from './pedidos.service';
 import { PaginatedPedidosDto } from './dto/paginated-pedidos.dto';
+import { KpisFilterDto } from './dto/kpis-filter.dto';
 
 @ApiTags('Pedidos')
 @Controller('pedidos')
@@ -43,7 +44,7 @@ export class PedidosController {
   }
 
   @Get('kpis')
-  @ApiOperation({ summary: 'KPIs de pedidos por estado de integración' })
+  @ApiOperation({ summary: 'KPIs de pedidos por estado de integración (sin filtros)' })
   @ApiResponse({ status: 200, description: 'Conteos por estado (clave = estado, valor = cantidad).' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   async getKpis() {
@@ -52,6 +53,24 @@ export class PedidosController {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error(`Error en GET pedidos/kpis: ${error}`);
+      throw new HttpException(
+        'Error en el servidor. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('kpis')
+  @ApiOperation({ summary: 'KPIs de pedidos por estado de integración (con filtros opcionales)' })
+  @ApiBody({ type: KpisFilterDto, required: false })
+  @ApiResponse({ status: 200, description: 'Conteos por estado (clave = estado, valor = cantidad).' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getKpisWithFilter(@Body() dto?: KpisFilterDto) {
+    try {
+      return await this.pedidosService.getKpisByEstado(dto?.empresasIds);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Error en POST pedidos/kpis: ${error}`);
       throw new HttpException(
         'Error en el servidor. Intenta de nuevo más tarde.',
         HttpStatus.INTERNAL_SERVER_ERROR,

@@ -51,6 +51,9 @@ export class PedidoDetalleDto {
   @ApiPropertyOptional({ description: 'Observaciones de reparto del pedido' })
   observacionesReparto?: string;
 
+  @ApiPropertyOptional({ description: 'Nombre de la empresa a la que pertenece el pedido' })
+  nombreEmpresa?: string;
+
   @ApiPropertyOptional({ description: 'Totales del pedido (desde PedidosTotal)' })
   totales?: PedidoTotalesDto;
 
