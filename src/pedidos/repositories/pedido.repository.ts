@@ -48,6 +48,8 @@ export interface FindPaginatedOptions {
   sortDirection?: string;
   empresasIds?: number[];
   estadoImportacion?: string[]; // Array de códigos de estado (ej: ['I1', 'I2'])
+  fechaDesde?: string; // Fecha desde en formato ISO
+  fechaHasta?: string; // Fecha hasta en formato ISO
 }
 
 @Injectable()
@@ -67,6 +69,8 @@ export class PedidoRepository {
       sortDirection = 'ASC',
       empresasIds,
       estadoImportacion,
+      fechaDesde,
+      fechaHasta,
     } = options;
 
     const whereParams: Record<string, unknown> = { falseVal: false };
@@ -78,6 +82,12 @@ export class PedidoRepository {
     }
     if (estadoImportacion && estadoImportacion.length > 0) {
       whereParams.estadoImportacion = estadoImportacion;
+    }
+    if (fechaDesde) {
+      whereParams.fechaDesde = fechaDesde;
+    }
+    if (fechaHasta) {
+      whereParams.fechaHasta = fechaHasta;
     }
 
     const countQb = this.repo
@@ -100,6 +110,16 @@ export class PedidoRepository {
     // Filtrar por estado de importación si se proporciona
     if (estadoImportacion && estadoImportacion.length > 0) {
       countQb.andWhere(`p.${PEDIDOS_COLUMNS.estadoImportacion} IN (:...estadoImportacion)`);
+    }
+    
+    // Filtrar por fecha desde si se proporciona
+    if (fechaDesde) {
+      countQb.andWhere(`p.${PEDIDOS_COLUMNS.fecha} >= :fechaDesde`);
+    }
+    
+    // Filtrar por fecha hasta si se proporciona
+    if (fechaHasta) {
+      countQb.andWhere(`p.${PEDIDOS_COLUMNS.fecha} <= :fechaHasta`);
     }
 
     // Evitar bug TypeORM #8213 (databaseName undefined): paginación sin joins, luego cargar entidades con relaciones
@@ -133,6 +153,16 @@ export class PedidoRepository {
     if (estadoImportacion && estadoImportacion.length > 0) {
       idsQb.andWhere(`p.${PEDIDOS_COLUMNS.estadoImportacion} IN (:...estadoImportacion)`);
     }
+    
+    // Filtrar por fecha desde si se proporciona
+    if (fechaDesde) {
+      idsQb.andWhere(`p.${PEDIDOS_COLUMNS.fecha} >= :fechaDesde`);
+    }
+    
+    // Filtrar por fecha hasta si se proporciona
+    if (fechaHasta) {
+      idsQb.andWhere(`p.${PEDIDOS_COLUMNS.fecha} <= :fechaHasta`);
+    }
 
     const [idRows, totalItems] = await Promise.all([idsQb.getRawMany<{ pedidoId: number }>(), countQb.getCount()]);
     const ids = idRows.map((r) => r.pedidoId);
@@ -162,6 +192,7 @@ export class PedidoRepository {
       .leftJoinAndSelect('p.clienteRelation', 'cliente')
       .leftJoinAndSelect('p.customerRelation', 'customer')
       .leftJoinAndSelect('p.empresaRelation', 'empresa')
+      .leftJoinAndSelect('p.medioPagoRelation', 'medioPago')
       .where('p.Id_Pedido = :id', { id })
       .getOne();
   }

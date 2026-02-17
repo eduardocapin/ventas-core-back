@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { PedidoDetalle } from './pedido-detalle.entity';
 import { PedidosTotal } from './pedidos-total.entity';
+import { MedioPago } from './medio-pago.entity';
 import { Client } from '../../clients/entities/client.entity';
 import { Empresa } from '../../core/empresas/entities/empresa.entity';
 
@@ -109,6 +110,11 @@ export class Pedido {
   @ManyToOne(() => Empresa, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'Cod_Empresa', referencedColumnName: 'idEmpresa' })
   empresaRelation: Empresa | null;
+
+  /** Relación con MediosPago: Pedidos.IdMedioPagoOPT = MediosPago.Id */
+  @ManyToOne(() => MedioPago, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'IdMedioPagoOPT', referencedColumnName: 'id' })
+  medioPagoRelation: MedioPago | null;
 
   /** Líneas del pedido. Relación: PedidosDetalle.Codigo_PedidoAuto → Pedidos.Id_Pedido */
   @OneToMany(() => PedidoDetalle, (detalle) => detalle.pedido)

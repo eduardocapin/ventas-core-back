@@ -54,6 +54,9 @@ export class PedidoDetalleDto {
   @ApiPropertyOptional({ description: 'Nombre de la empresa a la que pertenece el pedido' })
   nombreEmpresa?: string;
 
+  @ApiPropertyOptional({ description: 'Nombre del medio de pago (desde MediosPago.NombreMedio)' })
+  formaPago?: string;
+
   @ApiPropertyOptional({ description: 'Totales del pedido (desde PedidosTotal)' })
   totales?: PedidoTotalesDto;
 

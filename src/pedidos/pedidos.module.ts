@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Pedido } from './entities/pedido.entity';
 import { PedidoDetalle } from './entities/pedido-detalle.entity';
 import { PedidosTotal } from './entities/pedidos-total.entity';
+import { MedioPago } from './entities/medio-pago.entity';
 import { Client } from '../clients/entities/client.entity';
 import { PedidoRepository } from './repositories/pedido.repository';
 import { PedidosController } from './pedidos.controller';
@@ -14,6 +15,6 @@ import { PedidosService } from './pedidos.service';
   ],
   controllers: [PedidosController],
   providers: [PedidosService, PedidoRepository],
-  exports: [PedidosService],
+  exports: [PedidosService, PedidoRepository],
 })
 export class PedidosModule {}

@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/core/guards/jwt-auth/jwt-auth.guard';
 import { PedidosService } from './pedidos.service';
 import { PaginatedPedidosDto } from './dto/paginated-pedidos.dto';
 import { KpisFilterDto } from './dto/kpis-filter.dto';
+import { DashboardFilterDto } from './dto/dashboard-filter.dto';
 
 @ApiTags('Pedidos')
 @Controller('pedidos')
@@ -90,6 +91,60 @@ export class PedidosController {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error(`Error en GET pedidos/${id}: ${error}`);
+      throw new HttpException(
+        'Error en el servidor. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('dashboard/top-clientes')
+  @ApiOperation({ summary: 'Obtener top 10 clientes por valor total de pedidos' })
+  @ApiBody({ type: DashboardFilterDto, required: false })
+  @ApiResponse({ status: 200, description: 'Top 10 clientes' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getTop10Clientes(@Body() dto?: DashboardFilterDto) {
+    try {
+      return await this.pedidosService.getTop10Clientes(dto?.empresasIds, dto?.fechaDesde, dto?.fechaHasta);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Error en POST pedidos/dashboard/top-clientes: ${error}`);
+      throw new HttpException(
+        'Error en el servidor. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('dashboard/top-productos')
+  @ApiOperation({ summary: 'Obtener top 10 productos por cantidad y valor total vendido' })
+  @ApiBody({ type: DashboardFilterDto, required: false })
+  @ApiResponse({ status: 200, description: 'Top 10 productos' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getTop10Productos(@Body() dto?: DashboardFilterDto) {
+    try {
+      return await this.pedidosService.getTop10Productos(dto?.empresasIds, dto?.fechaDesde, dto?.fechaHasta);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Error en POST pedidos/dashboard/top-productos: ${error}`);
+      throw new HttpException(
+        'Error en el servidor. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('dashboard/top-pedidos')
+  @ApiOperation({ summary: 'Obtener top 10 pedidos por valor total' })
+  @ApiBody({ type: DashboardFilterDto, required: false })
+  @ApiResponse({ status: 200, description: 'Top 10 pedidos' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  async getTop10Pedidos(@Body() dto?: DashboardFilterDto) {
+    try {
+      return await this.pedidosService.getTop10Pedidos(dto?.empresasIds, dto?.fechaDesde, dto?.fechaHasta);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error(`Error en POST pedidos/dashboard/top-pedidos: ${error}`);
       throw new HttpException(
         'Error en el servidor. Intenta de nuevo más tarde.',
         HttpStatus.INTERNAL_SERVER_ERROR,

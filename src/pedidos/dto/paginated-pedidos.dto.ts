@@ -39,4 +39,12 @@ export class PaginatedPedidosDto {
   @IsNumber({}, { each: true })
   @Type(() => Number)
   empresasIds?: number[];
+
+  @ApiPropertyOptional({ description: 'Fecha desde (ISO 8601). Incluye pedidos desde esta fecha' })
+  @IsOptional()
+  fechaDesde?: string;
+
+  @ApiPropertyOptional({ description: 'Fecha hasta (ISO 8601). Incluye pedidos hasta esta fecha' })
+  @IsOptional()
+  fechaHasta?: string;
 }

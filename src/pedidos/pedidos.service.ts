@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Pedido } from './entities/pedido.entity';
 import { PedidosTotal } from './entities/pedidos-total.entity';
+import { PedidoDetalle } from './entities/pedido-detalle.entity';
 import { Client } from '../clients/entities/client.entity';
 import { PedidoRepository } from './repositories/pedido.repository';
 import { PaginatedPedidosDto } from './dto/paginated-pedidos.dto';
@@ -13,6 +14,10 @@ import { PedidoAgenteDto } from './dto/pedido-agente.dto';
 import { PedidoTotalesDto } from './dto/pedido-totales.dto';
 import { PedidoClienteDto } from './dto/pedido-cliente.dto';
 import { PedidoDireccionDto } from './dto/pedido-direccion.dto';
+import { DashboardTopClienteDto, DashboardTopClientesResponseDto } from './dto/dashboard-top-clientes.dto';
+import { DashboardTopProductoDto, DashboardTopProductosResponseDto } from './dto/dashboard-top-productos.dto';
+import { DashboardTopPedidoDto, DashboardTopPedidosResponseDto } from './dto/dashboard-top-pedidos.dto';
+import { DashboardFilterDto } from './dto/dashboard-filter.dto';
 
 export type PedidosKpisByEstado = Record<string, number>;
 
@@ -93,6 +98,10 @@ export class PedidosService {
     private readonly pedidoRepository: PedidoRepository,
     @InjectRepository(Pedido)
     private readonly pedidoRepo: Repository<Pedido>,
+    @InjectRepository(PedidosTotal)
+    private readonly pedidosTotalRepo: Repository<PedidosTotal>,
+    @InjectRepository(PedidoDetalle)
+    private readonly pedidoDetalleRepo: Repository<PedidoDetalle>,
   ) {}
 
   /**
@@ -123,6 +132,8 @@ export class PedidosService {
         sortDirection: dto.sortDirection,
         empresasIds: dto.empresasIds,
         estadoImportacion,
+        fechaDesde: dto.fechaDesde,
+        fechaHasta: dto.fechaHasta,
       });
 
       const items: PedidoListDto[] = pedidos.map((p) => {
@@ -240,6 +251,7 @@ export class PedidosService {
       observacionesComerciales: pedido.observacionesComerciales ?? undefined,
       observacionesReparto: pedido.observacionesReparto ?? undefined,
       nombreEmpresa: pedido.empresaRelation?.Nombre ?? undefined,
+      formaPago: pedido.medioPagoRelation?.nombreMedio ?? undefined,
       totales: mapTotalesToDto(pedido.totales),
       lineas,
     };
@@ -279,6 +291,175 @@ export class PedidosService {
       this.logger.error(`Error al obtener KPIs de pedidos: ${error}`);
       throw new HttpException(
         'Error al obtener los KPIs de pedidos. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Obtiene los top 10 clientes por valor total de pedidos
+   * @param empresasIds Filtro opcional por empresas
+   * @param fechaDesde Filtro opcional: pedidos desde esta fecha (inclusive)
+   * @param fechaHasta Filtro opcional: pedidos hasta esta fecha (inclusive)
+   */
+  async getTop10Clientes(
+    empresasIds?: number[],
+    fechaDesde?: string,
+    fechaHasta?: string,
+  ): Promise<DashboardTopClientesResponseDto> {
+    try {
+      const queryBuilder = this.pedidoRepo
+        .createQueryBuilder('p')
+        .leftJoin('p.totales', 't')
+        .leftJoin('p.clienteRelation', 'c')
+        .select('c.id', 'clienteId')
+        .addSelect('COALESCE(c.nombre, p.cliente, \'Sin nombre\')', 'nombreCliente')
+        .addSelect('COUNT(DISTINCT p.id)', 'totalPedidos')
+        .addSelect('COALESCE(SUM(t.total), 0)', 'valorTotal')
+        .where('(p.deleted = :falseVal OR p.deleted IS NULL)', { falseVal: false })
+        .andWhere('(t.bajaEnERP = :falseVal OR t.bajaEnERP IS NULL)', { falseVal: false })
+        .andWhere('c.id IS NOT NULL')
+        .groupBy('c.id')
+        .addGroupBy('c.nombre')
+        .addGroupBy('p.cliente')
+        .orderBy('valorTotal', 'DESC')
+        .limit(10);
+
+      if (empresasIds && empresasIds.length > 0) {
+        queryBuilder.andWhere('p.codEmpresa IN (:...empresasIds)', { empresasIds });
+      }
+      if (fechaDesde) {
+        queryBuilder.andWhere('p.fecha >= :fechaDesde', { fechaDesde });
+      }
+      if (fechaHasta) {
+        queryBuilder.andWhere('p.fecha <= :fechaHasta', { fechaHasta });
+      }
+
+      const results = await queryBuilder.getRawMany();
+
+      const items: DashboardTopClienteDto[] = results.map((r) => ({
+        clienteId: r.clienteId,
+        nombreCliente: r.nombreCliente || 'Sin nombre',
+        totalPedidos: parseInt(r.totalPedidos) || 0,
+        valorTotal: parseFloat(r.valorTotal) || 0,
+      }));
+
+      return { items };
+    } catch (error) {
+      this.logger.error(`Error al obtener top 10 clientes: ${error}`);
+      throw new HttpException(
+        'Error al obtener los top 10 clientes. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Obtiene los top 10 productos por cantidad y valor total vendido
+   * @param empresasIds Filtro opcional por empresas
+   * @param fechaDesde Filtro opcional: pedidos desde esta fecha (inclusive)
+   * @param fechaHasta Filtro opcional: pedidos hasta esta fecha (inclusive)
+   */
+  async getTop10Productos(
+    empresasIds?: number[],
+    fechaDesde?: string,
+    fechaHasta?: string,
+  ): Promise<DashboardTopProductosResponseDto> {
+    try {
+      const queryBuilder = this.pedidoDetalleRepo
+        .createQueryBuilder('pd')
+        .leftJoin('pd.pedido', 'p')
+        .select('pd.referencia', 'referencia')
+        .addSelect('COALESCE(pd.descripcion, \'Sin descripción\')', 'descripcion')
+        .addSelect('COALESCE(SUM(pd.unidades), 0)', 'cantidadTotal')
+        .addSelect('COALESCE(SUM(pd.total), 0)', 'valorTotal')
+        .where('(pd.deleted = :falseVal OR pd.deleted IS NULL)', { falseVal: false })
+        .andWhere('(p.deleted = :falseVal OR p.deleted IS NULL)', { falseVal: false })
+        .andWhere('pd.referencia IS NOT NULL')
+        .groupBy('pd.referencia')
+        .addGroupBy('pd.descripcion')
+        .orderBy('valorTotal', 'DESC')
+        .limit(10);
+
+      if (empresasIds && empresasIds.length > 0) {
+        queryBuilder.andWhere('p.codEmpresa IN (:...empresasIds)', { empresasIds });
+      }
+      if (fechaDesde) {
+        queryBuilder.andWhere('p.fecha >= :fechaDesde', { fechaDesde });
+      }
+      if (fechaHasta) {
+        queryBuilder.andWhere('p.fecha <= :fechaHasta', { fechaHasta });
+      }
+
+      const results = await queryBuilder.getRawMany();
+
+      const items: DashboardTopProductoDto[] = results.map((r) => ({
+        referencia: r.referencia || 'Sin referencia',
+        descripcion: r.descripcion || 'Sin descripción',
+        cantidadTotal: parseFloat(r.cantidadTotal) || 0,
+        valorTotal: parseFloat(r.valorTotal) || 0,
+      }));
+
+      return { items };
+    } catch (error) {
+      this.logger.error(`Error al obtener top 10 productos: ${error}`);
+      throw new HttpException(
+        'Error al obtener los top 10 productos. Intenta de nuevo más tarde.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Obtiene los top 10 pedidos por valor total
+   * @param empresasIds Filtro opcional por empresas
+   * @param fechaDesde Filtro opcional: pedidos desde esta fecha (inclusive)
+   * @param fechaHasta Filtro opcional: pedidos hasta esta fecha (inclusive)
+   */
+  async getTop10Pedidos(
+    empresasIds?: number[],
+    fechaDesde?: string,
+    fechaHasta?: string,
+  ): Promise<DashboardTopPedidosResponseDto> {
+    try {
+      const queryBuilder = this.pedidoRepo
+        .createQueryBuilder('p')
+        .leftJoin('p.totales', 't')
+        .select('p.id', 'pedidoId')
+        .addSelect('COALESCE(p.idDocumentoPDA, \'Sin número\')', 'numero')
+        .addSelect('COALESCE(p.cliente, \'Sin cliente\')', 'nombreCliente')
+        .addSelect('p.fecha', 'fecha')
+        .addSelect('COALESCE(t.total, 0)', 'valorTotal')
+        .where('(p.deleted = :falseVal OR p.deleted IS NULL)', { falseVal: false })
+        .andWhere('(t.bajaEnERP = :falseVal OR t.bajaEnERP IS NULL)', { falseVal: false })
+        .orderBy('valorTotal', 'DESC')
+        .limit(10);
+
+      if (empresasIds && empresasIds.length > 0) {
+        queryBuilder.andWhere('p.codEmpresa IN (:...empresasIds)', { empresasIds });
+      }
+      if (fechaDesde) {
+        queryBuilder.andWhere('p.fecha >= :fechaDesde', { fechaDesde });
+      }
+      if (fechaHasta) {
+        queryBuilder.andWhere('p.fecha <= :fechaHasta', { fechaHasta });
+      }
+
+      const results = await queryBuilder.getRawMany();
+
+      const items: DashboardTopPedidoDto[] = results.map((r) => ({
+        pedidoId: r.pedidoId,
+        numero: r.numero || 'Sin número',
+        nombreCliente: r.nombreCliente || 'Sin cliente',
+        fecha: r.fecha ? new Date(r.fecha) : new Date(),
+        valorTotal: parseFloat(r.valorTotal) || 0,
+      }));
+
+      return { items };
+    } catch (error) {
+      this.logger.error(`Error al obtener top 10 pedidos: ${error}`);
+      throw new HttpException(
+        'Error al obtener los top 10 pedidos. Intenta de nuevo más tarde.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
